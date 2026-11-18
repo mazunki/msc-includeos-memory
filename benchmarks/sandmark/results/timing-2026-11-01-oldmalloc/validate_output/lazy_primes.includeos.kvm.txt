@@ -1,0 +1,207 @@
+Looking for chainloader: 
+Found /nix/store/s2nxxalfn223lkvlphx9vihkykbxbid3-chainloader-static-i686-unknown-linux-musl-dev/bin//chainloader Type:  /nix/store/s2nxxalfn223lkvlphx9vihkykbxbid3-chainloader-static-i686-unknown-linux-musl-dev/bin//chainloader: ELF 32-bit LSB executable, Intel i386, version 1 (SYSV), statically linked, stripped
+
+SeaBIOS (version rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org)
+
+
+iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+BEFD0D60+BEF30D60 CA00
+Press Ctrl-B to configure iPXE (PCI 00:03.0)...
+
+
+Booting from ROM..* Multiboot begin: 0x9500
+* Multiboot cmdline @ 0x003150de: /nix/store/s2nxxalfn223lkvlphx9vihkykbxbid3-chainloader-static-i686-unknown-linux-musl-dev/bin//chainloader /nix/store/pamq5ak5ypdw7wfwryz5ylxhpzxz1j2h-ocaml_sandmark-static-x86_64-unknown-linux-musl-dev
+* Multiboot end: 0x3151aa
+* Module list @ 0x315000
+	 * Module @ 0x316000
+	 * Args: /nix/store/pamq5ak5ypdw7wfwryz5ylxhpzxz1j2h-ocaml_sandmark-static-x86_64-unknown-linux-musl-dev/hello.elf.bin /nix/store/pamq5ak5ypdw7wfwryz5ylxhpzxz1j2h-ocaml_sandmark-static-x86_64-unknown-linux-musl-dev
+ 	 * End: 0x60e708
+* Multiboot end: 6350600
+* ELF syms header CRC OK
+< multiboot >Booted with multiboot x86
+	* Boot flags: 0x24f
+	* Valid memory (3145215 KiB):
+	  0x00000000 - 0x0009fbff (639 KiB)
+	  0x00100000 - 0xbffdffff (3144576 KiB)
+
+	* Booted with parameters @ 0x3150de: /nix/store/s2nxxalfn223lkvlphx9vihkykbxbid3-chainloader-static-i686-unknown-linux-musl-dev/bin//chainloader /nix/store/pamq5ak5ypdw7wfwryz5ylxhpzxz1j2h-ocaml_sandmark-static-x86_64-unknown-linux-musl-dev
+	* Multiboot provided memory map  (9 entries @ 0x9000)
+
+	               0x0 -          0x9fbff (639 KiB): Available
+	           0x9fc00 -          0x9ffff (1 KiB): Reserved
+	           0xf0000 -          0xfffff (64 KiB): Reserved
+	          0x100000 -       0xbffdffff (3144576 KiB): Available
+	        0xbffe0000 -       0xbfffffff (128 KiB): Reserved
+	        0xfeffc000 -       0xfeffffff (16 KiB): Reserved
+	        0xfffc0000 -       0xffffffff (256 KiB): Reserved
+	               0x0 -       0x3fffffff (1048576 KiB): Available
+	               0x0 -       0xffffffff (0 KiB): Reserved
+
+< multiboot >OS loaded with 1 modules
+	* /nix/store/pamq5ak5ypdw7wfwryz5ylxhpzxz1j2h-ocaml_sandmark-static-x86_64-unknown-linux-musl-dev/hello.elf.bin /nix/store/pamq5ak5ypdw7wfwryz5ylxhpzxz1j2h-ocaml_sandmark-static-x86_64-unknown-linux-musl-dev @ 0x00316000 - 0x0060e708, size: 3114760 B
+* Multiboot begin: 0x9500
+* Multiboot end: 0x4f4f80
+[x86_64 PC] constructor
+[ Machine ] Initializing heap
+[ Machine ] Main memory detected as 3215896384 b
+[ Machine ] Reserving 1048576 b for machine use
+================================================================================
+
+                           #include<os> // Literally
+
+================================================================================
+     [ Kernel ] Stack: 0x1ffbc8
+     [ Kernel ] Boot magic: 0x2badb002, addr: 0x9500
+     [ x86_64 ] Initializing paging
+                * Supported page sizes: 4.000_KiB, 2.000_MiB
+                * Adding 512 1GiB entries @ 0x0 -> 0x8000000000
+                * Identity mapping 0x0 -> 0x0, size 17179869184, attrs 0x8000000000000083 (8192 pages of 2097152)
+                * Marking page 0 as not present
+                * Allowing execute on 0x201000 -> 0x371708
+<Paging> Wants : 0x201000 -> 0x201000, size 1509128, attrs 0x4 (page sizes: 4.000_KiB, 2.000_MiB) size: 1509128
+<Paging> Gets  : 0x201000 -> 0x201000, size 1511424, attrs 0x1 (369 pages of 4096) size: 1511424
+                * Passing page tables to CPU
+< multiboot >Booted with multiboot x86_64
+	* Boot flags: 0x24f
+	* Valid memory (3145215 KiB):
+	  0x00000000 - 0x0009fbff (639 KiB)
+	  0x00100000 - 0xbffdffff (3144576 KiB)
+
+	* Booted with parameters @ 0x8000: /nix/store/pamq5ak5ypdw7wfwryz5ylxhpzxz1j2h-ocaml_sandmark-static-x86_64-unknown-linux-musl-dev/hello.elf.bin /nix/store/pamq5ak5ypdw7wfwryz5ylxhpzxz1j2h-ocaml_sandmark-static-x86_64-unknown-linux-musl-dev
+	* Multiboot provided memory map  (9 entries @ 0x9000)
+
+	               0x0 -          0x9fbff (639 KiB): Available
+	           0x9fc00 -          0x9ffff (1 KiB): Reserved
+	           0xf0000 -          0xfffff (64 KiB): Reserved
+<Paging> Wants : 0xf0000 -> 0xf0000, size 65536, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 65536
+<Paging> Gets  : 0xf0000 -> 0xf0000, size 65536, attrs 0x8000000000000003 (16 pages of 4096) size: 65536
+	          0x100000 -       0xbffdffff (3144576 KiB): Available
+	        0xbffe0000 -       0xbfffffff (128 KiB): Reserved
+<Paging> Wants : 0xbffe0000 -> 0xbffe0000, size 131072, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 131072
+<Paging> Gets  : 0xbffe0000 -> 0xbffe0000, size 131072, attrs 0x8000000000000003 (32 pages of 4096) size: 131072
+	        0xfeffc000 -       0xfeffffff (16 KiB): Reserved
+<Paging> Wants : 0xfeffc000 -> 0xfeffc000, size 16384, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 16384
+<Paging> Gets  : 0xfeffc000 -> 0xfeffc000, size 16384, attrs 0x8000000000000003 (4 pages of 4096) size: 16384
+	        0xfffc0000 -       0xffffffff (256 KiB): Reserved
+<Paging> Wants : 0xfffc0000 -> 0xfffc0000, size 262144, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 262144
+<Paging> Gets  : 0xfffc0000 -> 0xfffc0000, size 262144, attrs 0x8000000000000003 (64 pages of 4096) size: 262144
+	       0x100000000 -      0x13fffffff (1048576 KiB): Available
+	      0xfd00000000 -     0xffffffffff (12582912 KiB): Reserved
+<Paging> Wants : 0xfd00000000 -> 0xfd00000000, size 12884901888, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 12884901888
+<Paging> Gets  : 0xfd00000000 -> 0xfd00000000, size 12884901888, attrs 0x8000000000000003 (6144 pages of 2097152) size: 12884901888
+
+     [ Kernel ] Total memory detected as 2.250_GiB
+                Assigning fixed memory ranges (Memory map)
+                * ELF symbol table size 0, ignoring.
+<Paging> Wants : 0x1000 -> 0x1000, size 28672, attrs 0x1 (page sizes: 4.000_KiB, 2.000_MiB) size: 28672
+<Paging> Gets  : 0x1000 -> 0x1000, size 28672, attrs 0x8000000000000001 (7 pages of 4096) size: 28672
+                * Assigning heap 0x1000000 -> 0x90015fff
+                * Assigning secondary heap 0x100000000 -> 0x13fffffff
+     [ Kernel ] Virtual memory map
+                0x0000001000 - 0x0000007fff,  28.000_KiB (100.0 %) Page tables
+                0x0000010000 - 0x000009d3ff, 565.000_KiB (100.0 %) Stack
+                0x000009fc00 - 0x000009ffff,   1.000_KiB (100.0 %) UNALIGNED
+                0x00000f0000 - 0x00000fffff,  64.000_KiB (100.0 %) Multiboot (Reserved)
+                0x0000201000 - 0x0000371fff,   1.441_MiB (100.0 %) ELF Executable (Unikernel service)
+                0x0001000000 - 0x0090015fff,   2.234_GiB (0.027 %) Heap
+                0x00bffe0000 - 0x00bfffffff, 128.000_KiB (100.0 %) Multiboot (Reserved)
+                0x00feffc000 - 0x00feffffff,  16.000_KiB (100.0 %) Multiboot (Reserved)
+                0x00fffc0000 - 0x00ffffffff, 256.000_KiB (100.0 %) Multiboot (Reserved)
+                0x0100000000 - 0x013fffffff,   1.000_GiB (100.0 %) Heap (secondary)
+                0xfd00000000 - 0xffffffffff,  12.000_GiB (100.0 %) Multiboot (Reserved)
+       [ ACPI ] Reading headers
+                OEM: BOCHS  Rev. 0
+       [ ACPI ] Reading APIC information
+                LAPIC base: 0xfee00000  (flags: 0x1)
+                I/O APIC 0   ADDR 0xfec00000  INTR 0x0
+                IRQ redirect for bus 0 from IRQ 0 to VEC 2
+                IRQ redirect for bus 0 from IRQ 5 to VEC 5
+                IRQ redirect for bus 0 from IRQ 9 to VEC 9
+                IRQ redirect for bus 0 from IRQ 10 to VEC 10
+                IRQ redirect for bus 0 from IRQ 11 to VEC 11
+        [ SMP ] Found 1 APs
+     [ SMBIOS ] Version 2.8
+                BIOS vendor: rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org
+                BIOS version: 04/01/2014
+                Manufacturer: Standard PC (i440FX + PIIX, 1996)
+                Product name: pc-i440fx-9.2
+                System UUID: 00000000000000000000000000000000
+                Physical memory array with 0 MB capacity
+        [ x86 ] Setting up GDT, TLS, IST
+<Paging> Wants : 0x400000001000 -> 0x617000, size 81920, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 81920
+<Paging> Gets  : 0x400000001000 -> 0x617000, size 81920, attrs 0x8000000000000003 (20 pages of 4096) size: 81920
+<Paging> Wants : 0x400000016000 -> 0x637000, size 262144, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 262144
+<Paging> Gets  : 0x400000016000 -> 0x637000, size 262144, attrs 0x8000000000000003 (64 pages of 4096) size: 262144
+<Paging> Wants : 0x400000057000 -> 0x677000, size 81920, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 81920
+<Paging> Gets  : 0x400000057000 -> 0x677000, size 81920, attrs 0x8000000000000003 (20 pages of 4096) size: 81920
+        [ x86 ] Initializing CPU 0
+   [ I/O APIC ] Initializing ID=0
+                Addr: 0xfec00000  Version: 0x11  Intr: 0  Entries: 24
+     [ x2APIC ] Enabling x2APIC @ 0xfee00900
+                APIC id: 0  ver: 50014
+        [ x86 ] Enabling interrupts
+        [ x86 ] Setting up kernel clock sources
+        [ x86 ] KVM PV clocks initialized
+                +--> 4691.200000 MHz
+       [ APIC ] Measuring APIC timer...
+                Enabled redirected entry 2 ioapic 0 -> 0 on apic 0
+                Initializing drivers
+[ PCI Manager ] Probing PCI bus
+                |
+                +--[ Bridge device, Intel (0x1237) ]
+                +--[ Bridge device, Intel (0x7000) ]
+                +--[ Storage controller, Intel (0x7010) ]
+                +--[ Bridge device, Intel (0x7113) ]
+                +--[ Display controller, Unknown vendor (0x1111) ]
+                +--[ Network controller, Intel (0x100e) ]
+                o
+                |- Initializing Storage controller
+                |--[ Storage controller, Intel (0x8086:0x7010) ]
+                |  +-x Driver not found
+                o
+                |- Initializing Network controller
+                |--[ Network controller, Intel, Ethernet (0x8086:0x100e) ]
+                |  +-x Driver not found
+                o
+    [ Machine ] Listing registered devices
+                |
+                o
+<Paging> Wants : 0x200000000000 -> 0x90126000, size 803971072, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 803971072
+<Paging> Gets  : 0x200000000000 -> 0x90126000, size 803971072, attrs 0x8000000000000003 (196282 pages of 4096) size: 803971072
+<Paging> ::protect 0x90126000
+<Paging> Found key: 0x90126000
+<Paging> Found entry: 0x0090126000 - 0x00bffdffff, 766.727_MiB (100.0 %) LiveUpdate physical
+<Paging> Wants: 0x90126000 -> 0xffffffffffffffff, size 803971072, attrs 0x0 (page sizes: 4.000_KiB, 2.000_MiB)
+  [ SystemLog ] Initializing System Log
+<Paging> Wants : 0x1fffffff0000 -> 0x90116000, size 65536, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 65536
+<Paging> Gets  : 0x1fffffff0000 -> 0x90116000, size 65536, attrs 0x8000000000000003 (16 pages of 4096) size: 65536
+<Paging> ::protect 0x90116000
+<Paging> Found key: 0x90116000
+<Paging> Found entry: 0x0090116000 - 0x0090125fff,  64.000_KiB (100.0 %) SystemLog physical
+<Paging> Wants: 0x90116000 -> 0xffffffffffffffff, size 65536, attrs 0x0 (page sizes: 4.000_KiB, 2.000_MiB)
+                Created @ 0x1fffffff0000 (63 kB)
+                Data @ 0x1fffffff0028 (65496 bytes)
+     [ Kernel ] Initializing RNG
+     [ Kernel ] Initializing plugins
+     [ Kernel ] Running service constructors
+--------------------------------------------------------------------------------
+================================================================================
+ IncludeOS VERY_DIRTY (x86_64 / 64-bit)
+ +--> Running [ Sandmark benchmark on IncludeOS ]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ocaml start]
+[bench start]
+2
+[bench end]
+caml_startup_cycles  208116
+ocaml_entry_cycles   188
+peak_requested_bytes 284704046
+peak_busy_bytes      0
+highest_used         543125504
+count_alloc          61
+count_alloc_at       1
+[ocaml end]
+     [ Kernel ] Stopping service
+     [ Kernel ] Powering off
+
+[92m[ SUCCESS ] process exited[0m
+

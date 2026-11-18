@@ -1,0 +1,196 @@
+From bd5d9e08e9c73708d633030874ba7d41627daaeb Mon Sep 17 00:00:00 2001
+From: Mazunki Hoksaas <rolferen@gmail.com>
+Date: Wed, 27 May 2026 18:41:44 +0200
+Subject: [PATCH 1/2] prints
+
+---
+ benchmarks/almabench/almabench.ml     | 2 +-
+ benchmarks/kb/kb.ml                   | 6 ++++--
+ benchmarks/kb/kb_no_exc.ml            | 6 ++++--
+ benchmarks/sequence/sequence_cps.ml   | 2 +-
+ benchmarks/simple-tests/alloc.ml      | 8 +++++---
+ benchmarks/simple-tests/morestacks.ml | 8 +++++---
+ 6 files changed, 20 insertions(+), 12 deletions(-)
+
+diff --git a/benchmarks/almabench/almabench.ml b/benchmarks/almabench/almabench.ml
+index f61249f..b385120 100644
+--- a/benchmarks/almabench/almabench.ml
++++ b/benchmarks/almabench/almabench.ml
+@@ -308,7 +308,7 @@ let _ =
+   for p = 0 to 7 do
+     planetpv jd p pv;
+     radecdist pv position;
+-(*    Printf.printf "%d %.2f %.2f\n%!" p position.(0) position.(1)*)
++    Printf.printf "%d %.2f %.2f\n%!" p position.(0) position.(1)
+   done;
+   (* Benchmark *)
+   for _i = 0 to test_loops - 1 do
+diff --git a/benchmarks/kb/kb.ml b/benchmarks/kb/kb.ml
+index 9c22eb3..9af4e52 100644
+--- a/benchmarks/kb/kb.ml
++++ b/benchmarks/kb/kb.ml
+@@ -1,4 +1,5 @@
+-let print_string _ = ()
++let _canonical_count = ref 0
++let print_string s = if s = "Canonical set found :" then incr _canonical_count
+ let print_int _ = ()
+ let print_newline _ = ()
+ (***********************************************************************)
+@@ -586,7 +587,8 @@ let greater pair =
+   match group_order pair with Greater -> true | _ -> false
+ 
+ let _ =
+-  for i = 1 to 100 do kb_complete greater [] geom_rules done
++  for _i = 1 to 100 do kb_complete greater [] geom_rules done;
++  Printf.printf "%d\n" !_canonical_count
+ 
+ let () =
+   try
+diff --git a/benchmarks/kb/kb_no_exc.ml b/benchmarks/kb/kb_no_exc.ml
+index c65416a..318a55e 100644
+--- a/benchmarks/kb/kb_no_exc.ml
++++ b/benchmarks/kb/kb_no_exc.ml
+@@ -1,5 +1,6 @@
+ 
+-let print_string _ = ()
++let _canonical_count = ref 0
++let print_string s = if s = "Canonical set found :" then incr _canonical_count
+ let print_int _ = ()
+ let print_newline _ = ()
+ 
+@@ -628,7 +629,8 @@ let greater pair =
+   match group_order pair with Greater -> true | _ -> false
+ 
+ let _ =
+-  for i = 1 to 100 do kb_complete greater [] geom_rules done
++  for _i = 1 to 100 do kb_complete greater [] geom_rules done;
++  Printf.printf "%d\n" !_canonical_count
+ 
+ let () =
+   try
+diff --git a/benchmarks/sequence/sequence_cps.ml b/benchmarks/sequence/sequence_cps.ml
+index dcb5e64..ba6ace7 100644
+--- a/benchmarks/sequence/sequence_cps.ml
++++ b/benchmarks/sequence/sequence_cps.ml
+@@ -68,7 +68,7 @@ let test n =
+   |> fold ~init:0 ~f:(+)
+ 
+ let () =
+-  let n = int_of_string Sys.argv.(1) in
++  let n = try int_of_string Sys.argv.(1) with _ -> 1000 in
+   let r = ref 0 in
+   for i = 0 to n do
+     r := !r + test i;
+diff --git a/benchmarks/simple-tests/alloc.ml b/benchmarks/simple-tests/alloc.ml
+index 9790356..c7c9c97 100644
+--- a/benchmarks/simple-tests/alloc.ml
++++ b/benchmarks/simple-tests/alloc.ml
+@@ -8,6 +8,8 @@ let rec create f n =
+   | _ -> let _ = f() in
+   create f (n-1)
+ 
+-let () = for _ = 0 to iterations do
+-  Sys.opaque_identity create (fun () -> { an_int = 5; a_string = "foo"; a_float = 0.1 }) 1000
+-done
++let () =
++  for _ = 0 to iterations do
++    Sys.opaque_identity create (fun () -> { an_int = 5; a_string = "foo"; a_float = 0.1 }) 1000
++  done;
++  print_string "ok\n"
+diff --git a/benchmarks/simple-tests/morestacks.ml b/benchmarks/simple-tests/morestacks.ml
+index 3cae1bf..b520317 100644
+--- a/benchmarks/simple-tests/morestacks.ml
++++ b/benchmarks/simple-tests/morestacks.ml
+@@ -5,6 +5,8 @@ let foo () = for a = 0 to 1_000_000 do
+   ignore(Sys.opaque_identity bar a)
+ done
+ 
+-let () = for _ = 0 to (try int_of_string(Array.get Sys.argv 1) with _ -> 10_000) do
+-  foo()
+-done
++let () =
++  for _ = 0 to (try int_of_string(Array.get Sys.argv 1) with _ -> 10_000) do
++    foo()
++  done;
++  print_string "ok\n"
+-- 
+2.56.0
+
+
+From 9028acf891215bc8a21a7a42709bda4580e56bae Mon Sep 17 00:00:00 2001
+From: Mazunki Hoksaas <rolferen@gmail.com>
+Date: Wed, 27 May 2026 20:20:19 +0200
+Subject: [PATCH 2/2] Add correctness output to bdd and numerical benchmarks
+
+---
+ benchmarks/bdd/bdd.ml                                 | 7 +------
+ benchmarks/numerical-analysis/crout_decomposition.ml  | 4 +++-
+ benchmarks/numerical-analysis/durand_kerner_aberth.ml | 7 +++++--
+ benchmarks/numerical-analysis/qr_decomposition.ml     | 4 +++-
+ 4 files changed, 12 insertions(+), 10 deletions(-)
+
+diff --git a/benchmarks/bdd/bdd.ml b/benchmarks/bdd/bdd.ml
+index 78275c8..24b9de5 100644
+--- a/benchmarks/bdd/bdd.ml
++++ b/benchmarks/bdd/bdd.ml
+@@ -223,14 +223,9 @@ let main () =
+   for _i = 1 to ntests do
+     succeeded := !succeeded && test_hwb bdd (random_vars n)
+   done;
+-  assert !succeeded
+-(*
+   if !succeeded
+   then print_string "OK\n"
+-  else print_string "FAILED\n";
+-Format.eprintf "%d@." !nodeC;
+-  exit 0
+-*)
++  else print_string "FAILED\n"
+ 
+ let _ = main()
+ 
+diff --git a/benchmarks/numerical-analysis/crout_decomposition.ml b/benchmarks/numerical-analysis/crout_decomposition.ml
+index 5069008..8974a5b 100644
+--- a/benchmarks/numerical-analysis/crout_decomposition.ml
++++ b/benchmarks/numerical-analysis/crout_decomposition.ml
+@@ -2833,4 +2833,6 @@ let main () =
+   (* print_mat "matrix P * L * U" a' *)
+   a'
+ 
+-let () = main () |> ignore
++let () =
++  let a' = main () in
++  Printf.printf "%f\n" a'.(0).(0)
+diff --git a/benchmarks/numerical-analysis/durand_kerner_aberth.ml b/benchmarks/numerical-analysis/durand_kerner_aberth.ml
+index 32ba852..4b3691c 100644
+--- a/benchmarks/numerical-analysis/durand_kerner_aberth.ml
++++ b/benchmarks/numerical-analysis/durand_kerner_aberth.ml
+@@ -176,8 +176,11 @@ let cs =
+   Array.sub cs 0 (Array.length cs * len / 100)
+ 
+ let main () =
+-  for i=1 to 10 do
++  for _i=1 to 10 do
+     roots cs |> ignore
+   done
+ 
+-let () = main ()
++let () =
++  main ();
++  let rs = roots cs in
++  print rs.(0)
+diff --git a/benchmarks/numerical-analysis/qr_decomposition.ml b/benchmarks/numerical-analysis/qr_decomposition.ml
+index 84facba..b84a5d7 100644
+--- a/benchmarks/numerical-analysis/qr_decomposition.ml
++++ b/benchmarks/numerical-analysis/qr_decomposition.ml
+@@ -337,4 +337,6 @@ let main () =
+   (* print_mat "R" r; *)
+   (* print_mat "Q * R" *) (gemm q r)
+ 
+-let () = main () |> ignore
++let () =
++  let result = main () in
++  Printf.printf "%f\n" result.(0).(0)
+-- 
+2.56.0
+

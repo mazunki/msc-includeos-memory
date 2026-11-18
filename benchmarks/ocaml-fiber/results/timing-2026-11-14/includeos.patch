@@ -1,0 +1,1214 @@
+diff --git a/api/kernel/memory.hpp b/api/kernel/memory.hpp
+index ebf2225c1..24dd38a80 100644
+--- a/api/kernel/memory.hpp
++++ b/api/kernel/memory.hpp
+@@ -252,6 +252,9 @@ namespace os::mem {
+   /** Get default allocator for untyped allocations */
+   os::mem::mem_resource& raw_allocator();
+ 
++  /* secondary allocator which isn't used by default */
++  os::mem::mem_resource* secondary_allocator();
++
+   template <typename T>
+   using Typed_allocator = Allocator<T, os::mem::mem_resource>;
+ 
+diff --git a/api/mem/alloc/buddy.hpp b/api/mem/alloc/buddy.hpp
+index 9ce6f4c90..7123ea9dc 100644
+--- a/api/mem/alloc/buddy.hpp
++++ b/api/mem/alloc/buddy.hpp
+@@ -26,9 +26,12 @@
+ #include <algorithm>
+ 
+ #include <mem/mem.hpp>
++#include <util/pretty.hpp>
+ 
+ namespace os::mem {
+ 
++using util::format::Bytes;
++
+ struct buddy_config {
+   std::size_t min_block = 64; // must be power of two
+ };
+@@ -89,8 +92,6 @@ public:
+     push_free(pool_base_, max_order_);
+   }
+ 
+-  // self-hosts a buddy_resource at the front of region, same as
+-  // arena_resource::create_at -- bcfg is forwarded to the constructor
+   static buddy_resource* create_at(mem_region region, buddy_config bcfg = {}) {
+     return create_resource_at<buddy_resource>(region, bcfg);
+   }
+@@ -139,6 +140,83 @@ public:
+     return peak_highest_used_;
+   }
+ 
++  // overrides mem_resource's default (bytes_free()), which would
++  // overstate this: buddy's free bytes are routinely scattered across
++  // many disjoint blocks, so the biggest single allocation that could
++  // actually succeed is whatever the largest single free block is, not
++  // the full free total.
++  std::size_t largest_free() const noexcept override {
++    for (int order = max_order_; order >= min_order_; --order) {
++      if (free_[idx(order)] != nullptr) return std::size_t(1) << order;
++    }
++    return 0;
++  }
++
++  // total number of free blocks across every order -- a scattered
++  // freelist (many small blocks) vs. a clean one (few, coarse blocks)
++  // can look identical under fragmentation() alone whenever a single
++  // large untouched block still survives; this is what actually shows
++  // the difference.
++  std::size_t free_blocks() const noexcept {
++    std::size_t count = 0;
++    for (int order = max_order_; order >= min_order_; --order) {
++      for (FreeNode* n = free_[idx(order)]; n != nullptr; n = n->next) {
++        ++count;
++      }
++    }
++    return count;
++  }
++
++  // the fewest free blocks bytes_free() could ever be represented by:
++  // any byte count has a unique binary decomposition into powers of two
++  // (its set bits), and that's exactly the minimal set of buddy blocks
++  // needed to cover it -- you can't do better, the same way
++  // ideal_size_allocatable() uses bit_floor() for the single largest
++  // term. unlike that one, this ideal has no structural floor: the same
++  // "push everything to one side" rearrangement that reaches
++  // ideal_size_allocatable() also always reaches exactly this many
++  // blocks, no matter how much is used -- so there's no separate
++  // "ideal_block_fragmentation()" to speak of, it would always just be 0.
++  std::size_t ideal_free_blocks() const noexcept {
++    return static_cast<std::size_t>(std::popcount(bytes_free()));
++  }
++
++  // 0 = free_blocks() is already at the theoretical minimum for this much
++  // free space; closer to 1 = far more scattered than it needs to be.
++  // complements size_fragmentation(): that one goes blind the moment a
++  // single large block survives untouched, even if everything smaller
++  // than it is in shreds -- this one still sees the shreds.
++  double block_fragmentation() const noexcept {
++    const std::size_t actual = free_blocks();
++    if (actual == 0) return 0.0;
++    return 1.0 - (static_cast<double>(ideal_free_blocks()) / static_cast<double>(actual));
++  }
++
++  // 0 = all free bytes form one contiguous block
++  // 1 = free bytes are scattered
++  //
++  // this only speaks to ONE dimension of fragmentation -- the size of
++  // the single largest allocation you could make -- not the full
++  // picture; see block_fragmentation() for the complementary "how many
++  // separate pieces is free space split into" dimension.
++  double size_fragmentation() const noexcept {
++    const std::size_t free_bytes = bytes_free();
++    if (free_bytes == 0) return 0.0;
++    return 1.0 - (static_cast<double>(largest_free()) / static_cast<double>(free_bytes));
++  }
++
++  // the biggest single allocation achievable for the current bytes_used(),
++  // assuming every live allocation is freely rearrangeable -- NOT always
++  // equal to bytes_free() (unlike the block-count ideal, which always
++  // reaches 0 fragmentation): buddy's power-of-two structure imposes a
++  // real floor here whenever anything at all is allocated, since
++  // bytes_free() is then rarely itself a power of two. a byte size, not
++  // a ratio -- print its relation to bytes_free() alongside it as
++  // context, rather than inverting it into a "fragmentation %".
++  std::size_t ideal_size_allocatable() const noexcept {
++    return std::bit_floor(bytes_free());
++  }
++
+   void draw_tiles(std::size_t cols = 64) const noexcept {
+     static constexpr std::size_t max_tiles = 1024;
+     if (pool_size_ == 0) return;
+@@ -157,7 +235,7 @@ public:
+     static Seg free_segs[max_free_segs];
+     std::size_t n_free = 0;
+ 
+-    std::println("  tile legend:");
++    std::println("  free chunks tile legend:");
+ 
+     for (int order = max_order_; order >= min_order_; --order) {
+       FreeNode* n = free_[idx(order)];
+@@ -175,7 +253,7 @@ public:
+         n = n->next;
+       } while (n != nullptr);
+ 
+-      std::println("    \x1b[48;5;{}m  \x1b[0m order {} = {} bytes ({})", color, order, block_size, n_free - first);
++      std::println("    \x1b[48;5;{}m  \x1b[0m order {} = {} ({})", color, order, Bytes{block_size}, n_free - first);
+     }
+ 
+     std::sort(free_segs, free_segs + n_free, [](const Seg& a, const Seg& b) {
+@@ -230,7 +308,7 @@ public:
+ 
+     const std::size_t tile_size = pool_size_ / total_tiles;
+ 
+-    std::println("  tile map (~{} bytes/tile; '@'=full, '.'/'-'=empty, digit=N suborders):", tile_size);
++    std::println("  tile map (~{} bytes/tile; '@'=fully allocated, '.'/'-'=empty, digit=N suborders):", tile_size);
+     for (std::size_t row = 0; row < total_tiles; row += cols) {
+       const std::uintptr_t row_addr = pool_base_ + row * tile_size;
+ 
+@@ -260,11 +338,10 @@ protected:
+     std::println("  pool_base:     {:#x}", pool_base_);
+     std::println("  pool_end:      {:#x}", pool_end_);
+     std::println("  pool_size:     {} bytes (2^{})", pool_size_, max_order_);
+-    std::println("  min_order:     {} (min bud = {} bytes)", min_order_, 1<<min_order_);
+-    std::println("  max_order:     {} (max bud = {} bytes)", max_order_, 1<<max_order_);
++    std::println("  min_order:     {} (min bud = {} bytes)", min_order_, std::size_t(1) << min_order_);
++    std::println("  max_order:     {} (max bud = {} bytes)", max_order_, std::size_t(1) << max_order_);
+ 
+     std::println("  freelist (order: count x block_size):");
+-    std::size_t largest_free = 0;
+     std::size_t free_blocks_total = 0;
+     for (int order = max_order_; order >= min_order_; --order) {
+       FreeNode* n = free_[idx(order)];
+@@ -276,22 +353,20 @@ protected:
+         n = n->next;
+       } while (n != nullptr);
+ 
+-      const std::size_t block_size = std::size_t(1) << order;
+       free_blocks_total += count;
+-      if (largest_free == 0)
+-        largest_free = block_size; // first hit will always be the largest
+ 
+-      std::println("    {:>2}: {:>6} x {} bytes", order, count, block_size);
++      std::println("    {:>2}: {:>6} x {} bytes", order, count, std::size_t(1) << order);
+     }
+ 
+-    const std::size_t free_bytes = bytes_free();
+-    const double fragmentation = (free_bytes > 0)
+-      ? 1.0 - (static_cast<double>(largest_free) / static_cast<double>(free_bytes))
+-      : 0.0;
+-
+-    std::println("  free_blocks:   {}", free_blocks_total);
+-    std::println("  largest_free:  {} bytes", largest_free);
+-    std::println("  fragmentation: {:.4f} (1 - largest_free/bytes_free; 0 = no fragmentation)", fragmentation);
++    std::println("  free_blocks:            {} (ideal = {})", free_blocks_total, ideal_free_blocks());
++    {
++      const std::size_t free_bytes = bytes_free();
++      const double largest_pct = 100.0 * safe_div(largest_free(), free_bytes);
++      const double ideal_pct = 100.0 * safe_div(ideal_size_allocatable(), free_bytes);
++      std::println("  largest_free:           {} ({:.2f}% of free bytes)", Bytes{largest_free()}, largest_pct);
++      std::println("  ideal_size_allocatable: {} ({:.2f}% of free bytes)", Bytes{ideal_size_allocatable()}, ideal_pct);
++    }
++    std::println("  block_fragmentation:    {:.2f}% (free_blocks vs. the fewest blocks that free space could be)", block_fragmentation() * 100.0);
+   }
+ 
+   std::size_t strat_good_size(std::size_t bytes, std::size_t alignment) const noexcept override {
+diff --git a/api/mem/alloc/snake.hpp b/api/mem/alloc/snake.hpp
+new file mode 100644
+index 000000000..096747d4d
+--- /dev/null
++++ b/api/mem/alloc/snake.hpp
+@@ -0,0 +1,245 @@
++// This file is a part of the IncludeOS unikernel - www.includeos.org
++//
++// Copyright 2018 IncludeOS AS, Oslo, Norway
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++#pragma once
++#include <memory_resource>
++#include <bit>
++#include <cstddef>
++#include <cstdint>
++#include <new>
++#include <print>
++#include <stdexcept>
++#include <string_view>
++#include <algorithm>
++
++#include <mem/mem.hpp>
++
++namespace os::mem {
++
++struct snake_config {
++  std::size_t align = alignof(std::max_align_t); // every allocation's reserved size is rounded up to a multiple of this
++  std::size_t max_pending = 1024; // max concurrent live allocations + wrap-gaps, tracked in a self-hosted queue
++};
++
++class snake_resource final : public mem_resource {
++public:
++  snake_resource(mem_config cfg, snake_config rcfg = {})
++    : mem_resource(cfg), cfg_(cfg), rcfg_(rcfg)
++  {
++    if (!std::has_single_bit(rcfg_.align)) {
++      throw std::invalid_argument("snake align must be a power of two");
++    }
++    if (rcfg_.max_pending == 0) {
++      throw std::invalid_argument("snake max_pending must be > 0");
++    }
++
++    resource_base_ = cfg_.region.start;
++    spans_ = reinterpret_cast<Span*>(resource_base_);
++    const std::size_t spans_bytes = rcfg_.max_pending * sizeof(Span);
++
++    pool_base_ = align_up(resource_base_ + spans_bytes, rcfg_.align);
++    if (pool_base_ >= cfg_.region.end) {
++      throw std::bad_alloc(); // metadata took too much space
++    }
++    capacity_ = cfg_.region.end - pool_base_;
++  }
++
++  static snake_resource* create_at(mem_region region, snake_config rcfg = {}) {
++    return create_resource_at<snake_resource>(region, rcfg);
++  }
++
++  /**
++   * carves at least `capacity` usable bytes out of parent and self-hosts a
++   * child snake in it. the header overhead is added on top automatically.
++   */
++  static snake_resource* create_from(mem_resource& parent, std::size_t capacity, snake_config rcfg = {}) {
++    const std::size_t total = sizeof(snake_resource) + alignof(snake_resource) + capacity;
++    mem_region region = parent.allocate_region(total, alignof(snake_resource));
++    snake_resource* child = create_at(region, rcfg);
++    if (!child) {
++      parent.deallocate_region(region, alignof(snake_resource));
++    }
++    return child;
++  }
++
++  size_t bytes_used() const noexcept override { return busy_bytes_; }
++  size_t bytes_free() const noexcept override { return capacity_ - busy_bytes_; }
++  uintptr_t highest_used() const noexcept override { return peak_highest_used_; }
++
++  std::size_t largest_free() const noexcept override {
++    if (busy_bytes_ == 0) return capacity_;
++    if (busy_bytes_ == capacity_) return 0;
++
++    const std::size_t phys_tail = tail_off_ % capacity_;
++    const std::size_t phys_head = head_off_ % capacity_;
++
++    if (phys_tail < phys_head) {
++      // live span is the single contiguous run [phys_tail, phys_head);
++      // free space is split across the two ends of the pool
++      return std::max(capacity_ - phys_head, phys_tail);
++    }
++    // live span wraps around the end of the pool; free space is the
++    // single contiguous run in the middle, [phys_head, phys_tail)
++    return phys_tail - phys_head;
++  }
++
++protected:
++  std::string_view name() const noexcept override { return "snake"; }
++
++  void strat_summary() const noexcept override {
++    std::println("  capacity:   {} bytes", capacity_);
++    std::println("  pool_base:  {:#x}", pool_base_);
++    std::println("  head_off:   {}", head_off_);
++    std::println("  tail_off:   {}", tail_off_);
++    std::println("  pending:    {} spans (of {} max)", span_count_, rcfg_.max_pending);
++  }
++
++  std::size_t strat_good_size(std::size_t bytes, std::size_t alignment) const noexcept override {
++    return align_up(std::max(bytes, alignment), rcfg_.align);
++  }
++
++  std::size_t strat_alignment() const noexcept override {
++    return rcfg_.align;
++  }
++
++  uintptr_t strat_allocate(std::size_t bytes, std::size_t alignment) override {
++    const std::size_t size = strat_good_size(bytes, alignment);
++    if (size == 0 || size > capacity_) {
++      throw os::mem::allocator_error("os::mem::snake_resource::strat_allocate: requested size exceeds the snake's total capacity");
++    }
++
++    const std::size_t phys_off = head_off_ % capacity_;
++    const std::size_t remaining_before_wrap = capacity_ - phys_off;
++
++    std::size_t gap = 0;
++    std::uintptr_t addr;
++    if (size <= remaining_before_wrap) {
++      addr = pool_base_ + phys_off;
++    } else {
++      // waste the trailing gap and wrap to the start
++      gap = remaining_before_wrap;
++      addr = pool_base_;
++    }
++
++    const std::size_t total_needed = gap + size;
++    if (total_needed > bytes_free()) {
++      throw os::mem::allocator_error("os::mem::snake_resource::strat_allocate: not enough free space, wrapping would run into still-live data");
++    }
++    if (span_count_ + (gap > 0 ? 2u : 1u) > rcfg_.max_pending) {
++      throw os::mem::allocator_error("os::mem::snake_resource::strat_allocate: pending-span bookkeeping queue is full (increase snake_config::max_pending)");
++    }
++
++    if (gap > 0) {
++      push_span(gap, Span::Gap, 0);
++    }
++    push_span(size, Span::Live, addr);
++
++    head_off_ += total_needed;
++    busy_bytes_ += total_needed;
++    peak_busy_bytes_ = std::max(peak_busy_bytes_, busy_bytes_);
++
++    const uintptr_t end = addr + size;
++    highest_used_ = std::max(highest_used_, end);
++    peak_highest_used_ = std::max(peak_highest_used_, end);
++
++    return addr;
++  }
++
++  // we support deallocation in any order
++  void strat_deallocate(uintptr_t addr, std::size_t bytes, std::size_t alignment) noexcept override {
++    const std::size_t size = strat_good_size(bytes, alignment);
++
++    std::size_t idx = span_tail_idx_;
++    for (std::size_t n = 0; n < span_count_; ++n, idx = (idx + 1) % rcfg_.max_pending) {
++      Span& s = spans_[idx];
++      if (s.state == Span::Live && s.addr == addr && s.size == size) {
++        s.state = Span::Done;
++        break;
++      }
++    }
++
++    // reclaim the longest current run of done/gap spans from the tail,
++    // stopping at the first still-live one
++    while (span_count_ > 0 && spans_[span_tail_idx_].state != Span::Live) {
++      const std::size_t sz = spans_[span_tail_idx_].size;
++      pop_span();
++      tail_off_ += sz;
++      busy_bytes_ -= sz;
++    }
++  }
++
++  // clears everything at once -- unlike a single out-of-order free, this
++  // is always well-defined for a ring
++  void strat_deallocate_all() noexcept override {
++    head_off_ = 0;
++    tail_off_ = 0;
++    span_head_idx_ = 0;
++    span_tail_idx_ = 0;
++    span_count_ = 0;
++    busy_bytes_ = 0;
++  }
++
++  // in-place growth/shrink of an arbitrary live span isn't meaningful for
++  // a ring (only the tail and head ends are ever touched) -- not supported
++  bool strat_expand(mem_region&, std::size_t) noexcept override {
++    return false;
++  }
++
++  // "the whole pool as one allocation" doesn't fit the FIFO model either
++  mem_region strat_allocate_all() noexcept override {
++    return mem_region{};
++  }
++
++private:
++  struct Span {
++    enum State { Live, Gap, Done };
++    std::size_t size;
++    std::uintptr_t addr; // unused for Gap spans
++    State state;
++  };
++
++  void push_span(std::size_t size, Span::State state, std::uintptr_t addr) noexcept {
++    spans_[span_head_idx_] = { size, addr, state };
++    span_head_idx_ = (span_head_idx_ + 1) % rcfg_.max_pending;
++    ++span_count_;
++  }
++
++  void pop_span() noexcept {
++    span_tail_idx_ = (span_tail_idx_ + 1) % rcfg_.max_pending;
++    --span_count_;
++  }
++
++  mem_config cfg_;
++  snake_config rcfg_;
++
++  std::uintptr_t resource_base_{0};
++  std::uintptr_t pool_base_{0};
++  std::size_t capacity_{0};
++
++  Span* spans_{nullptr};
++  std::size_t span_head_idx_{0};
++  std::size_t span_tail_idx_{0};
++  std::size_t span_count_{0};
++
++  std::size_t head_off_{0}; // monotonic-ish logical offset (mod capacity_ for the physical address)
++  std::size_t tail_off_{0};
++
++  std::size_t busy_bytes_{0};
++  std::size_t peak_busy_bytes_{0};
++  std::uintptr_t highest_used_{0};
++  std::uintptr_t peak_highest_used_{0};
++};
++
++} // namespace os::mem
+diff --git a/api/mem/mem.hpp b/api/mem/mem.hpp
+index 7c6463de3..805d311ed 100644
+--- a/api/mem/mem.hpp
++++ b/api/mem/mem.hpp
+@@ -23,6 +23,12 @@ inline constexpr std::uintptr_t align_up(std::uintptr_t p, std::size_t alignment
+   return (p + (a - 1)) & ~(a - 1);
+ }
+ 
++// TODO: find a better place for me
++template <typename T>
++constexpr double safe_div(T n, T div, double fallback = 0.0) noexcept {
++  return div != T(0) ? static_cast<double>(n) / static_cast<double>(div) : fallback;
++}
++
+ struct mem_stats {
+   std::size_t total_bytes{};          // total capacity of the allocator
+   std::size_t busy_bytes{};           // including overhead of the underlying implementation
+@@ -238,6 +244,17 @@ public:
+   virtual size_t bytes_free() const noexcept = 0;
+   virtual uintptr_t highest_used() const noexcept = 0;
+ 
++  // the biggest single allocation that could succeed right now, without
++  // actually committing to it (unlike allocate_largest(), which performs
++  // the allocation). the default assumes any arrangement of free bytes
++  // could serve one request -- exactly true for a bump allocator like
++  // arena, where free space is always one contiguous region; strategies
++  // that can have free bytes scattered across multiple disjoint blocks
++  // (buddy) must override this, since bytes_free() would overstate it.
++  virtual std::size_t largest_free() const noexcept {
++    return bytes_free();
++  }
++
+   void dump_state() const noexcept {
+     std::println("{}:", name());
+     std::println("  region:        [{:#x}, {:#x}) ({} bytes)",
+diff --git a/example/src/capacity.cpp b/example/src/capacity.cpp
+new file mode 100644
+index 000000000..6fef6c179
+--- /dev/null
++++ b/example/src/capacity.cpp
+@@ -0,0 +1,50 @@
++#include <print>
++#include <kernel/memory.hpp>
++#include <mem/alloc/buddy.hpp>
++
++using os::mem::Bytes;
++
++static void print_allocator(std::string_view label, os::mem::mem_resource& alloc) {
++  std::println("{}: total={} free={} largest_free={}",
++               label,
++               Bytes{alloc.stats().total_bytes},
++               Bytes{alloc.bytes_free()},
++               Bytes{alloc.largest_free()});
++}
++
++int main() {
++  auto& primary = os::mem::raw_allocator();
++  auto* secondary = os::mem::secondary_allocator();
++
++  print_allocator("primary  ", primary);
++
++  if (secondary == nullptr) {
++    std::println("no secondary heap on this machine. give the VM more than 4GiB of RAM to get one");
++    return 1;
++  }
++  print_allocator("secondary", *secondary);
++  std::println();
++
++  constexpr std::size_t big = std::size_t(6) << 30; // 6 GiB
++
++  std::println("asking primary for a single {} allocation...", Bytes{big});
++  try {
++    auto region = primary.allocate_region(big);
++    std::println("  unexpectedly succeeded at {:#x}. this shouldn't be possible!", region.start);
++    primary.deallocate_region(region);
++  } catch (const std::bad_alloc& e) {
++    std::println("  failed, as expected: {}", e.what());
++  }
++  std::println();
++
++  std::println("asking secondary for the same {} allocation...", Bytes{big});
++  try {
++    auto region = secondary->allocate_region(big);
++    std::println("  succeeded at {:#x}", region.start);
++    secondary->deallocate_region(region);
++  } catch (const std::bad_alloc& e) {
++    std::println("  failed: {} (try giving the VM more RAM)", e.what());
++  }
++
++  return 0;
++}
+diff --git a/example/src/channel.hpp b/example/src/channel.hpp
+new file mode 100644
+index 000000000..407f65c08
+--- /dev/null
++++ b/example/src/channel.hpp
+@@ -0,0 +1,105 @@
++#pragma once
++#include <coroutine>
++#include <optional>
++#include <exception>
++#include <utility>
++#include <deque>
++#include <cstddef>
++
++struct Task {
++  struct promise_type {
++    Task get_return_object() {
++      return Task{std::coroutine_handle<promise_type>::from_promise(*this)};
++    }
++    std::suspend_always initial_suspend() noexcept { return {}; }
++    std::suspend_always final_suspend() noexcept { return {}; }
++    void return_void() noexcept {}
++    void unhandled_exception() { std::terminate(); }
++  };
++
++  std::coroutine_handle<promise_type> handle;
++
++  explicit Task(std::coroutine_handle<promise_type> h) : handle(h) {}
++  ~Task() { if (handle) handle.destroy(); }
++  Task(const Task&) = delete;
++
++  void start() {
++    handle.resume();
++  }
++};
++
++template <typename T>
++class Channel {
++public:
++  explicit Channel(std::size_t capacity) : capacity_(capacity) {}
++
++  struct Sender {
++    Channel& ch;
++    T value;
++    bool await_ready() noexcept {
++      return false;
++    }
++
++    std::coroutine_handle<> await_suspend(std::coroutine_handle<> h) noexcept {
++      ch.buffer_.push_back(std::move(value));
++
++      if (ch.buffer_.size() <= ch.capacity_) {
++        if (ch.waiting_consumer_) {
++          auto c = std::exchange(ch.waiting_consumer_, {});
++          c.resume();
++        }
++
++        return h;
++      }
++      ch.waiting_producer_ = h;
++      return std::noop_coroutine(); // block until receive() makes room
++    }
++    void await_resume() noexcept {}
++  };
++
++  struct Receiver {
++    Channel& ch;
++    std::optional<T> value;
++    bool await_ready() noexcept {
++      return false;
++    }
++
++    std::coroutine_handle<> await_suspend(std::coroutine_handle<> h) noexcept {
++      if (!ch.buffer_.empty()) {
++        value = std::move(ch.buffer_.front());
++        ch.buffer_.pop_front();
++
++        if (ch.waiting_producer_) {
++          auto p = std::exchange(ch.waiting_producer_, {});
++          p.resume();
++        }
++        return h;
++      }
++
++      if (ch.closed_) return h;
++
++      ch.waiting_consumer_ = h;
++      return std::noop_coroutine();
++    }
++    std::optional<T> await_resume() noexcept { return std::move(value); }
++  };
++
++  Sender send(T v) noexcept { return Sender{*this, std::move(v)}; }
++  Receiver receive() noexcept { return Receiver{*this}; }
++
++  void close() noexcept {
++    closed_ = true;
++    if (waiting_consumer_) {
++      auto c = std::exchange(waiting_consumer_, {});
++      c.resume();
++    }
++  }
++
++private:
++  std::size_t capacity_;
++  std::deque<T> buffer_;
++  std::coroutine_handle<> waiting_producer_{};
++  std::coroutine_handle<> waiting_consumer_{};
++  bool closed_{false};
++};
++
+diff --git a/example/src/fragmentation.cpp b/example/src/fragmentation.cpp
+new file mode 100644
+index 000000000..011d2477f
+--- /dev/null
++++ b/example/src/fragmentation.cpp
+@@ -0,0 +1,114 @@
++#include <sys/mman.h>
++#include <print>
++#include <cstdlib>
++#include <random>
++#include <deque>
++#include <iterator>
++#include <string_view>
++#include <kernel/memory.hpp>
++#include <mem/alloc/buddy.hpp>
++#include <mem/alloc/snake.hpp>
++#include "channel.hpp"
++
++inline void print_summary(os::mem::buddy_resource* buddy) {
++  std::println("used={} free_blocks={} (ideal={})",
++               os::mem::Bytes{buddy->bytes_used()},
++               buddy->free_blocks(),
++               buddy->ideal_free_blocks());
++
++  const std::size_t free_bytes = buddy->bytes_free();
++  const double largest_pct = 100.0 * os::mem::safe_div(buddy->largest_free(), free_bytes);
++  const double ideal_pct = 100.0 * os::mem::safe_div(buddy->ideal_size_allocatable(), free_bytes);
++
++  std::println("largest_free={} ({:.2f}% of free bytes)", os::mem::Bytes{buddy->largest_free()}, largest_pct);
++  std::println("ideal_size_allocatable={} ({:.2f}% of free bytes)", os::mem::Bytes{buddy->ideal_size_allocatable()}, ideal_pct);
++  std::println("block_fragmentation={:.2f}%", buddy->block_fragmentation() * 100.0);
++
++  buddy->draw_tiles();
++  std::println();
++}
++
++static constexpr int PACKET_SIZES[] = {64, 512, 4096, 16384}; // bytes
++
++Task packet_producer(auto allocator, Channel<os::mem::mem_region>& ch, unsigned seed, int n_packets) {
++  std::mt19937 rng(seed);
++  std::uniform_int_distribution<int> size_pick(0, static_cast<int>(std::size(PACKET_SIZES)) - 1);
++  for (int i = 0; i < n_packets; ++i) {
++    auto region = allocator->allocate_region(PACKET_SIZES[size_pick(rng)]);
++    co_await ch.send(region);
++  }
++  ch.close();
++}
++
++static constexpr int RESULT_SIZE = 32;
++
++Task packet_consumer(auto allocator, auto main_allocator, Channel<os::mem::mem_region>& ch, int window) {
++  std::deque<os::mem::mem_region> held;
++  bool snapshotted = false;
++
++  while (auto region = co_await ch.receive()) {
++    held.push_back(*region);
++
++    if (static_cast<int>(held.size()) >= window) {
++      if (!snapshotted) {
++        std::println("--- snapshot: window first filled ({} packets in flight) ---", held.size());
++        allocator->dump_state();
++        snapshotted = true;
++      }
++      allocator->deallocate_region(held.front());
++      held.pop_front();
++
++      main_allocator->allocate_region(RESULT_SIZE);
++    }
++  }
++  for (auto& r : held) allocator->deallocate_region(r);
++}
++
++static constexpr int WORKLOAD_N_PACKETS = 16000;
++static constexpr int WORKLOAD_WINDOW = 48;
++
++inline void packet_workload_demo(auto allocator, auto main_allocator, unsigned seed, std::string_view label) {
++  std::println("=== workload: {} packets, sizes {{64,128,256,512,1024,1460}}, window={} ===", WORKLOAD_N_PACKETS, WORKLOAD_WINDOW);
++  std::println("--- using {} for temporary allocations ---", label);
++
++  Channel<os::mem::mem_region> ch(WORKLOAD_WINDOW);
++  auto producer = packet_producer(allocator, ch, seed, WORKLOAD_N_PACKETS);
++  auto consumer = packet_consumer(allocator, main_allocator, ch, WORKLOAD_WINDOW);
++  producer.start();
++  consumer.start();
++}
++
++int main() {
++  auto* secondary_ptr = os::mem::secondary_allocator();
++  if (secondary_ptr == nullptr) {
++    std::println("no secondary heap on this machine");
++    return 1;
++  }
++  auto& secondary = *secondary_ptr;
++
++  auto* heap = os::mem::buddy_resource::create_from(secondary, 1 << 21 /* 2 MiB */, os::mem::buddy_config{.min_block = 64});
++  if (heap == nullptr) {
++    std::println("failed to make buddy allocator");
++    return 1;
++  }
++
++  auto* snake = os::mem::snake_resource::create_from(secondary, 1 << 22 /* 4 MiB */);
++  if (snake == nullptr) {
++    std::println("failed to make snake allocator");
++    return 1;
++  }
++
++  constexpr unsigned seed = 42;
++
++  print_summary(heap);
++
++  packet_workload_demo(heap, heap, seed, "heap");
++  print_summary(heap);
++
++  heap->deallocate_all();
++
++  packet_workload_demo(snake, heap, seed, "snake");
++  print_summary(heap);
++
++  return 0;
++}
+diff --git a/example/src/junk.cpp b/example/src/junk.cpp
+new file mode 100644
+index 000000000..cb8f6e49e
+--- /dev/null
++++ b/example/src/junk.cpp
+@@ -0,0 +1,114 @@
++#include <cstddef>
++#include <print>
++#include <mem/alloc/buddy.hpp>
++
++auto alloc(os::mem::buddy_resource& alloc, int bytes) {
++  auto region = alloc.allocate_region(bytes);
++  std::println("allocated {} bytes at offset [{:#x}, {:#x})", bytes,
++               alloc.offset_of(region.start), alloc.offset_of(region.end));
++  return region;
++}
++
++auto alloc_at(os::mem::buddy_resource& alloc, size_t offset, size_t bytes) {
++  auto region = alloc.allocate_region_at(alloc.addr_at(offset), bytes, false);
++  std::println("carved {} bytes at offset {:#x}: {}", bytes, offset, region.size() > 0 ? "OK" : "FAILED");
++  return region;
++}
++
++
++void free(os::mem::buddy_resource& alloc, os::mem::mem_region mem) {
++  std::println("freeeing {} bytes", mem.size());
++  alloc.deallocate_region(mem);
++}
++
++inline void ex1(auto& buddy) {
++  auto large0 = alloc(*buddy, 1 << 18);
++  auto large1 = alloc(*buddy, 1 << 17);
++  auto small0 = alloc(*buddy, 1 << 12);
++  auto small1 = alloc(*buddy, 1 << 16);
++  auto small2 = alloc(*buddy, 1 << 12);
++  free(*buddy, small1);
++
++  auto large2 = alloc(*buddy, 1 << 17);
++  auto small3 = alloc(*buddy, 1 << 12);
++  free(*buddy, small0);
++  free(*buddy, small3);
++  auto large3 = alloc(*buddy, 1 << 17);
++
++  buddy->dump_state();
++  buddy->draw_tiles();
++
++  free(*buddy, small2);
++
++  // buddy->dump_state();
++  buddy->draw_tiles();
++
++  auto biggest = buddy->allocate_largest();
++  std::println("biggest free block: offset [{:#x}, {:#x}) = {} bytes",
++               buddy->offset_of(biggest.start), buddy->offset_of(biggest.end), biggest.size());
++  buddy->deallocate_region(biggest);
++
++  auto midpoint = buddy->offset_of(biggest.start) + biggest.size() / 2;
++  auto dumb0 = alloc_at(*buddy, midpoint, 1<<14);
++
++  buddy->dump_state();
++  buddy->draw_tiles();
++
++  free(*buddy, large0);
++  free(*buddy, large1);
++  free(*buddy, large2);
++  free(*buddy, large3);
++
++  free(*buddy, dumb0);
++}
++
++inline void ex2(auto& buddy) {
++  // buddy->dump_state();
++
++  buddy->draw_tiles();
++
++  auto mem0 = alloc(*buddy, 1<<20);
++  buddy->draw_tiles();
++
++  auto mem1 = alloc(*buddy, 1<<19);
++  buddy->draw_tiles();
++
++  auto mem2 = alloc(*buddy, 4);
++  buddy->draw_tiles();
++
++  free(*buddy, mem1);
++  buddy->draw_tiles();
++
++  free(*buddy, mem0);
++  buddy->draw_tiles();
++
++  auto mem3 = alloc_at(*buddy, 1<<20, 1<<18);
++  buddy->draw_tiles();
++
++  free(*buddy, mem2);
++  buddy->draw_tiles();
++
++  free(*buddy, mem3);
++  buddy->draw_tiles();
++
++  buddy->dump_state();
++}
++
++inline void ex3(auto& buddy) {
++  std::println("--- start: one big free pool ---");
++  buddy->draw_tiles();
++
++  auto a = alloc(*buddy, 1<<20);
++  auto b = alloc(*buddy, 1<<20);
++  auto c = alloc(*buddy, 1<<20);
++  auto d = alloc(*buddy, 1<<19);
++
++  free(*buddy, a);
++  free(*buddy, c);
++
++  buddy->dump_state();
++  buddy->draw_tiles();
++
++  free(*buddy, b);
++  free(*buddy, d);
++}
+diff --git a/example/src/main.cpp b/example/src/main.cpp
+index cabe20e2b..bddaf3c59 100644
+--- a/example/src/main.cpp
++++ b/example/src/main.cpp
+@@ -1,31 +1,200 @@
+-#include <sys/mman.h>
+ #include <print>
+-#include <cstdlib>
++#include <random>
++#include <vector>
++#include <deque>
++#include <span>
++#include <kernel/memory.hpp>
++#include <mem/alloc/buddy.hpp>
++#include <mem/alloc/arena.hpp>
++#include <mem/alloc/snake.hpp>
++
++using os::mem::Bytes;
++
++static constexpr std::size_t PACKET_SIZES[] = {64, 512, 4096, 16384};
++
++template <typename Callback = void(*)(os::mem::mem_resource*)>
++static void run_scratch_workload(os::mem::mem_resource* alloc, unsigned seed, int n_tasks,
++                                  int min_allocs, int max_allocs,
++                                  std::span<const std::size_t> sizes,
++                                  Callback on_task_end = [](os::mem::mem_resource*){}) {
++  std::mt19937 rng(seed);
++  std::uniform_int_distribution<int> n_allocs(min_allocs, max_allocs);
++  std::uniform_int_distribution<std::size_t> size_pick(0, sizes.size() - 1);
++
++  for (int t = 0; t < n_tasks; ++t) {
++    const int k = n_allocs(rng);
++    for (int i = 0; i < k; ++i) {
++      alloc->allocate_region(sizes[size_pick(rng)]);
++    }
++    on_task_end(alloc);
++    alloc->deallocate_all();
++  }
++}
++
++template <typename Callback = void(*)(os::mem::mem_resource*)>
++static void run_window_workload(os::mem::mem_resource* alloc, unsigned seed, int n_steps, int window,
++                                 std::span<const std::size_t> sizes,
++                                 Callback on_step = [](os::mem::mem_resource*){}) {
++  std::mt19937 rng(seed);
++  std::uniform_int_distribution<std::size_t> size_pick(0, sizes.size() - 1);
++  std::deque<os::mem::mem_region> live;
++
++  for (int i = 0; i < n_steps; ++i) {
++    live.push_back(alloc->allocate_region(sizes[size_pick(rng)]));
++    if (static_cast<int>(live.size()) > window) {
++      alloc->deallocate_region(live.front());
++      live.pop_front();
++    }
++    on_step(alloc);
++  }
++  for (auto& r : live) alloc->deallocate_region(r);
++}
+ 
+ int main() {
+-  constexpr size_t page_sz = 4096;
++  auto* secondary_ptr = os::mem::secondary_allocator();
++  if (secondary_ptr == nullptr) {
++    std::println("no secondary (post-4G) heap on this machine");
++    return 1;
++  }
++  auto& secondary = *secondary_ptr;
+ 
+-  volatile int* p = (volatile int*) mmap(nullptr, page_sz*16, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
++  constexpr unsigned seed = 42;
++  constexpr std::size_t KiB = std::size_t(1) << 10;
+ 
+-  if (p == MAP_FAILED) {
+-    std::println("mmap failed");
++  // step 1
++  auto* heap = os::mem::buddy_resource::create_from(secondary, 256 * KiB, os::mem::buddy_config{.min_block = 64});
++  if (heap == nullptr) {
++    std::println("failed to carve heap");
+     return 1;
+   }
++  run_scratch_workload(heap, seed, 50, 2, 5, PACKET_SIZES);
++  std::println("heap (standalone):   used={} highest_used={}",
++               Bytes{heap->bytes_used()}, Bytes{heap->offset_of(heap->highest_used())});
++  heap->deallocate_all();
+ 
+-  std::printf("before='%d'\n", p[0]);
+-  p[0] = 42;
+-  std::printf("after='%d'\n", p[0]);
++  // step 2
++  auto* arena = os::mem::arena_resource::create_from(secondary, 256 * KiB);
++  if (arena == nullptr) {
++    std::println("failed to carve arena");
++    return 1;
++  }
++  run_scratch_workload(arena, seed, 50, 2, 5, PACKET_SIZES);
++  const std::size_t arena_peak = arena->offset_of(arena->highest_used());
++  std::println("arena (standalone):  used={} highest_used={}",
++               Bytes{arena->bytes_used()}, Bytes{arena_peak});
+ 
+-  if (mprotect((void*)p, 4000, PROT_READ) != 0) {
+-    std::println("mprotect failed");
++  // step 2b
++  constexpr std::size_t temp_region_size = 256 * KiB;
++  auto temp_buddy_region = secondary.allocate_region(temp_region_size, alignof(std::max_align_t));
++  auto* temp_buddy = os::mem::buddy_resource::create_at(temp_buddy_region, os::mem::buddy_config{.min_block = 64});
++  if (temp_buddy == nullptr) {
++    std::println("failed to carve temp buddy");
+     return 1;
+   }
++  {
++    std::size_t min_free = temp_buddy->bytes_free();
++    std::size_t min_largest = temp_buddy->largest_free();
++    std::println("temp buddy (standalone, {} raw region, {} usable) per-task free/largest_free:",
++                 Bytes{temp_region_size}, Bytes{temp_buddy->bytes_free()});
++    int task_i = 0;
++    run_scratch_workload(temp_buddy, seed, 50, 2, 5, PACKET_SIZES,
++      [&](os::mem::mem_resource* a) {
++        const std::size_t free_now = a->bytes_free();
++        const std::size_t largest_now = a->largest_free();
++        min_free = std::min(min_free, free_now);
++        min_largest = std::min(min_largest, largest_now);
++        std::println("  task {:>2}: free={} largest_free={}", task_i++, Bytes{free_now}, Bytes{largest_now});
++      });
++    std::println("temp buddy (standalone):  min_free={} min_largest_free={}", Bytes{min_free}, Bytes{min_largest});
++  }
+ 
+-  std::printf("protected='%d'\n", p[0]);
++  // step 2c
++  auto temp_snake_region = secondary.allocate_region(temp_region_size, alignof(std::max_align_t));
++  auto* temp_snake = os::mem::snake_resource::create_at(temp_snake_region, os::mem::snake_config{.max_pending = 32});
++  if (temp_snake == nullptr) {
++    std::println("failed to carve temp snake");
++    return 1;
++  }
++  {
++    std::size_t min_free = temp_snake->bytes_free();
++    std::size_t min_largest = temp_snake->largest_free();
++    std::println("temp snake (standalone, {} raw region, {} usable) per-task free/largest_free:",
++                 Bytes{temp_region_size}, Bytes{temp_snake->bytes_free()});
++    int task_i = 0;
++    run_scratch_workload(temp_snake, seed, 50, 2, 5, PACKET_SIZES,
++      [&](os::mem::mem_resource* a) {
++        const std::size_t free_now = a->bytes_free();
++        const std::size_t largest_now = a->largest_free();
++        min_free = std::min(min_free, free_now);
++        min_largest = std::min(min_largest, largest_now);
++        std::println("  task {:>2}: free={} largest_free={}", task_i++, Bytes{free_now}, Bytes{largest_now});
++      });
++    std::println("temp snake (standalone):  min_free={} min_largest_free={}", Bytes{min_free}, Bytes{min_largest});
++  }
++
++  // step 2d
++  auto window_buddy_region = secondary.allocate_region(temp_region_size, alignof(std::max_align_t));
++  auto* window_buddy = os::mem::buddy_resource::create_at(window_buddy_region, os::mem::buddy_config{.min_block = 64});
++  auto window_snake_region = secondary.allocate_region(temp_region_size, alignof(std::max_align_t));
++  auto* window_snake = os::mem::snake_resource::create_at(window_snake_region, os::mem::snake_config{.max_pending = 64});
++  if (window_buddy == nullptr || window_snake == nullptr) {
++    std::println("failed to carve window buddy/snake");
++    return 1;
++  }
++  constexpr int window = 8;
++  constexpr int n_steps = 300;
++  std::println("window workload (buddy, {} usable, window={}) free/largest_free over {} steps:",
++               Bytes{window_buddy->bytes_free()}, window, n_steps);
++  {
++    int step_i = 0;
++    run_window_workload(window_buddy, seed, n_steps, window, PACKET_SIZES,
++      [&](os::mem::mem_resource* a) {
++        std::println("  step {:>3}: free={} largest_free={}", step_i++, Bytes{a->bytes_free()}, Bytes{a->largest_free()});
++      });
++  }
++  std::println("window workload (snake, {} usable, window={}) free/largest_free over {} steps:",
++               Bytes{window_snake->bytes_free()}, window, n_steps);
++  {
++    int step_i = 0;
++    run_window_workload(window_snake, seed, n_steps, window, PACKET_SIZES,
++      [&](os::mem::mem_resource* a) {
++        std::println("  step {:>3}: free={} largest_free={}", step_i++, Bytes{a->bytes_free()}, Bytes{a->largest_free()});
++      });
++  }
++
++  // step 3
++  std::println("\nheap (before control): used={} free={} largest_free={}",
++               Bytes{heap->bytes_used()}, Bytes{heap->bytes_free()}, Bytes{heap->largest_free()});
++  heap->draw_tiles();
++  auto* control_arena = os::mem::arena_resource::create_from(*heap, arena_peak);
++  if (control_arena == nullptr) {
++    std::println("failed to carve control arena from heap");
++    return 1;
++  }
++  run_scratch_workload(control_arena, seed, 50, 2, 5, PACKET_SIZES);
++  std::println("control (in heap):   used={} highest_used={}",
++               Bytes{control_arena->bytes_used()}, Bytes{control_arena->offset_of(control_arena->highest_used())});
++  heap->deallocate_all(); // undo the control carve, back to a clean, fully-free heap
++
++  // step 4
++  constexpr std::size_t block = 2 * KiB;
++  constexpr int n_blocks = 128; // 128 * 2 KiB = 256 KiB = heap's full capacity
++  std::vector<os::mem::mem_region> blocks;
++  for (int i = 0; i < n_blocks; ++i) {
++    blocks.push_back(heap->allocate_region(block));
++  }
++  for (std::size_t i = 1; i < blocks.size(); i += 2) {
++    heap->deallocate_region(blocks[i]);
++  }
++  std::println("heap (fragmented):   used={} free={} largest_free={}",
++               Bytes{heap->bytes_used()}, Bytes{heap->bytes_free()}, Bytes{heap->largest_free()});
++  heap->draw_tiles();
+ 
+-  std::println("about to write to read-only page; this should fault");
+-  p[page_sz+2] = 69;
++  // step 5
++  std::println("\ncarving a {} temp arena from the fragmented heap (bytes_free={} >= this, but largest_free={} < this)...",
++               Bytes{arena_peak}, Bytes{heap->bytes_free()}, Bytes{heap->largest_free()});
++  auto* temp_arena = os::mem::arena_resource::create_from(*heap, arena_peak); // expected to throw, this is the point
+ 
+-  std::printf("BUG: write succeeded, value='%d'\n", p[0]);
++  std::println("unexpectedly succeeded: {}", static_cast<void*>(temp_arena));
+   return 0;
+ }
+diff --git a/example/vm.json b/example/vm.json
+index 2c63c0851..7b976178d 100644
+--- a/example/vm.json
++++ b/example/vm.json
+@@ -1,2 +1,3 @@
+ {
++  "mem": 16384
+ }
+diff --git a/src/musl/mmap.cpp b/src/musl/mmap.cpp
+index 227cbeaf5..3250ed4a4 100644
+--- a/src/musl/mmap.cpp
++++ b/src/musl/mmap.cpp
+@@ -23,11 +23,18 @@
+ static os::mem::buddy_resource* buddy_alloc = nullptr;
+ static os::mem::mem_resource* default_allocator = nullptr;
+ 
++static os::mem::buddy_resource* buddy_alloc_2 = nullptr;
++static os::mem::mem_resource* allocator_2 = nullptr;
++
+ os::mem::mem_resource& os::mem::raw_allocator() {
+   Expects(default_allocator);
+   return *default_allocator;
+ }
+ 
++os::mem::mem_resource* os::mem::secondary_allocator() {
++  return allocator_2;
++}
++
+ uintptr_t __init_mmap(uintptr_t addr_begin, size_t size)
+ {
+   size_t align = PAGE_SIZE; // os::mem::min_psize();
+@@ -46,6 +53,22 @@ uintptr_t __init_mmap(uintptr_t addr_begin, size_t size)
+   return aligned_end;
+ }
+ 
++uintptr_t __init_mmap_secondary(uintptr_t addr_begin, uintptr_t addr_end)
++{
++  size_t align = PAGE_SIZE;
++  auto aligned_begin = (addr_begin + align - 1) & ~(align - 1);
++  auto aligned_end   = addr_end & ~(uintptr_t(align - 1));
++
++  if (aligned_end <= aligned_begin) {
++    return aligned_begin;
++  }
++
++  os::mem::mem_region region{ aligned_begin, aligned_end };
++  buddy_alloc_2 = os::mem::buddy_resource::create_at(region, os::mem::buddy_config{ .min_block = align });
++  allocator_2 = buddy_alloc_2;
++  return aligned_end;
++}
++
+ extern "C" __attribute__((weak))
+ void* kalloc(size_t size) {
+   Expects(kernel::heap_ready());
+diff --git a/src/platform/x86_pc/os.cpp b/src/platform/x86_pc/os.cpp
+index 23d591909..a05b20237 100644
+--- a/src/platform/x86_pc/os.cpp
++++ b/src/platform/x86_pc/os.cpp
+@@ -49,6 +49,7 @@ extern uintptr_t _ELF_END_;
+ extern bool os_default_stdout;
+ 
+ extern std::span<multiboot_memory_map_t> _multiboot_memory_maps();
++extern uintptr_t __init_mmap_secondary(uintptr_t, uintptr_t);
+ 
+ struct alignas(SMP_ALIGN) OS_CPU {
+   uint64_t cycles_hlt = 0;
+@@ -143,12 +144,19 @@ void kernel::start(uint32_t boot_magic, uint32_t boot_addr)
+   memmap.assign_range({0x10000, 0x9d3ff, "Stack"});
+ #endif
+ 
++  static constexpr uint64_t heap_split_4g = 0x1'0000'0000ULL;
++
+   multiboot_memory_map_t heap_map = {0,0,0,0};
++  multiboot_memory_map_t heap_map_high = {0,0,0,0};
+   for (auto entry : _multiboot_memory_maps())
+   {
+     if (not entry.is_available()) continue;
+ 
+-    if (entry.len > heap_map.len) {
++    if (entry.addr >= heap_split_4g) {
++      if (entry.len > heap_map_high.len) {
++        heap_map_high = entry;
++      }
++    } else if (entry.len > heap_map.len) {
+       heap_map = entry;
+     }
+   }
+@@ -168,6 +176,15 @@ void kernel::start(uint32_t boot_magic, uint32_t boot_addr)
+   INFO2("* Assigning heap 0x%lx -> 0x%lx", kernel::heap_begin(), kernel::heap_max());
+   memmap.assign_range({kernel::heap_begin(), kernel::heap_max(), "Heap", kernel::heap_usage });
+ 
++  if (heap_map_high.len > 0) {
++    const uintptr_t hi_begin = heap_map_high.addr;
++    const uintptr_t hi_end = heap_map_high.addr + heap_map_high.len - 1;
++    __init_mmap_secondary(hi_begin, hi_end + 1);
++
++    INFO2("* Assigning secondary heap 0x%lx -> 0x%lx", hi_begin, hi_end);
++    memmap.assign_range({hi_begin, hi_end, "Heap (secondary)"});
++  }
++
+   MYINFO("Virtual memory map");
+   for (const auto& entry : memmap)
+       INFO2("%s", entry.second.to_string().c_str());

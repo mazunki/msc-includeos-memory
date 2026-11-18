@@ -1,0 +1,71 @@
+\begin{figure}[!htbp]
+\centering
+\colorlet{bucketc}{brown!75}\colorlet{bucketw}{brown!75!black!85}\colorlet{slabc}{sysorig!80}\colorlet{slobc}{allocring!80!black}%
+\colorlet{slubc}{syslinux}\colorlet{slubtiny}{syslinux!75!red!85!black}%
+\colorlet{scanc}{gray!60}\colorlet{buddyc}{allocbuddy}\colorlet{buddypcp}{allocbuddy!75!blue!80!black}%
+\begin{tikzpicture}[x=0.32cm, y=1cm,
+    every node/.style={font=\scriptsize},
+    ver/.style={font=\tiny, inner sep=1pt, anchor=south},
+    lane/.style={font=\scriptsize\ttfamily, anchor=east}]
+  % x = years since 1991; full colour = default, tint = available
+  % object allocators
+  \node[lane] at (0,2.20) {kmalloc};
+  \fill[bucketc] (0.9,2.10) rectangle (2.8,2.30);
+  \fill[bucketw] (2.8,2.10) rectangle (6.1,2.30);
+  \node[ver] at (0.9,2.30) {0.11};
+  \node[ver, anchor=north] at (2.8,2.10) {0.99.14};
+
+  \node[lane] at (0,1.65) {SLAB};
+  \fill[slabc] (6.1,1.55) rectangle (16.8,1.75);
+  \fill[slabc!30] (16.8,1.55) rectangle (33.2,1.75);
+  \node[ver] at (6.1,1.75) {2.1.23};
+  \node[ver] at (33.2,1.75) {6.8};
+
+  \node[lane] at (0,1.10) {SLOB};
+  \fill[slobc!30] (15.2,1.00) rectangle (32.5,1.20);
+  \node[ver] at (15.2,1.20) {2.6.16};
+  \node[ver] at (32.5,1.20) {6.4};
+
+  \node[lane] at (0,0.55) {SLUB};
+  \fill[slubc!30] (16.5,0.45) rectangle (16.8,0.65);
+  \fill[slubc] (16.8,0.45) rectangle (32.1,0.65);
+  \fill[slubtiny] (32.1,0.45) rectangle (35.8,0.65);
+  \draw[-{Latex[length=1.2mm]}, slubtiny, line width=0.2cm] (35.6,0.55) -- (36.3,0.55);
+  \node[ver] at (16.5,0.65) {2.6.22};
+  \node[ver] at (32.1,0.65) {6.2};
+
+  % page allocator, underneath
+  \draw[gray!50, densely dotted] (0,0.28) -- (36.3,0.28);
+  \node[lane] at (0,-0.15) {scan};
+  \fill[scanc] (0.7,-0.25) rectangle (3.3,-0.05);
+  \node[ver] at (0.7,-0.05) {0.01};
+  \node[ver] at (3.3,-0.05) {1.1};
+
+  \node[lane] at (0,-0.70) {buddy};
+  \fill[buddyc] (3.3,-0.80) rectangle (12.9,-0.60);
+  \fill[buddypcp] (12.9,-0.80) rectangle (35.8,-0.60);
+  \node[ver] at (12.9,-0.60) {2.6};
+  \draw[-{Latex[length=1.2mm]}, buddypcp, line width=0.2cm] (35.6,-0.70) -- (36.3,-0.70);
+  \node[ver] at (3.3,-0.60) {1.1};
+
+  % year axis
+  \draw[thin, gray] (0,-1.05) -- (36.5,-1.05);
+  \foreach \y in {1995,2000,...,2025} {
+    \draw[thin, gray] ({\y-1991},-1.05) -- ({\y-1991},-1.12)
+      node[anchor=north, font=\tiny, text=black] {\y};
+  }
+\end{tikzpicture}
+\caption{Linux's kernel memory allocators by release, from when each was
+         merged until it was removed. Above the dotted line are the
+         allocators for small objects, and below it the page allocators
+         they take their pages from. Before 1.1 the page allocator (grey)
+         scanned a table of page use counts and could only return single
+         pages, and it has been a buddy allocator (blue) since; the
+         darker blue from 2.6 on has per-CPU lists of single pages in front
+         of it
+         \cite{linux-1.1.0-diff,gorman2004vmm}. The two browns are Ts'o's \texttt{kmalloc} and Wolff's rewrite
+         of it \cite{linux-0.11-source,linux-1.0-source}. The full colour marks the
+         default, and the darker SLUB from 6.2 on has
+         \texttt{SLUB\_TINY}, which let it replace SLOB.}
+\label{fig:linux-slab-timeline}
+\end{figure}

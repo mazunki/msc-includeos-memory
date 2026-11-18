@@ -1,0 +1,961 @@
+warning: Git tree '/home/maz/repos/includeos/zig-allocator-path' is dirty
+Looking for chainloader: 
+Found /nix/store/ma16rjv97mln867cka323bxrgdwpfdvl-chainloader-static-i686-unknown-linux-musl-dev/bin/chainloader Type:  /nix/store/ma16rjv97mln867cka323bxrgdwpfdvl-chainloader-static-i686-unknown-linux-musl-dev/bin/chainloader: ELF 32-bit LSB executable, Intel i386, version 1 (SYSV), statically linked, stripped
+
+SeaBIOS (version rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org)
+
+
+iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+BEFD0D60+BEF30D60 CA00
+Press Ctrl-B to configure iPXE (PCI 00:03.0)...
+
+
+Booting from ROM..* Multiboot begin: 0x9500
+* Multiboot cmdline @ 0x0031402d: /nix/store/ma16rjv97mln867cka323bxrgdwpfdvl-chainloader-static-i686-unknown-linux-musl-dev/bin/chainloader ""
+* Multiboot end: 0x31409b
+* Module list @ 0x314000
+	 * Module @ 0x315000
+	 * Args: ./hello_includeos.elf.bin ""
+ 	 * End: 0x557560
+* Multiboot end: 5600608
+* ELF syms header CRC OK
+< multiboot >Booted with multiboot x86
+	* Boot flags: 0x24f
+	* Valid memory (3145215 KiB):
+	  0x00000000 - 0x0009fbff (639 KiB)
+	  0x00100000 - 0xbffdffff (3144576 KiB)
+
+	* Booted with parameters @ 0x31402d: /nix/store/ma16rjv97mln867cka323bxrgdwpfdvl-chainloader-static-i686-unknown-linux-musl-dev/bin/chainloader ""
+	* Multiboot provided memory map  (9 entries @ 0x9000)
+
+	               0x0 -          0x9fbff (639 KiB): Available
+	           0x9fc00 -          0x9ffff (1 KiB): Reserved
+	           0xf0000 -          0xfffff (64 KiB): Reserved
+	          0x100000 -       0xbffdffff (3144576 KiB): Available
+	        0xbffe0000 -       0xbfffffff (128 KiB): Reserved
+	        0xfeffc000 -       0xfeffffff (16 KiB): Reserved
+	        0xfffc0000 -       0xffffffff (256 KiB): Reserved
+	               0x0 -       0x3fffffff (1048576 KiB): Available
+	               0x0 -       0xffffffff (0 KiB): Reserved
+
+< multiboot >OS loaded with 1 modules
+	* ./hello_includeos.elf.bin "" @ 0x00315000 - 0x00557560, size: 2368864 B
+* Multiboot begin: 0x9500
+* Multiboot end: 0x46c160
+[x86_64 PC] constructor
+[ Machine ] Initializing heap
+[ Machine ] Main memory detected as 3216453440 b
+[ Machine ] Reserving 1048576 b for machine use
+================================================================================
+
+                           #include<os> // Literally
+
+================================================================================
+     [ Kernel ] Stack: 0x1ffbc8
+     [ Kernel ] Boot magic: 0x2badb002, addr: 0x9500
+     [ x86_64 ] Initializing paging
+                * Supported page sizes: 4.000_KiB, 2.000_MiB
+                * Adding 512 1GiB entries @ 0x0 -> 0x8000000000
+                * Identity mapping 0x0 -> 0x0, size 17179869184, attrs 0x8000000000000083 (8192 pages of 2097152)
+                * Marking page 0 as not present
+                * Allowing execute on 0x201000 -> 0x31e108
+<Paging> Wants : 0x201000 -> 0x201000, size 1167624, attrs 0x4 (page sizes: 4.000_KiB, 2.000_MiB) size: 1167624
+<Paging> Gets  : 0x201000 -> 0x201000, size 1171456, attrs 0x1 (286 pages of 4096) size: 1171456
+                * Passing page tables to CPU
+< multiboot >Booted with multiboot x86_64
+	* Boot flags: 0x24f
+	* Valid memory (3145215 KiB):
+	  0x00000000 - 0x0009fbff (639 KiB)
+	  0x00100000 - 0xbffdffff (3144576 KiB)
+
+	* Booted with parameters @ 0x8000: ./hello_includeos.elf.bin ""
+	* Multiboot provided memory map  (9 entries @ 0x9000)
+
+	               0x0 -          0x9fbff (639 KiB): Available
+	           0x9fc00 -          0x9ffff (1 KiB): Reserved
+	           0xf0000 -          0xfffff (64 KiB): Reserved
+<Paging> Wants : 0xf0000 -> 0xf0000, size 65536, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 65536
+<Paging> Gets  : 0xf0000 -> 0xf0000, size 65536, attrs 0x8000000000000003 (16 pages of 4096) size: 65536
+	          0x100000 -       0xbffdffff (3144576 KiB): Available
+	        0xbffe0000 -       0xbfffffff (128 KiB): Reserved
+<Paging> Wants : 0xbffe0000 -> 0xbffe0000, size 131072, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 131072
+<Paging> Gets  : 0xbffe0000 -> 0xbffe0000, size 131072, attrs 0x8000000000000003 (32 pages of 4096) size: 131072
+	        0xfeffc000 -       0xfeffffff (16 KiB): Reserved
+<Paging> Wants : 0xfeffc000 -> 0xfeffc000, size 16384, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 16384
+<Paging> Gets  : 0xfeffc000 -> 0xfeffc000, size 16384, attrs 0x8000000000000003 (4 pages of 4096) size: 16384
+	        0xfffc0000 -       0xffffffff (256 KiB): Reserved
+<Paging> Wants : 0xfffc0000 -> 0xfffc0000, size 262144, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 262144
+<Paging> Gets  : 0xfffc0000 -> 0xfffc0000, size 262144, attrs 0x8000000000000003 (64 pages of 4096) size: 262144
+	       0x100000000 -      0x43fffffff (13631488 KiB): Available
+	      0xfd00000000 -     0xffffffffff (12582912 KiB): Reserved
+<Paging> Wants : 0xfd00000000 -> 0xfd00000000, size 12884901888, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 12884901888
+<Paging> Gets  : 0xfd00000000 -> 0xfd00000000, size 12884901888, attrs 0x8000000000000003 (6144 pages of 2097152) size: 12884901888
+
+     [ Kernel ] Total memory detected as 2.250_GiB
+                Assigning fixed memory ranges (Memory map)
+                * ELF symbol table size 0, ignoring.
+<Paging> Wants : 0x1000 -> 0x1000, size 28672, attrs 0x1 (page sizes: 4.000_KiB, 2.000_MiB) size: 28672
+<Paging> Gets  : 0x1000 -> 0x1000, size 28672, attrs 0x8000000000000001 (7 pages of 4096) size: 28672
+                * Assigning heap 0x1000000 -> 0x8fff3fff
+                * Assigning secondary heap 0x100000000 -> 0x43fffffff
+     [ Kernel ] Virtual memory map
+                0x0000001000 - 0x0000007fff,  28.000_KiB (100.0 %) Page tables
+                0x0000010000 - 0x000009d3ff, 565.000_KiB (100.0 %) Stack
+                0x000009fc00 - 0x000009ffff,   1.000_KiB (100.0 %) UNALIGNED
+                0x00000f0000 - 0x00000fffff,  64.000_KiB (100.0 %) Multiboot (Reserved)
+                0x0000201000 - 0x000031efff,   1.117_MiB (100.0 %) ELF Executable (Unikernel service)
+                0x0001000000 - 0x008fff3fff,   2.234_GiB (0.027 %) Heap
+                0x00bffe0000 - 0x00bfffffff, 128.000_KiB (100.0 %) Multiboot (Reserved)
+                0x00feffc000 - 0x00feffffff,  16.000_KiB (100.0 %) Multiboot (Reserved)
+                0x00fffc0000 - 0x00ffffffff, 256.000_KiB (100.0 %) Multiboot (Reserved)
+                0x0100000000 - 0x043fffffff,  13.000_GiB (100.0 %) Heap (secondary)
+                0xfd00000000 - 0xffffffffff,  12.000_GiB (100.0 %) Multiboot (Reserved)
+       [ ACPI ] Reading headers
+                OEM: BOCHS  Rev. 0
+       [ ACPI ] Reading APIC information
+                LAPIC base: 0xfee00000  (flags: 0x1)
+                I/O APIC 0   ADDR 0xfec00000  INTR 0x0
+                IRQ redirect for bus 0 from IRQ 0 to VEC 2
+                IRQ redirect for bus 0 from IRQ 5 to VEC 5
+                IRQ redirect for bus 0 from IRQ 9 to VEC 9
+                IRQ redirect for bus 0 from IRQ 10 to VEC 10
+                IRQ redirect for bus 0 from IRQ 11 to VEC 11
+        [ SMP ] Found 1 APs
+     [ SMBIOS ] Version 2.8
+                BIOS vendor: rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org
+                BIOS version: 04/01/2014
+                Manufacturer: Standard PC (i440FX + PIIX, 1996)
+                Product name: pc-i440fx-9.2
+                System UUID: 00000000000000000000000000000000
+                Physical memory array with 0 MB capacity
+        [ x86 ] Setting up GDT, TLS, IST
+<Paging> Wants : 0x400000001000 -> 0x58f000, size 81920, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 81920
+<Paging> Gets  : 0x400000001000 -> 0x58f000, size 81920, attrs 0x8000000000000003 (20 pages of 4096) size: 81920
+<Paging> Wants : 0x400000016000 -> 0x5af000, size 262144, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 262144
+<Paging> Gets  : 0x400000016000 -> 0x5af000, size 262144, attrs 0x8000000000000003 (64 pages of 4096) size: 262144
+<Paging> Wants : 0x400000057000 -> 0x5ef000, size 81920, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 81920
+<Paging> Gets  : 0x400000057000 -> 0x5ef000, size 81920, attrs 0x8000000000000003 (20 pages of 4096) size: 81920
+        [ x86 ] Initializing CPU 0
+   [ I/O APIC ] Initializing ID=0
+                Addr: 0xfec00000  Version: 0x11  Intr: 0  Entries: 24
+     [ x2APIC ] Enabling x2APIC @ 0xfee00900
+                APIC id: 0  ver: 50014
+        [ x86 ] Enabling interrupts
+        [ x86 ] Setting up kernel clock sources
+        [ x86 ] KVM PV clocks initialized
+                +--> 3399.998000 MHz
+       [ APIC ] Measuring APIC timer...
+                Enabled redirected entry 2 ioapic 0 -> 0 on apic 0
+                Initializing drivers
+[ PCI Manager ] Probing PCI bus
+                |
+                +--[ Bridge device, Intel (0x1237) ]
+                +--[ Bridge device, Intel (0x7000) ]
+                +--[ Storage controller, Intel (0x7010) ]
+                +--[ Bridge device, Intel (0x7113) ]
+                +--[ Display controller, Unknown vendor (0x1111) ]
+                +--[ Network controller, Intel (0x100e) ]
+                o
+                |- Initializing Storage controller
+                |--[ Storage controller, Intel (0x8086:0x7010) ]
+                |  +-x Driver not found
+                o
+                |- Initializing Network controller
+                |--[ Network controller, Intel, Ethernet (0x8086:0x100e) ]
+                |  +-x Driver not found
+                o
+    [ Machine ] Listing registered devices
+                |
+                o
+<Paging> Wants : 0x200000000000 -> 0x90104000, size 804110336, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 804110336
+<Paging> Gets  : 0x200000000000 -> 0x90104000, size 804110336, attrs 0x8000000000000003 (196316 pages of 4096) size: 804110336
+<Paging> ::protect 0x90104000
+<Paging> Found key: 0x90104000
+<Paging> Found entry: 0x0090104000 - 0x00bffdffff, 766.859_MiB (100.0 %) LiveUpdate physical
+<Paging> Wants: 0x90104000 -> 0xffffffffffffffff, size 804110336, attrs 0x0 (page sizes: 4.000_KiB, 2.000_MiB)
+  [ SystemLog ] Initializing System Log
+<Paging> Wants : 0x1fffffff0000 -> 0x900f4000, size 65536, attrs 0x5 (page sizes: 4.000_KiB, 2.000_MiB) size: 65536
+<Paging> Gets  : 0x1fffffff0000 -> 0x900f4000, size 65536, attrs 0x8000000000000003 (16 pages of 4096) size: 65536
+<Paging> ::protect 0x900f4000
+<Paging> Found key: 0x900f4000
+<Paging> Found entry: 0x00900f4000 - 0x0090103fff,  64.000_KiB (100.0 %) SystemLog physical
+<Paging> Wants: 0x900f4000 -> 0xffffffffffffffff, size 65536, attrs 0x0 (page sizes: 4.000_KiB, 2.000_MiB)
+                Created @ 0x1fffffff0000 (63 kB)
+                Data @ 0x1fffffff0028 (65496 bytes)
+     [ Kernel ] Initializing RNG
+     [ Kernel ] Initializing plugins
+     [ Kernel ] Running service constructors
+--------------------------------------------------------------------------------
+================================================================================
+ IncludeOS VERY_DIRTY (x86_64 / 64-bit)
+ +--> Running [ Hello world - OS included ]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+heap (standalone):   used=0 B highest_used=48.00 KiB
+arena (standalone):  used=0 B highest_used=44.00 KiB
+temp buddy (standalone, 256.00 KiB raw region, 128.00 KiB usable) per-task free/largest_free:
+  task  0: free=103.94 KiB largest_free=64.00 KiB
+  task  1: free=119.38 KiB largest_free=64.00 KiB
+  task  2: free=103.94 KiB largest_free=64.00 KiB
+  task  3: free=91.44 KiB largest_free=64.00 KiB
+  task  4: free=95.50 KiB largest_free=64.00 KiB
+  task  5: free=95.50 KiB largest_free=64.00 KiB
+  task  6: free=111.94 KiB largest_free=64.00 KiB
+  task  7: free=111.44 KiB largest_free=64.00 KiB
+  task  8: free=123.94 KiB largest_free=64.00 KiB
+  task  9: free=91.50 KiB largest_free=64.00 KiB
+  task 10: free=103.00 KiB largest_free=64.00 KiB
+  task 11: free=104.00 KiB largest_free=64.00 KiB
+  task 12: free=103.88 KiB largest_free=64.00 KiB
+  task 13: free=123.38 KiB largest_free=64.00 KiB
+  task 14: free=110.44 KiB largest_free=64.00 KiB
+  task 15: free=127.44 KiB largest_free=64.00 KiB
+  task 16: free=92.00 KiB largest_free=64.00 KiB
+  task 17: free=87.94 KiB largest_free=64.00 KiB
+  task 18: free=110.94 KiB largest_free=64.00 KiB
+  task 19: free=110.00 KiB largest_free=64.00 KiB
+  task 20: free=111.44 KiB largest_free=64.00 KiB
+  task 21: free=110.50 KiB largest_free=64.00 KiB
+  task 22: free=111.00 KiB largest_free=64.00 KiB
+  task 23: free=91.50 KiB largest_free=64.00 KiB
+  task 24: free=95.44 KiB largest_free=64.00 KiB
+  task 25: free=111.94 KiB largest_free=64.00 KiB
+  task 26: free=107.94 KiB largest_free=64.00 KiB
+  task 27: free=95.94 KiB largest_free=64.00 KiB
+  task 28: free=123.75 KiB largest_free=64.00 KiB
+  task 29: free=123.94 KiB largest_free=64.00 KiB
+  task 30: free=111.94 KiB largest_free=64.00 KiB
+  task 31: free=84.00 KiB largest_free=64.00 KiB
+  task 32: free=108.00 KiB largest_free=64.00 KiB
+  task 33: free=123.38 KiB largest_free=64.00 KiB
+  task 34: free=107.44 KiB largest_free=64.00 KiB
+  task 35: free=96.00 KiB largest_free=64.00 KiB
+  task 36: free=107.94 KiB largest_free=64.00 KiB
+  task 37: free=107.44 KiB largest_free=64.00 KiB
+  task 38: free=103.44 KiB largest_free=64.00 KiB
+  task 39: free=119.44 KiB largest_free=64.00 KiB
+  task 40: free=127.44 KiB largest_free=64.00 KiB
+  task 41: free=115.50 KiB largest_free=64.00 KiB
+  task 42: free=120.00 KiB largest_free=64.00 KiB
+  task 43: free=111.44 KiB largest_free=64.00 KiB
+  task 44: free=103.94 KiB largest_free=64.00 KiB
+  task 45: free=95.38 KiB largest_free=64.00 KiB
+  task 46: free=115.94 KiB largest_free=64.00 KiB
+  task 47: free=111.94 KiB largest_free=64.00 KiB
+  task 48: free=99.50 KiB largest_free=64.00 KiB
+  task 49: free=126.94 KiB largest_free=64.00 KiB
+temp buddy (standalone):  min_free=84.00 KiB min_largest_free=64.00 KiB
+temp snake (standalone, 256.00 KiB raw region, 254.97 KiB usable) per-task free/largest_free:
+  task  0: free=230.91 KiB largest_free=230.91 KiB
+  task  1: free=246.34 KiB largest_free=246.34 KiB
+  task  2: free=230.91 KiB largest_free=230.91 KiB
+  task  3: free=218.41 KiB largest_free=218.41 KiB
+  task  4: free=222.47 KiB largest_free=222.47 KiB
+  task  5: free=222.47 KiB largest_free=222.47 KiB
+  task  6: free=238.91 KiB largest_free=238.91 KiB
+  task  7: free=238.41 KiB largest_free=238.41 KiB
+  task  8: free=250.91 KiB largest_free=250.91 KiB
+  task  9: free=218.47 KiB largest_free=218.47 KiB
+  task 10: free=229.97 KiB largest_free=229.97 KiB
+  task 11: free=230.97 KiB largest_free=230.97 KiB
+  task 12: free=230.84 KiB largest_free=230.84 KiB
+  task 13: free=250.34 KiB largest_free=250.34 KiB
+  task 14: free=237.41 KiB largest_free=237.41 KiB
+  task 15: free=254.41 KiB largest_free=254.41 KiB
+  task 16: free=218.97 KiB largest_free=218.97 KiB
+  task 17: free=214.91 KiB largest_free=214.91 KiB
+  task 18: free=237.91 KiB largest_free=237.91 KiB
+  task 19: free=236.97 KiB largest_free=236.97 KiB
+  task 20: free=238.41 KiB largest_free=238.41 KiB
+  task 21: free=237.47 KiB largest_free=237.47 KiB
+  task 22: free=237.97 KiB largest_free=237.97 KiB
+  task 23: free=218.47 KiB largest_free=218.47 KiB
+  task 24: free=222.41 KiB largest_free=222.41 KiB
+  task 25: free=238.91 KiB largest_free=238.91 KiB
+  task 26: free=234.91 KiB largest_free=234.91 KiB
+  task 27: free=222.91 KiB largest_free=222.91 KiB
+  task 28: free=250.72 KiB largest_free=250.72 KiB
+  task 29: free=250.91 KiB largest_free=250.91 KiB
+  task 30: free=238.91 KiB largest_free=238.91 KiB
+  task 31: free=210.97 KiB largest_free=210.97 KiB
+  task 32: free=234.97 KiB largest_free=234.97 KiB
+  task 33: free=250.34 KiB largest_free=250.34 KiB
+  task 34: free=234.41 KiB largest_free=234.41 KiB
+  task 35: free=222.97 KiB largest_free=222.97 KiB
+  task 36: free=234.91 KiB largest_free=234.91 KiB
+  task 37: free=234.41 KiB largest_free=234.41 KiB
+  task 38: free=230.41 KiB largest_free=230.41 KiB
+  task 39: free=246.41 KiB largest_free=246.41 KiB
+  task 40: free=254.41 KiB largest_free=254.41 KiB
+  task 41: free=242.47 KiB largest_free=242.47 KiB
+  task 42: free=246.97 KiB largest_free=246.97 KiB
+  task 43: free=238.41 KiB largest_free=238.41 KiB
+  task 44: free=230.91 KiB largest_free=230.91 KiB
+  task 45: free=222.34 KiB largest_free=222.34 KiB
+  task 46: free=242.91 KiB largest_free=242.91 KiB
+  task 47: free=238.91 KiB largest_free=238.91 KiB
+  task 48: free=226.47 KiB largest_free=226.47 KiB
+  task 49: free=253.91 KiB largest_free=253.91 KiB
+temp snake (standalone):  min_free=210.97 KiB min_largest_free=210.97 KiB
+window workload (buddy, 128.00 KiB usable, window=8) free/largest_free over 300 steps:
+  step   0: free=124.00 KiB largest_free=64.00 KiB
+  step   1: free=108.00 KiB largest_free=64.00 KiB
+  step   2: free=107.94 KiB largest_free=64.00 KiB
+  step   3: free=103.94 KiB largest_free=64.00 KiB
+  step   4: free=99.94 KiB largest_free=64.00 KiB
+  step   5: free=83.94 KiB largest_free=64.00 KiB
+  step   6: free=83.88 KiB largest_free=64.00 KiB
+  step   7: free=83.81 KiB largest_free=64.00 KiB
+  step   8: free=83.81 KiB largest_free=64.00 KiB
+  step   9: free=99.31 KiB largest_free=64.00 KiB
+  step  10: free=95.38 KiB largest_free=64.00 KiB
+  step  11: free=95.38 KiB largest_free=64.00 KiB
+  step  12: free=95.38 KiB largest_free=64.00 KiB
+  step  13: free=107.38 KiB largest_free=64.00 KiB
+  step  14: free=91.44 KiB largest_free=64.00 KiB
+  step  15: free=91.44 KiB largest_free=64.00 KiB
+  step  16: free=79.44 KiB largest_free=64.00 KiB
+  step  17: free=63.94 KiB largest_free=32.00 KiB
+  step  18: free=51.94 KiB largest_free=32.00 KiB
+  step  19: free=51.94 KiB largest_free=32.00 KiB
+  step  20: free=55.44 KiB largest_free=32.00 KiB
+  step  21: free=59.38 KiB largest_free=32.00 KiB
+  step  22: free=74.88 KiB largest_free=32.00 KiB
+  step  23: free=58.94 KiB largest_free=32.00 KiB
+  step  24: free=58.94 KiB largest_free=32.00 KiB
+  step  25: free=74.44 KiB largest_free=32.00 KiB
+  step  26: free=89.94 KiB largest_free=64.00 KiB
+  step  27: free=93.44 KiB largest_free=64.00 KiB
+  step  28: free=77.94 KiB largest_free=64.00 KiB
+  step  29: free=62.00 KiB largest_free=32.00 KiB
+  step  30: free=62.44 KiB largest_free=32.00 KiB
+  step  31: free=78.38 KiB largest_free=32.00 KiB
+  step  32: free=78.38 KiB largest_free=32.00 KiB
+  step  33: free=78.38 KiB largest_free=32.00 KiB
+  step  34: free=78.38 KiB largest_free=32.00 KiB
+  step  35: free=78.81 KiB largest_free=32.00 KiB
+  step  36: free=78.81 KiB largest_free=32.00 KiB
+  step  37: free=94.75 KiB largest_free=64.00 KiB
+  step  38: free=94.75 KiB largest_free=64.00 KiB
+  step  39: free=90.81 KiB largest_free=64.00 KiB
+  step  40: free=102.81 KiB largest_free=64.00 KiB
+  step  41: free=99.31 KiB largest_free=64.00 KiB
+  step  42: free=99.31 KiB largest_free=64.00 KiB
+  step  43: free=83.38 KiB largest_free=64.00 KiB
+  step  44: free=83.38 KiB largest_free=64.00 KiB
+  step  45: free=67.44 KiB largest_free=64.00 KiB
+  step  46: free=51.50 KiB largest_free=32.00 KiB
+  step  47: free=51.50 KiB largest_free=32.00 KiB
+  step  48: free=55.00 KiB largest_free=32.00 KiB
+  step  49: free=58.50 KiB largest_free=32.00 KiB
+  step  50: free=55.00 KiB largest_free=32.00 KiB
+  step  51: free=70.50 KiB largest_free=32.00 KiB
+  step  52: free=82.50 KiB largest_free=32.00 KiB
+  step  53: free=82.50 KiB largest_free=32.00 KiB
+  step  54: free=94.50 KiB largest_free=32.00 KiB
+  step  55: free=82.50 KiB largest_free=32.00 KiB
+  step  56: free=67.00 KiB largest_free=32.00 KiB
+  step  57: free=67.44 KiB largest_free=32.00 KiB
+  step  58: free=67.44 KiB largest_free=32.00 KiB
+  step  59: free=67.88 KiB largest_free=32.00 KiB
+  step  60: free=67.88 KiB largest_free=32.00 KiB
+  step  61: free=79.88 KiB largest_free=32.00 KiB
+  step  62: free=83.81 KiB largest_free=32.00 KiB
+  step  63: free=99.75 KiB largest_free=32.00 KiB
+  step  64: free=111.75 KiB largest_free=32.00 KiB
+  step  65: free=111.31 KiB largest_free=32.00 KiB
+  step  66: free=99.31 KiB largest_free=32.00 KiB
+  step  67: free=99.31 KiB largest_free=32.00 KiB
+  step  68: free=87.31 KiB largest_free=32.00 KiB
+  step  69: free=90.81 KiB largest_free=32.00 KiB
+  step  70: free=90.38 KiB largest_free=32.00 KiB
+  step  71: free=89.94 KiB largest_free=32.00 KiB
+  step  72: free=93.88 KiB largest_free=32.00 KiB
+  step  73: free=93.88 KiB largest_free=32.00 KiB
+  step  74: free=109.81 KiB largest_free=64.00 KiB
+  step  75: free=109.38 KiB largest_free=64.00 KiB
+  step  76: free=109.38 KiB largest_free=64.00 KiB
+  step  77: free=93.88 KiB largest_free=64.00 KiB
+  step  78: free=90.38 KiB largest_free=64.00 KiB
+  step  79: free=74.88 KiB largest_free=64.00 KiB
+  step  80: free=70.94 KiB largest_free=64.00 KiB
+  step  81: free=55.44 KiB largest_free=32.00 KiB
+  step  82: free=55.44 KiB largest_free=32.00 KiB
+  step  83: free=39.94 KiB largest_free=32.00 KiB
+  step  84: free=51.94 KiB largest_free=32.00 KiB
+  step  85: free=63.94 KiB largest_free=32.00 KiB
+  step  86: free=67.44 KiB largest_free=32.00 KiB
+  step  87: free=83.38 KiB largest_free=32.00 KiB
+  step  88: free=71.38 KiB largest_free=32.00 KiB
+  step  89: free=86.88 KiB largest_free=32.00 KiB
+  step  90: free=70.94 KiB largest_free=32.00 KiB
+  step  91: free=70.94 KiB largest_free=32.00 KiB
+  step  92: free=74.44 KiB largest_free=32.00 KiB
+  step  93: free=77.94 KiB largest_free=32.00 KiB
+  step  94: free=77.94 KiB largest_free=32.00 KiB
+  step  95: free=77.50 KiB largest_free=32.00 KiB
+  step  96: free=93.00 KiB largest_free=32.00 KiB
+  step  97: free=77.50 KiB largest_free=32.00 KiB
+  step  98: free=93.00 KiB largest_free=32.00 KiB
+  step  99: free=108.94 KiB largest_free=32.00 KiB
+  step 100: free=105.44 KiB largest_free=32.00 KiB
+  step 101: free=105.44 KiB largest_free=32.00 KiB
+  step 102: free=105.44 KiB largest_free=32.00 KiB
+  step 103: free=89.94 KiB largest_free=32.00 KiB
+  step 104: free=89.94 KiB largest_free=32.00 KiB
+  step 105: free=105.44 KiB largest_free=64.00 KiB
+  step 106: free=105.44 KiB largest_free=64.00 KiB
+  step 107: free=89.50 KiB largest_free=64.00 KiB
+  step 108: free=93.00 KiB largest_free=64.00 KiB
+  step 109: free=89.50 KiB largest_free=64.00 KiB
+  step 110: free=74.00 KiB largest_free=64.00 KiB
+  step 111: free=86.00 KiB largest_free=64.00 KiB
+  step 112: free=70.50 KiB largest_free=64.00 KiB
+  step 113: free=70.50 KiB largest_free=64.00 KiB
+  step 114: free=67.00 KiB largest_free=64.00 KiB
+  step 115: free=67.00 KiB largest_free=32.00 KiB
+  step 116: free=67.44 KiB largest_free=32.00 KiB
+  step 117: free=70.94 KiB largest_free=32.00 KiB
+  step 118: free=70.94 KiB largest_free=32.00 KiB
+  step 119: free=74.88 KiB largest_free=32.00 KiB
+  step 120: free=74.88 KiB largest_free=32.00 KiB
+  step 121: free=75.31 KiB largest_free=32.00 KiB
+  step 122: free=78.81 KiB largest_free=32.00 KiB
+  step 123: free=90.81 KiB largest_free=64.00 KiB
+  step 124: free=90.81 KiB largest_free=64.00 KiB
+  step 125: free=75.31 KiB largest_free=64.00 KiB
+  step 126: free=90.81 KiB largest_free=64.00 KiB
+  step 127: free=90.81 KiB largest_free=64.00 KiB
+  step 128: free=90.81 KiB largest_free=64.00 KiB
+  step 129: free=74.88 KiB largest_free=64.00 KiB
+  step 130: free=59.38 KiB largest_free=32.00 KiB
+  step 131: free=63.31 KiB largest_free=32.00 KiB
+  step 132: free=63.31 KiB largest_free=32.00 KiB
+  step 133: free=79.25 KiB largest_free=32.00 KiB
+  step 134: free=75.75 KiB largest_free=32.00 KiB
+  step 135: free=75.75 KiB largest_free=32.00 KiB
+  step 136: free=91.69 KiB largest_free=32.00 KiB
+  step 137: free=107.62 KiB largest_free=32.00 KiB
+  step 138: free=119.62 KiB largest_free=64.00 KiB
+  step 139: free=119.62 KiB largest_free=64.00 KiB
+  step 140: free=103.69 KiB largest_free=64.00 KiB
+  step 141: free=103.69 KiB largest_free=64.00 KiB
+  step 142: free=91.69 KiB largest_free=64.00 KiB
+  step 143: free=75.75 KiB largest_free=64.00 KiB
+  step 144: free=59.81 KiB largest_free=32.00 KiB
+  step 145: free=55.88 KiB largest_free=32.00 KiB
+  step 146: free=55.88 KiB largest_free=32.00 KiB
+  step 147: free=51.94 KiB largest_free=32.00 KiB
+  step 148: free=67.88 KiB largest_free=32.00 KiB
+  step 149: free=51.94 KiB largest_free=32.00 KiB
+  step 150: free=63.94 KiB largest_free=32.00 KiB
+  step 151: free=75.94 KiB largest_free=32.00 KiB
+  step 152: free=91.88 KiB largest_free=32.00 KiB
+  step 153: free=91.88 KiB largest_free=32.00 KiB
+  step 154: free=95.81 KiB largest_free=32.00 KiB
+  step 155: free=99.31 KiB largest_free=32.00 KiB
+  step 156: free=95.38 KiB largest_free=32.00 KiB
+  step 157: free=110.88 KiB largest_free=32.00 KiB
+  step 158: free=114.81 KiB largest_free=32.00 KiB
+  step 159: free=102.81 KiB largest_free=32.00 KiB
+  step 160: free=98.88 KiB largest_free=32.00 KiB
+  step 161: free=102.81 KiB largest_free=32.00 KiB
+  step 162: free=86.88 KiB largest_free=32.00 KiB
+  step 163: free=71.38 KiB largest_free=32.00 KiB
+  step 164: free=74.88 KiB largest_free=32.00 KiB
+  step 165: free=75.31 KiB largest_free=32.00 KiB
+  step 166: free=59.38 KiB largest_free=32.00 KiB
+  step 167: free=71.38 KiB largest_free=32.00 KiB
+  step 168: free=71.38 KiB largest_free=32.00 KiB
+  step 169: free=70.94 KiB largest_free=32.00 KiB
+  step 170: free=70.94 KiB largest_free=32.00 KiB
+  step 171: free=86.88 KiB largest_free=32.00 KiB
+  step 172: free=83.38 KiB largest_free=32.00 KiB
+  step 173: free=67.44 KiB largest_free=32.00 KiB
+  step 174: free=67.44 KiB largest_free=32.00 KiB
+  step 175: free=70.94 KiB largest_free=32.00 KiB
+  step 176: free=70.94 KiB largest_free=32.00 KiB
+  step 177: free=67.44 KiB largest_free=32.00 KiB
+  step 178: free=83.38 KiB largest_free=32.00 KiB
+  step 179: free=79.44 KiB largest_free=32.00 KiB
+  step 180: free=83.38 KiB largest_free=32.00 KiB
+  step 181: free=95.38 KiB largest_free=32.00 KiB
+  step 182: free=110.88 KiB largest_free=32.00 KiB
+  step 183: free=107.38 KiB largest_free=32.00 KiB
+  step 184: free=111.31 KiB largest_free=32.00 KiB
+  step 185: free=115.25 KiB largest_free=32.00 KiB
+  step 186: free=114.81 KiB largest_free=32.00 KiB
+  step 187: free=114.81 KiB largest_free=32.00 KiB
+  step 188: free=110.88 KiB largest_free=32.00 KiB
+  step 189: free=114.38 KiB largest_free=32.00 KiB
+  step 190: free=110.88 KiB largest_free=32.00 KiB
+  step 191: free=110.88 KiB largest_free=32.00 KiB
+  step 192: free=110.88 KiB largest_free=32.00 KiB
+  step 193: free=106.94 KiB largest_free=32.00 KiB
+  step 194: free=103.44 KiB largest_free=32.00 KiB
+  step 195: free=106.94 KiB largest_free=32.00 KiB
+  step 196: free=110.44 KiB largest_free=32.00 KiB
+  step 197: free=94.94 KiB largest_free=32.00 KiB
+  step 198: free=98.88 KiB largest_free=32.00 KiB
+  step 199: free=98.88 KiB largest_free=32.00 KiB
+  step 200: free=94.94 KiB largest_free=32.00 KiB
+  step 201: free=82.94 KiB largest_free=32.00 KiB
+  step 202: free=82.94 KiB largest_free=32.00 KiB
+  step 203: free=83.38 KiB largest_free=32.00 KiB
+  step 204: free=67.88 KiB largest_free=32.00 KiB
+  step 205: free=83.81 KiB largest_free=32.00 KiB
+  step 206: free=67.88 KiB largest_free=32.00 KiB
+  step 207: free=55.88 KiB largest_free=32.00 KiB
+  step 208: free=59.38 KiB largest_free=32.00 KiB
+  step 209: free=75.31 KiB largest_free=32.00 KiB
+  step 210: free=75.31 KiB largest_free=32.00 KiB
+  step 211: free=71.38 KiB largest_free=32.00 KiB
+  step 212: free=87.31 KiB largest_free=32.00 KiB
+  step 213: free=83.38 KiB largest_free=32.00 KiB
+  step 214: free=95.38 KiB largest_free=64.00 KiB
+  step 215: free=111.31 KiB largest_free=64.00 KiB
+  step 216: free=95.81 KiB largest_free=64.00 KiB
+  step 217: free=95.81 KiB largest_free=64.00 KiB
+  step 218: free=83.81 KiB largest_free=64.00 KiB
+  step 219: free=83.81 KiB largest_free=64.00 KiB
+  step 220: free=79.88 KiB largest_free=64.00 KiB
+  step 221: free=79.88 KiB largest_free=64.00 KiB
+  step 222: free=83.38 KiB largest_free=64.00 KiB
+  step 223: free=67.44 KiB largest_free=32.00 KiB
+  step 224: free=82.94 KiB largest_free=32.00 KiB
+  step 225: free=82.50 KiB largest_free=32.00 KiB
+  step 226: free=98.44 KiB largest_free=32.00 KiB
+  step 227: free=101.94 KiB largest_free=32.00 KiB
+  step 228: free=105.88 KiB largest_free=32.00 KiB
+  step 229: free=109.81 KiB largest_free=32.00 KiB
+  step 230: free=109.81 KiB largest_free=32.00 KiB
+  step 231: free=109.81 KiB largest_free=64.00 KiB
+  step 232: free=94.31 KiB largest_free=64.00 KiB
+  step 233: free=78.81 KiB largest_free=64.00 KiB
+  step 234: free=62.88 KiB largest_free=32.00 KiB
+  step 235: free=47.38 KiB largest_free=32.00 KiB
+  step 236: free=46.94 KiB largest_free=32.00 KiB
+  step 237: free=46.50 KiB largest_free=32.00 KiB
+  step 238: free=43.00 KiB largest_free=32.00 KiB
+  step 239: free=43.00 KiB largest_free=16.00 KiB
+  step 240: free=58.50 KiB largest_free=16.00 KiB
+  step 241: free=70.50 KiB largest_free=32.00 KiB
+  step 242: free=70.50 KiB largest_free=32.00 KiB
+  step 243: free=86.44 KiB largest_free=32.00 KiB
+  step 244: free=82.94 KiB largest_free=32.00 KiB
+  step 245: free=82.94 KiB largest_free=32.00 KiB
+  step 246: free=86.88 KiB largest_free=32.00 KiB
+  step 247: free=102.81 KiB largest_free=64.00 KiB
+  step 248: free=103.25 KiB largest_free=64.00 KiB
+  step 249: free=103.25 KiB largest_free=64.00 KiB
+  step 250: free=118.75 KiB largest_free=64.00 KiB
+  step 251: free=118.75 KiB largest_free=64.00 KiB
+  step 252: free=106.75 KiB largest_free=64.00 KiB
+  step 253: free=107.19 KiB largest_free=64.00 KiB
+  step 254: free=107.19 KiB largest_free=64.00 KiB
+  step 255: free=103.25 KiB largest_free=64.00 KiB
+  step 256: free=99.31 KiB largest_free=64.00 KiB
+  step 257: free=102.81 KiB largest_free=64.00 KiB
+  step 258: free=87.31 KiB largest_free=64.00 KiB
+  step 259: free=83.38 KiB largest_free=64.00 KiB
+  step 260: free=99.31 KiB largest_free=64.00 KiB
+  step 261: free=98.88 KiB largest_free=64.00 KiB
+  step 262: free=98.88 KiB largest_free=64.00 KiB
+  step 263: free=102.81 KiB largest_free=64.00 KiB
+  step 264: free=102.81 KiB largest_free=64.00 KiB
+  step 265: free=102.81 KiB largest_free=64.00 KiB
+  step 266: free=102.81 KiB largest_free=64.00 KiB
+  step 267: free=90.81 KiB largest_free=64.00 KiB
+  step 268: free=86.88 KiB largest_free=64.00 KiB
+  step 269: free=83.38 KiB largest_free=64.00 KiB
+  step 270: free=82.94 KiB largest_free=64.00 KiB
+  step 271: free=67.00 KiB largest_free=64.00 KiB
+  step 272: free=55.00 KiB largest_free=32.00 KiB
+  step 273: free=39.50 KiB largest_free=32.00 KiB
+  step 274: free=55.44 KiB largest_free=32.00 KiB
+  step 275: free=55.44 KiB largest_free=32.00 KiB
+  step 276: free=59.38 KiB largest_free=32.00 KiB
+  step 277: free=62.88 KiB largest_free=32.00 KiB
+  step 278: free=63.31 KiB largest_free=32.00 KiB
+  step 279: free=78.81 KiB largest_free=32.00 KiB
+  step 280: free=78.81 KiB largest_free=32.00 KiB
+  step 281: free=78.81 KiB largest_free=32.00 KiB
+  step 282: free=78.38 KiB largest_free=32.00 KiB
+  step 283: free=90.38 KiB largest_free=32.00 KiB
+  step 284: free=89.94 KiB largest_free=32.00 KiB
+  step 285: free=86.44 KiB largest_free=32.00 KiB
+  step 286: free=86.44 KiB largest_free=32.00 KiB
+  step 287: free=86.88 KiB largest_free=32.00 KiB
+  step 288: free=102.81 KiB largest_free=32.00 KiB
+  step 289: free=102.81 KiB largest_free=64.00 KiB
+  step 290: free=103.25 KiB largest_free=64.00 KiB
+  step 291: free=103.25 KiB largest_free=64.00 KiB
+  step 292: free=103.69 KiB largest_free=64.00 KiB
+  step 293: free=107.19 KiB largest_free=64.00 KiB
+  step 294: free=106.75 KiB largest_free=64.00 KiB
+  step 295: free=90.81 KiB largest_free=64.00 KiB
+  step 296: free=90.38 KiB largest_free=64.00 KiB
+  step 297: free=102.38 KiB largest_free=64.00 KiB
+  step 298: free=102.38 KiB largest_free=64.00 KiB
+  step 299: free=90.38 KiB largest_free=64.00 KiB
+window workload (snake, 254.22 KiB usable, window=8) free/largest_free over 300 steps:
+  step   0: free=250.22 KiB largest_free=250.22 KiB
+  step   1: free=234.22 KiB largest_free=234.22 KiB
+  step   2: free=234.16 KiB largest_free=234.16 KiB
+  step   3: free=230.16 KiB largest_free=230.16 KiB
+  step   4: free=226.16 KiB largest_free=226.16 KiB
+  step   5: free=210.16 KiB largest_free=210.16 KiB
+  step   6: free=210.09 KiB largest_free=210.09 KiB
+  step   7: free=210.03 KiB largest_free=210.03 KiB
+  step   8: free=210.03 KiB largest_free=210.03 KiB
+  step   9: free=225.53 KiB largest_free=225.53 KiB
+  step  10: free=221.59 KiB largest_free=221.59 KiB
+  step  11: free=221.59 KiB largest_free=221.59 KiB
+  step  12: free=221.59 KiB largest_free=221.59 KiB
+  step  13: free=233.59 KiB largest_free=233.59 KiB
+  step  14: free=217.66 KiB largest_free=217.66 KiB
+  step  15: free=217.66 KiB largest_free=217.66 KiB
+  step  16: free=205.66 KiB largest_free=205.66 KiB
+  step  17: free=190.16 KiB largest_free=190.16 KiB
+  step  18: free=178.16 KiB largest_free=178.16 KiB
+  step  19: free=178.16 KiB largest_free=178.16 KiB
+  step  20: free=181.66 KiB largest_free=181.66 KiB
+  step  21: free=185.59 KiB largest_free=185.59 KiB
+  step  22: free=201.09 KiB largest_free=201.09 KiB
+  step  23: free=185.16 KiB largest_free=185.16 KiB
+  step  24: free=185.16 KiB largest_free=185.16 KiB
+  step  25: free=200.66 KiB largest_free=200.66 KiB
+  step  26: free=216.16 KiB largest_free=216.16 KiB
+  step  27: free=219.66 KiB largest_free=219.66 KiB
+  step  28: free=204.16 KiB largest_free=204.16 KiB
+  step  29: free=188.22 KiB largest_free=188.22 KiB
+  step  30: free=188.66 KiB largest_free=188.66 KiB
+  step  31: free=204.59 KiB largest_free=204.59 KiB
+  step  32: free=204.59 KiB largest_free=204.59 KiB
+  step  33: free=204.59 KiB largest_free=204.59 KiB
+  step  34: free=204.59 KiB largest_free=204.59 KiB
+  step  35: free=205.03 KiB largest_free=205.03 KiB
+  step  36: free=205.03 KiB largest_free=205.03 KiB
+  step  37: free=220.97 KiB largest_free=220.97 KiB
+  step  38: free=220.97 KiB largest_free=220.97 KiB
+  step  39: free=217.03 KiB largest_free=217.03 KiB
+  step  40: free=229.03 KiB largest_free=229.03 KiB
+  step  41: free=225.53 KiB largest_free=225.53 KiB
+  step  42: free=225.53 KiB largest_free=225.53 KiB
+  step  43: free=200.50 KiB largest_free=200.50 KiB
+  step  44: free=200.50 KiB largest_free=200.50 KiB
+  step  45: free=184.56 KiB largest_free=184.56 KiB
+  step  46: free=168.62 KiB largest_free=168.62 KiB
+  step  47: free=168.62 KiB largest_free=168.62 KiB
+  step  48: free=172.12 KiB largest_free=172.12 KiB
+  step  49: free=175.62 KiB largest_free=175.62 KiB
+  step  50: free=181.22 KiB largest_free=181.22 KiB
+  step  51: free=196.72 KiB largest_free=196.72 KiB
+  step  52: free=208.72 KiB largest_free=208.72 KiB
+  step  53: free=208.72 KiB largest_free=208.72 KiB
+  step  54: free=220.72 KiB largest_free=220.72 KiB
+  step  55: free=208.72 KiB largest_free=208.72 KiB
+  step  56: free=193.22 KiB largest_free=193.22 KiB
+  step  57: free=193.66 KiB largest_free=193.66 KiB
+  step  58: free=193.66 KiB largest_free=193.66 KiB
+  step  59: free=194.09 KiB largest_free=194.09 KiB
+  step  60: free=194.09 KiB largest_free=194.09 KiB
+  step  61: free=206.09 KiB largest_free=206.09 KiB
+  step  62: free=210.03 KiB largest_free=210.03 KiB
+  step  63: free=225.97 KiB largest_free=225.97 KiB
+  step  64: free=237.97 KiB largest_free=237.97 KiB
+  step  65: free=237.53 KiB largest_free=237.53 KiB
+  step  66: free=225.53 KiB largest_free=225.53 KiB
+  step  67: free=225.53 KiB largest_free=225.53 KiB
+  step  68: free=213.53 KiB largest_free=213.53 KiB
+  step  69: free=217.03 KiB largest_free=217.03 KiB
+  step  70: free=216.59 KiB largest_free=216.59 KiB
+  step  71: free=216.16 KiB largest_free=216.16 KiB
+  step  72: free=220.09 KiB largest_free=220.09 KiB
+  step  73: free=220.09 KiB largest_free=220.09 KiB
+  step  74: free=236.03 KiB largest_free=236.03 KiB
+  step  75: free=235.59 KiB largest_free=235.59 KiB
+  step  76: free=235.59 KiB largest_free=235.59 KiB
+  step  77: free=220.09 KiB largest_free=220.09 KiB
+  step  78: free=216.59 KiB largest_free=216.59 KiB
+  step  79: free=201.09 KiB largest_free=201.09 KiB
+  step  80: free=197.16 KiB largest_free=197.16 KiB
+  step  81: free=181.66 KiB largest_free=181.66 KiB
+  step  82: free=181.66 KiB largest_free=181.66 KiB
+  step  83: free=164.94 KiB largest_free=164.94 KiB
+  step  84: free=176.94 KiB largest_free=176.94 KiB
+  step  85: free=188.94 KiB largest_free=188.94 KiB
+  step  86: free=192.44 KiB largest_free=192.44 KiB
+  step  87: free=208.38 KiB largest_free=208.38 KiB
+  step  88: free=196.38 KiB largest_free=196.38 KiB
+  step  89: free=211.88 KiB largest_free=211.88 KiB
+  step  90: free=197.16 KiB largest_free=197.16 KiB
+  step  91: free=197.16 KiB largest_free=197.16 KiB
+  step  92: free=200.66 KiB largest_free=200.66 KiB
+  step  93: free=204.16 KiB largest_free=204.16 KiB
+  step  94: free=204.16 KiB largest_free=204.16 KiB
+  step  95: free=203.72 KiB largest_free=203.72 KiB
+  step  96: free=219.22 KiB largest_free=219.22 KiB
+  step  97: free=203.72 KiB largest_free=203.72 KiB
+  step  98: free=219.22 KiB largest_free=219.22 KiB
+  step  99: free=235.16 KiB largest_free=235.16 KiB
+  step 100: free=231.66 KiB largest_free=231.66 KiB
+  step 101: free=231.66 KiB largest_free=231.66 KiB
+  step 102: free=231.66 KiB largest_free=231.66 KiB
+  step 103: free=216.16 KiB largest_free=216.16 KiB
+  step 104: free=216.16 KiB largest_free=216.16 KiB
+  step 105: free=231.66 KiB largest_free=231.66 KiB
+  step 106: free=231.66 KiB largest_free=231.66 KiB
+  step 107: free=215.72 KiB largest_free=215.72 KiB
+  step 108: free=219.22 KiB largest_free=219.22 KiB
+  step 109: free=215.72 KiB largest_free=215.72 KiB
+  step 110: free=200.22 KiB largest_free=200.22 KiB
+  step 111: free=212.22 KiB largest_free=212.22 KiB
+  step 112: free=196.72 KiB largest_free=196.72 KiB
+  step 113: free=196.72 KiB largest_free=196.72 KiB
+  step 114: free=193.22 KiB largest_free=193.22 KiB
+  step 115: free=193.22 KiB largest_free=193.22 KiB
+  step 116: free=193.66 KiB largest_free=193.66 KiB
+  step 117: free=197.16 KiB largest_free=197.16 KiB
+  step 118: free=197.16 KiB largest_free=197.16 KiB
+  step 119: free=201.09 KiB largest_free=201.09 KiB
+  step 120: free=201.09 KiB largest_free=201.09 KiB
+  step 121: free=201.53 KiB largest_free=201.53 KiB
+  step 122: free=205.03 KiB largest_free=205.03 KiB
+  step 123: free=217.03 KiB largest_free=217.03 KiB
+  step 124: free=217.03 KiB largest_free=217.03 KiB
+  step 125: free=201.53 KiB largest_free=201.53 KiB
+  step 126: free=217.03 KiB largest_free=217.03 KiB
+  step 127: free=217.03 KiB largest_free=217.03 KiB
+  step 128: free=208.25 KiB largest_free=208.25 KiB
+  step 129: free=192.31 KiB largest_free=192.31 KiB
+  step 130: free=176.81 KiB largest_free=176.81 KiB
+  step 131: free=180.75 KiB largest_free=180.75 KiB
+  step 132: free=180.75 KiB largest_free=180.75 KiB
+  step 133: free=196.69 KiB largest_free=196.69 KiB
+  step 134: free=193.19 KiB largest_free=193.19 KiB
+  step 135: free=201.97 KiB largest_free=201.97 KiB
+  step 136: free=217.91 KiB largest_free=217.91 KiB
+  step 137: free=233.84 KiB largest_free=233.84 KiB
+  step 138: free=245.84 KiB largest_free=245.84 KiB
+  step 139: free=245.84 KiB largest_free=245.84 KiB
+  step 140: free=229.91 KiB largest_free=229.91 KiB
+  step 141: free=229.91 KiB largest_free=229.91 KiB
+  step 142: free=217.91 KiB largest_free=217.91 KiB
+  step 143: free=201.97 KiB largest_free=201.97 KiB
+  step 144: free=186.03 KiB largest_free=186.03 KiB
+  step 145: free=182.09 KiB largest_free=182.09 KiB
+  step 146: free=182.09 KiB largest_free=182.09 KiB
+  step 147: free=178.16 KiB largest_free=178.16 KiB
+  step 148: free=194.09 KiB largest_free=194.09 KiB
+  step 149: free=178.16 KiB largest_free=178.16 KiB
+  step 150: free=190.16 KiB largest_free=190.16 KiB
+  step 151: free=202.16 KiB largest_free=202.16 KiB
+  step 152: free=218.09 KiB largest_free=218.09 KiB
+  step 153: free=218.09 KiB largest_free=218.09 KiB
+  step 154: free=222.03 KiB largest_free=222.03 KiB
+  step 155: free=225.53 KiB largest_free=225.53 KiB
+  step 156: free=221.59 KiB largest_free=221.59 KiB
+  step 157: free=237.09 KiB largest_free=237.09 KiB
+  step 158: free=241.03 KiB largest_free=241.03 KiB
+  step 159: free=229.03 KiB largest_free=229.03 KiB
+  step 160: free=225.09 KiB largest_free=225.09 KiB
+  step 161: free=229.03 KiB largest_free=229.03 KiB
+  step 162: free=213.09 KiB largest_free=213.09 KiB
+  step 163: free=197.59 KiB largest_free=197.59 KiB
+  step 164: free=201.09 KiB largest_free=201.09 KiB
+  step 165: free=201.53 KiB largest_free=201.53 KiB
+  step 166: free=185.59 KiB largest_free=185.59 KiB
+  step 167: free=197.59 KiB largest_free=197.59 KiB
+  step 168: free=197.59 KiB largest_free=197.59 KiB
+  step 169: free=197.16 KiB largest_free=197.16 KiB
+  step 170: free=185.81 KiB largest_free=185.81 KiB
+  step 171: free=201.75 KiB largest_free=201.75 KiB
+  step 172: free=198.25 KiB largest_free=198.25 KiB
+  step 173: free=182.31 KiB largest_free=182.31 KiB
+  step 174: free=182.31 KiB largest_free=182.31 KiB
+  step 175: free=185.81 KiB largest_free=185.81 KiB
+  step 176: free=185.81 KiB largest_free=185.81 KiB
+  step 177: free=193.66 KiB largest_free=193.66 KiB
+  step 178: free=209.59 KiB largest_free=209.59 KiB
+  step 179: free=205.66 KiB largest_free=205.66 KiB
+  step 180: free=209.59 KiB largest_free=209.59 KiB
+  step 181: free=221.59 KiB largest_free=221.59 KiB
+  step 182: free=237.09 KiB largest_free=237.09 KiB
+  step 183: free=233.59 KiB largest_free=233.59 KiB
+  step 184: free=237.53 KiB largest_free=237.53 KiB
+  step 185: free=241.47 KiB largest_free=241.47 KiB
+  step 186: free=241.03 KiB largest_free=241.03 KiB
+  step 187: free=241.03 KiB largest_free=241.03 KiB
+  step 188: free=237.09 KiB largest_free=237.09 KiB
+  step 189: free=240.59 KiB largest_free=240.59 KiB
+  step 190: free=237.09 KiB largest_free=237.09 KiB
+  step 191: free=237.09 KiB largest_free=237.09 KiB
+  step 192: free=237.09 KiB largest_free=237.09 KiB
+  step 193: free=233.16 KiB largest_free=233.16 KiB
+  step 194: free=229.66 KiB largest_free=229.66 KiB
+  step 195: free=233.16 KiB largest_free=233.16 KiB
+  step 196: free=236.66 KiB largest_free=236.66 KiB
+  step 197: free=221.16 KiB largest_free=221.16 KiB
+  step 198: free=225.09 KiB largest_free=225.09 KiB
+  step 199: free=225.09 KiB largest_free=225.09 KiB
+  step 200: free=221.16 KiB largest_free=221.16 KiB
+  step 201: free=209.16 KiB largest_free=209.16 KiB
+  step 202: free=209.16 KiB largest_free=209.16 KiB
+  step 203: free=209.59 KiB largest_free=209.59 KiB
+  step 204: free=194.09 KiB largest_free=194.09 KiB
+  step 205: free=210.03 KiB largest_free=210.03 KiB
+  step 206: free=194.09 KiB largest_free=194.09 KiB
+  step 207: free=182.09 KiB largest_free=182.09 KiB
+  step 208: free=185.59 KiB largest_free=185.59 KiB
+  step 209: free=201.53 KiB largest_free=201.53 KiB
+  step 210: free=201.53 KiB largest_free=201.53 KiB
+  step 211: free=197.59 KiB largest_free=197.59 KiB
+  step 212: free=213.53 KiB largest_free=213.53 KiB
+  step 213: free=209.59 KiB largest_free=209.59 KiB
+  step 214: free=221.59 KiB largest_free=221.59 KiB
+  step 215: free=237.53 KiB largest_free=237.53 KiB
+  step 216: free=222.03 KiB largest_free=222.03 KiB
+  step 217: free=222.03 KiB largest_free=222.03 KiB
+  step 218: free=210.03 KiB largest_free=210.03 KiB
+  step 219: free=210.03 KiB largest_free=210.03 KiB
+  step 220: free=206.09 KiB largest_free=206.09 KiB
+  step 221: free=206.09 KiB largest_free=206.09 KiB
+  step 222: free=209.59 KiB largest_free=209.59 KiB
+  step 223: free=192.25 KiB largest_free=192.25 KiB
+  step 224: free=207.75 KiB largest_free=207.75 KiB
+  step 225: free=207.31 KiB largest_free=207.31 KiB
+  step 226: free=223.25 KiB largest_free=223.25 KiB
+  step 227: free=226.75 KiB largest_free=226.75 KiB
+  step 228: free=230.69 KiB largest_free=230.69 KiB
+  step 229: free=234.62 KiB largest_free=234.62 KiB
+  step 230: free=236.03 KiB largest_free=236.03 KiB
+  step 231: free=236.03 KiB largest_free=236.03 KiB
+  step 232: free=220.53 KiB largest_free=220.53 KiB
+  step 233: free=205.03 KiB largest_free=205.03 KiB
+  step 234: free=189.09 KiB largest_free=189.09 KiB
+  step 235: free=173.59 KiB largest_free=173.59 KiB
+  step 236: free=173.16 KiB largest_free=173.16 KiB
+  step 237: free=172.72 KiB largest_free=172.72 KiB
+  step 238: free=169.22 KiB largest_free=169.22 KiB
+  step 239: free=169.22 KiB largest_free=169.22 KiB
+  step 240: free=184.72 KiB largest_free=184.72 KiB
+  step 241: free=196.72 KiB largest_free=196.72 KiB
+  step 242: free=196.72 KiB largest_free=196.72 KiB
+  step 243: free=212.66 KiB largest_free=212.66 KiB
+  step 244: free=209.16 KiB largest_free=209.16 KiB
+  step 245: free=209.16 KiB largest_free=209.16 KiB
+  step 246: free=213.09 KiB largest_free=213.09 KiB
+  step 247: free=229.03 KiB largest_free=229.03 KiB
+  step 248: free=229.47 KiB largest_free=229.47 KiB
+  step 249: free=229.47 KiB largest_free=229.47 KiB
+  step 250: free=244.97 KiB largest_free=244.97 KiB
+  step 251: free=244.97 KiB largest_free=244.97 KiB
+  step 252: free=232.97 KiB largest_free=232.97 KiB
+  step 253: free=233.41 KiB largest_free=233.41 KiB
+  step 254: free=233.41 KiB largest_free=233.41 KiB
+  step 255: free=229.47 KiB largest_free=229.47 KiB
+  step 256: free=225.53 KiB largest_free=225.53 KiB
+  step 257: free=229.03 KiB largest_free=229.03 KiB
+  step 258: free=213.53 KiB largest_free=213.53 KiB
+  step 259: free=209.59 KiB largest_free=209.59 KiB
+  step 260: free=225.53 KiB largest_free=225.53 KiB
+  step 261: free=225.09 KiB largest_free=225.09 KiB
+  step 262: free=225.09 KiB largest_free=225.09 KiB
+  step 263: free=229.03 KiB largest_free=229.03 KiB
+  step 264: free=229.03 KiB largest_free=229.03 KiB
+  step 265: free=229.03 KiB largest_free=229.03 KiB
+  step 266: free=229.03 KiB largest_free=229.03 KiB
+  step 267: free=217.03 KiB largest_free=217.03 KiB
+  step 268: free=213.09 KiB largest_free=213.09 KiB
+  step 269: free=209.59 KiB largest_free=209.59 KiB
+  step 270: free=209.16 KiB largest_free=209.16 KiB
+  step 271: free=178.31 KiB largest_free=178.31 KiB
+  step 272: free=166.31 KiB largest_free=166.31 KiB
+  step 273: free=150.81 KiB largest_free=150.81 KiB
+  step 274: free=166.75 KiB largest_free=166.75 KiB
+  step 275: free=166.75 KiB largest_free=166.75 KiB
+  step 276: free=170.69 KiB largest_free=170.69 KiB
+  step 277: free=174.19 KiB largest_free=174.19 KiB
+  step 278: free=189.53 KiB largest_free=189.53 KiB
+  step 279: free=205.03 KiB largest_free=205.03 KiB
+  step 280: free=205.03 KiB largest_free=205.03 KiB
+  step 281: free=205.03 KiB largest_free=205.03 KiB
+  step 282: free=204.59 KiB largest_free=204.59 KiB
+  step 283: free=216.59 KiB largest_free=216.59 KiB
+  step 284: free=216.16 KiB largest_free=216.16 KiB
+  step 285: free=212.66 KiB largest_free=212.66 KiB
+  step 286: free=212.66 KiB largest_free=212.66 KiB
+  step 287: free=213.09 KiB largest_free=213.09 KiB
+  step 288: free=229.03 KiB largest_free=229.03 KiB
+  step 289: free=229.03 KiB largest_free=229.03 KiB
+  step 290: free=229.47 KiB largest_free=229.47 KiB
+  step 291: free=229.47 KiB largest_free=229.47 KiB
+  step 292: free=229.91 KiB largest_free=229.91 KiB
+  step 293: free=233.41 KiB largest_free=233.41 KiB
+  step 294: free=232.97 KiB largest_free=232.97 KiB
+  step 295: free=217.03 KiB largest_free=217.03 KiB
+  step 296: free=216.59 KiB largest_free=216.59 KiB
+  step 297: free=228.59 KiB largest_free=228.59 KiB
+  step 298: free=228.59 KiB largest_free=228.59 KiB
+  step 299: free=216.59 KiB largest_free=216.59 KiB
+
+heap (before control): used=0 B free=256.00 KiB largest_free=256.00 KiB
+  free chunks tile legend:
+    [48;5;220m  [0m order 18 = 256.00 KiB (1)
+  tile map (~256 bytes/tile; '@'=fully allocated, '.'/'-'=empty, digit=N suborders):
+    [90m0x0100001180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00000000[0m
+    [90m0x0100005180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00004000[0m
+    [90m0x0100009180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00008000[0m
+    [90m0x010000d180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x0000c000[0m
+    [90m0x0100011180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00010000[0m
+    [90m0x0100015180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00014000[0m
+    [90m0x0100019180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00018000[0m
+    [90m0x010001d180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x0001c000[0m
+    [90m0x0100021180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00020000[0m
+    [90m0x0100025180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00024000[0m
+    [90m0x0100029180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00028000[0m
+    [90m0x010002d180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x0002c000[0m
+    [90m0x0100031180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00030000[0m
+    [90m0x0100035180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00034000[0m
+    [90m0x0100039180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x00038000[0m
+    [90m0x010003d180[0m  [48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m[48;5;220m.[0m  [90m0x0003c000[0m
+control (in heap):   used=0 B highest_used=44.00 KiB
+heap (fragmented):   used=128.00 KiB free=128.00 KiB largest_free=2.00 KiB
+  free chunks tile legend:
+    [48;5;45m  [0m order 11 = 2.00 KiB (64)
+  tile map (~256 bytes/tile; '@'=fully allocated, '.'/'-'=empty, digit=N suborders):
+    [90m0x0100001180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00000000[0m
+    [90m0x0100005180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00004000[0m
+    [90m0x0100009180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00008000[0m
+    [90m0x010000d180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x0000c000[0m
+    [90m0x0100011180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00010000[0m
+    [90m0x0100015180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00014000[0m
+    [90m0x0100019180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00018000[0m
+    [90m0x010001d180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x0001c000[0m
+    [90m0x0100021180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00020000[0m
+    [90m0x0100025180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00024000[0m
+    [90m0x0100029180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00028000[0m
+    [90m0x010002d180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x0002c000[0m
+    [90m0x0100031180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00030000[0m
+    [90m0x0100035180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00034000[0m
+    [90m0x0100039180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x00038000[0m
+    [90m0x010003d180[0m  @@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m@@@@@@@@[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m[48;5;45m.[0m@@@@@@@@[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m[48;5;45m-[0m  [90m0x0003c000[0m
+
+carving a 44.00 KiB temp arena from the fragmented heap (bytes_free=128.00 KiB >= this, but largest_free=2.00 KiB < this)...
+libc++abi: terminating due to uncaught exception of type std::bad_alloc: std::bad_alloc
+
+	**** PANIC ****
+CPU: 0, Reason: TKILL called
+Heap is at: 0x156f000 / 0x8fff3fff  (diff=2393395199)
+Heap area: 5564 / 2342863 Kb (allocated 13940 kb)
+Total memory use: ~35% (835162112 of 2415869952 b)
+*** Found 0 plugin constructors:
+
+*** Backtrace:
+symtab or strtab is empty, indicating image may be stripped
+[0] 0x000000000021ef73 + 0x000: 0x21ef73
+[1] 0x0000000000204420 + 0x000: 0x204420
+[2] 0x00000000002b6ffd + 0x000: 0x2b6ffd
+[33;1m[ WARNING ] Process interrupted by signal 15 - stopping vms[0m
+
+[31;1m[ ABORT ] Process terminated by user[0m
+

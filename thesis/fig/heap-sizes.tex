@@ -1,0 +1,59 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=1cm, y=1cm, every node/.style={font=\scriptsize}]
+  \tikzset{
+    low/.style={fill=gray!35},
+    heap/.style={fill=orange!30},
+    sec/.style={fill=orange!12},
+    unused/.style={pattern=north east lines, pattern color=gray!55},
+    hole/.style={fill=white, draw=gray, dashed},
+    size/.style={anchor=east, font=\footnotesize},
+  }
+  \def\W{11}
+  % one bar per guest size, scaled to the same width:
+  % low 16 MiB (page tables, stack, ELF) | primary heap | LiveUpdate + system log | PCI range | secondary heap
+  % \bar{y}{label}{low}{heap}{unused}{hole}{secondary}{heap text}{secondary text}
+  \newcommand{\membar}[9]{%
+    \pgfmathsetmacro{\a}{\W*#3}\pgfmathsetmacro{\b}{\a+\W*#4}%
+    \pgfmathsetmacro{\c}{\b+\W*#5}\pgfmathsetmacro{\d}{\c+\W*#6}%
+    \pgfmathsetmacro{\e}{\d+\W*#7}%
+    \node[size] at (-0.15,#1+0.2) {#2};
+    \draw[low]    (0,#1)  rectangle (\a,#1+0.4);
+    \draw[heap]   (\a,#1) rectangle (\b,#1+0.4);
+    \draw[unused] (\b,#1) rectangle (\c,#1+0.4);
+    \ifdim #6pt>0pt \draw[hole] (\c,#1) rectangle (\d,#1+0.4); \fi
+    \ifdim #7pt>0pt \draw[sec]  (\d,#1) rectangle (\e,#1+0.4); \fi
+    \node at ({(\a+\b)/2},#1+0.2) {#8};
+    \ifdim #7pt>0pt \node at ({(\d+\e)/2},#1+0.2) {#9}; \fi
+  }
+  \membar{4.0}{32\,MiB}{0.5}{0.2515}{0.2485}{0}{0}{8\,MiB}{}
+  \membar{3.2}{512\,MiB}{0.0313}{0.7188}{0.2499}{0}{0}{368\,MiB}{}
+  \membar{2.4}{1\,GiB}{0.0156}{0.7344}{0.2500}{0}{0}{752\,MiB}{}
+  \membar{1.6}{4\,GiB}{0.0031}{0.4469}{0.1500}{0.2}{0.2}{2.23\,GiB}{1\,GiB}
+  \membar{0.8}{16\,GiB}{0.0009}{0.1314}{0.0441}{0.0588}{0.7647}{2.23\,GiB}{13\,GiB}
+
+  % legend: each box and label placed after the previous label
+  \begin{scope}[yshift=-0.1cm, key/.style={draw, minimum width=0.35cm, minimum height=0.25cm, inner sep=0pt}]
+    \node[key, low, anchor=west] (k1) at (0,0.125) {};
+    \node[right=0.05cm of k1] (t1) {kernel and stack};
+    \node[key, heap, right=0.18cm of t1] (k2) {};
+    \node[right=0.05cm of k2] (t2) {primary heap};
+    \node[key, unused, right=0.18cm of t2] (k3) {};
+    \node[right=0.05cm of k3] (t3) {LiveUpdate};
+    \node[key, hole, right=0.18cm of t3] (k4) {};
+    \node[right=0.05cm of k4] (t4) {PCI range};
+    \node[key, sec, right=0.18cm of t4] (k5) {};
+    \node[right=0.05cm of k5] (t5) {secondary heap};
+  \end{scope}
+\end{tikzpicture}
+\caption{Where IncludeOS puts its memory at five guest sizes, each bar
+         scaled to the same width, from address 0 to the top of the
+         guest's memory. The primary heap starts at 16\,MiB and ends where
+         the LiveUpdate area and the system log take the last quarter of
+         the memory below 4\,GiB (\fullref{sec:includeos-memory-model}),
+         and the secondary heap
+         only exists once some of the guest's memory sits above the
+         4\,GiB address, which QEMU already does for the 4\,GiB guest. Taken from the boot logs of
+         each guest.}
+\label{fig:heap-sizes}
+\end{figure}

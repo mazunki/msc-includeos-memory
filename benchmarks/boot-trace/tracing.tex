@@ -1,0 +1,1599 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+% \geometry{margin=2.5cm}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\setlist{nosep}
+
+\title{IncludeOS Kernel Startup Sequence\\(x86\_64, Multiboot, up to APIC Timer Calibration)}
+\author{Mazunki Hoksaas}
+\date{December 4, 2025}
+
+\begin{document}
+\maketitle
+
+\section{Scope and Intent}
+
+This document reconstructs the IncludeOS kernel startup sequence on
+the 64-bit x86 architecture (x86\_64) for a Multiboot boot scenario,
+based on:
+
+\begin{itemize}
+  \item a GDB (GNU Debugger) trace with breakpoints across early kernel
+        code, and
+  \item the serial boot log printed by the kernel during boot.
+\end{itemize}
+
+IncludeOS also has early support and stub code for other architectures
+(e.g.\ AArch64), but the trace and log I am working from exercise only
+the \texttt{x86\_pc} platform with the x86\_64 architecture. Everything
+here should therefore be read as describing \emph{the x86\_64 Multiboot
+configuration specifically}. Where relevant, I point out that other
+architectures have different entry stubs and platform glue.
+
+The goal is not just to list which functions run in which order, but to
+explain \emph{why} the IncludeOS kernel is structured this way, and what
+each phase guarantees for later layers such as the C standard library
+(\texttt{libc}) and the C++ standard library (\texttt{libc++}). This is
+intended both as IncludeOS documentation and as material for my master
+thesis, so I explicitly discuss design choices and ordering, not only
+mechanics.
+
+Where the exact behaviour is unclear from logs and a brief reading of
+the code at commit
+\texttt{62337fceb8f2aa72acd90de07ef9a3f69ec98197}, I leave small
+\texttt{TODO} notes as anchors for further work.
+
+The current logs end while the kernel is still calibrating the APIC
+(Advanced Programmable Interrupt Controller) timer. The system is
+clearly alive and servicing xAPIC (x86 Advanced Programmable Interrupt
+Controller) interrupts, but has not yet reached a fully booted state (no
+service entry or main event loop is visible in this trace). Later phases
+are therefore intentionally left incomplete until I have extended the
+trace or annotated the corresponding source in more detail.
+
+\section{From Firmware to \texorpdfstring{\texttt{kernel\_start}}{kernel\_start}}
+
+\subsection{Bootloader and Multiboot handoff}
+
+On the \texttt{x86\_pc} platform, the IncludeOS kernel image is loaded by
+a Multiboot-capable loader (either GRUB or the IncludeOS chainloader).
+The loader:
+
+\begin{itemize}
+  \item loads the IncludeOS ELF image into memory,
+  \item optionally loads additional modules (e.g.\ the service binary),
+  \item constructs the Multiboot information structure, and
+  \item jumps into the entry point declared in the Multiboot header.
+\end{itemize}
+
+The Multiboot header for this platform is defined in
+\texttt{src/platform/x86\_pc/start.asm} in a dedicated
+\texttt{.multiboot} section. It contains:
+
+\begin{itemize}
+  \item the Multiboot magic (\texttt{0x1BADB002}),
+  \item flags (requesting memory information and alignment),
+  \item pointers to the ELF load range (\texttt{\_LOAD\_START\_},
+        \texttt{\_LOAD\_END\_}) and the end-of-image symbol
+        (\texttt{\_end}),
+  \item the entry function \texttt{\_start},
+  \item and a secondary entry \texttt{fast\_kernel\_start} used for live
+        updates.
+\end{itemize}
+
+When the loader jumps into the image, the CPU is in 32-bit protected
+mode and the Multiboot convention guarantees:
+
+\begin{itemize}
+  \item \texttt{EAX} contains the Multiboot magic (\texttt{0x2BADB002}),
+  \item \texttt{EBX} contains a pointer to the Multiboot information
+        structure.
+\end{itemize}
+
+My serial log reflects this initial handover, for example:
+
+\begin{verbatim}
+* Multiboot begin: 0x9500
+* Multiboot cmdline @ 0x003c6034: /nix/store/.../chainloader ""
+* Module @ 0x3c7000
+  * Args: ./result/hello_includeos.elf.bin ""
+  * End: 0x17997d0
+* ELF syms header CRC OK
+< multiboot >Booted with multiboot
+\end{verbatim}
+
+At this point, none of the 64-bit kernel code has run yet; execution is
+still in the 32-bit platform-specific entry stub in
+\texttt{start.asm}.
+
+\subsection{32-bit entry stub on \texorpdfstring{\texttt{x86\_pc}}{x86\_pc}}
+
+The 32-bit boot stub for x86 is implemented in
+\texttt{src/platform/x86\_pc/start.asm}. Its responsibilities are:
+
+\begin{enumerate}
+  \item Install a minimal 32-bit Global Descriptor Table (GDT).
+  \item Set up a 32-bit stack in a safe low-memory region.
+  \item Enable floating-point and SIMD support (FPU, SSE, XSAVE, AVX).
+  \item Preserve the Multiboot parameters (\texttt{EAX}, \texttt{EBX}).
+  \item Transfer control to the architecture-specific long-mode setup
+        routine \texttt{\_\_arch\_start}.
+\end{enumerate}
+
+The stub builds a small GDT consisting of:
+
+\begin{itemize}
+  \item a null descriptor,
+  \item a flat 32-bit code segment (selector \texttt{0x08}),
+  \item a flat 32-bit data segment (selector \texttt{0x10}),
+  \item a data segment (selector \texttt{0x18}) later repurposed as
+        \texttt{GS} for local CPU data.
+\end{itemize}
+
+It loads this GDT via \texttt{lgdt [gdtr]} and then reloads all segment
+registers. The stack pointer is set to \texttt{0x9D3F0}, just below the
+EBDA (Extended BIOS Data Area). The comments in \texttt{start.asm}
+explicitly note that Multiboot may use \texttt{0x9D400--0x9FFFF}, so the
+stack is placed directly below that to avoid corrupting Multiboot data.
+
+Before calling into any C or C++ code, the stub enables floating-point
+and SIMD support through CR0/CR4 and checks CPUID flags to optionally
+enable XSAVE and AVX. It also sets global flags like \texttt{\_\_xsave\_enabled}
+and \texttt{\_\_avx\_enabled} based on what the CPU reports.
+
+Finally, it stores the Multiboot parameters into globals:
+
+\begin{verbatim}
+__multiboot_magic = EAX
+__multiboot_addr  = EBX
+\end{verbatim}
+
+and calls the architecture-specific entry \texttt{\_\_arch\_start}. If
+\texttt{\_\_arch\_start} ever returns, the stub prints a panic message
+over the serial port and halts.
+
+\subsection{Transition to 64-bit long mode on x86\_64}
+
+The function \texttt{\_\_arch\_start} is defined in
+\texttt{src/arch/x86\_64/arch\_start.asm}. Its job is to transition from
+32-bit protected mode into 64-bit long mode with a controlled paging and
+segmentation setup, and then call \texttt{kernel\_start} in C++.
+
+The sequence in \texttt{arch\_start.asm} is:
+
+\begin{enumerate}
+  \item Disable any existing paging by clearing the PG bit in CR0.
+  \item Construct a minimal long-mode page-table hierarchy:
+    \begin{itemize}
+      \item a PML4 (Page Map Level 4) at physical address
+            \texttt{0x1000},
+      \item a PDPT (Page Directory Pointer Table) at \texttt{0x2000},
+      \item a range of Page Directories starting at \texttt{0x100000},
+            each filled with 2~MiB ``huge'' pages.
+    \end{itemize}
+    This creates a large identity-mapped region so that virtual and
+    physical addresses match for the early kernel.
+  \item Enable Physical Address Extension (PAE) in CR4 and program the
+        IA32\_EFER (Extended Feature Enable Register) MSR to turn on
+        long mode and no-execute (NX).
+  \item Re-enable paging and supervisor write-protect via CR0.
+  \item Load a 64-bit GDT with code and data descriptors and perform a
+        far jump to the \texttt{long\_mode} label.
+\end{enumerate}
+
+In the \texttt{long\_mode} section, the code:
+
+\begin{itemize}
+  \item disables interrupts (\texttt{cli}),
+  \item reloads all segment registers (\texttt{ds}, \texttt{es},
+        \texttt{fs}, \texttt{gs}, \texttt{ss}) with the 64-bit data
+        segment,
+  \item installs a new 64-bit stack by setting \texttt{RSP} to the
+        linker-provided symbol \texttt{\_ELF\_START\_} (top of the loaded
+        ELF image) and \texttt{RBP} to match,
+  \item programs IA32\_STAR to configure the SYSCALL/SYSRET segment
+        selectors,
+  \item sets IA32\_FS\_BASE to a small \texttt{tls\_table} and
+        IA32\_GS\_BASE to a \texttt{smp\_table} to provide minimal
+        thread-local and per-CPU storage for the kernel itself.
+\end{itemize}
+
+Finally, it loads the saved Multiboot values and calls:
+
+\begin{verbatim}
+kernel_start(__multiboot_magic, __multiboot_addr)
+\end{verbatim}
+
+using the standard System~V AMD64 calling convention (\texttt{EDI},
+\texttt{ESI}).
+
+There is also a secondary entry \texttt{fast\_kernel\_start} in the same
+file, used by the live-update mechanism: it realigns the stack, forwards
+two arguments (\texttt{EAX}, \texttt{EBX}) to \texttt{kernel\_start}, and
+halts once \texttt{kernel\_start} returns.
+
+\subsection{Non-x86 architectures}
+
+IncludeOS has an \texttt{aarch64} port with its own entry stubs in:
+
+\begin{itemize}
+  \item \texttt{src/arch/aarch64/arch\_start.asm},
+  \item \texttt{src/platform/aarch64\_vm/start.asm},
+  \item \texttt{src/platform/aarch64\_vm/start\_aarch64.asm}.
+\end{itemize}
+
+These serve the same high-level purpose: move from the bootloader
+environment into a well-defined 64-bit state and then call
+\texttt{kernel\_start}. The details differ substantially (different
+registers, page-table layout, exception model, etc.), and I have not yet
+walked through them line by line.
+
+\subsection{Why IncludeOS does it this way}
+
+At this commit, x86\_64 is the primary architecture IncludeOS targets.
+The kernel image itself is 64-bit C++, but the Multiboot specification
+uses a 32-bit entry protocol. The architecture-specific assembly is
+therefore kept as small as possible: once it has received
+\texttt{magic} and \texttt{addr} from the loader and entered long mode,
+it immediately hands over control to C++.
+
+Other operating systems such as Linux or the BSD family often keep a lot
+of early hardware setup in assembly: page tables, hardware probing,
+stack management, etc. IncludeOS pushes almost all such logic into C++
+instead. The trade-off is:
+
+\begin{itemize}
+  \item more reliance on a cooperative boot environment (virtualised
+        hardware, Multiboot loader, no legacy 16-bit BIOS calls),
+  \item but much better debuggability and maintainability of early boot
+        logic, because it lives in regular C++.
+\end{itemize}
+
+The ARM/AArch64 path has its own assembly to match the architecture, but
+is structured around the same goal: do the minimal amount of work in
+assembly and defer as much as possible to C++.
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} assumptions at this point}
+
+At entry to \texttt{kernel\_start}, the following are \emph{not} yet true:
+
+\begin{itemize}
+  \item there is no C heap,
+  \item thread-local storage (TLS) for user-space is not configured,
+  \item the final GDT (Global Descriptor Table) and IDT (Interrupt
+        Descriptor Table) are not fully configured,
+  \item no \texttt{libc} or \texttt{libc++} initialisation has run.
+\end{itemize}
+
+The only guarantees are:
+
+\begin{itemize}
+  \item the CPU runs in 64-bit long mode,
+  \item a valid stack exists for CPU~0 (set by \texttt{arch\_start.asm}),
+  \item \texttt{magic} and \texttt{addr} point to sane Multiboot data.
+\end{itemize}
+
+Everything else must be established explicitly in the subsequent phases.
+
+\section{\texorpdfstring{\texttt{kernel\_start}}{kernel\_start}: Multiboot and Early Sanity}
+
+\subsection{High-level flow in \texttt{kernel\_start}}
+
+On \texttt{x86\_pc}, the C++ entry point is implemented in
+\texttt{src/platform/x86\_pc/kernel\_start.cpp}:
+
+\begin{verbatim}
+extern "C"
+__attribute__((no_sanitize("all")))
+void kernel_start(uint32_t magic, uint32_t addr)
+{
+  __init_sanity_checks();
+  uintptr_t free_mem_begin = reinterpret_cast<uintptr_t>(&_end);
+  uintptr_t memory_end     = kernel::memory_end();
+
+  if (magic == MULTIBOOT_BOOTLOADER_MAGIC) {
+    free_mem_begin = _multiboot_free_begin(addr);
+    memory_end     = _multiboot_memory_end(addr);
+  } else if (kernel::is_softreset_magic(magic)) {
+    memory_end = kernel::softreset_memory_end(addr);
+  }
+
+  free_mem_begin += _move_symbols(free_mem_begin);
+  _init_bss();
+  kernel::diag::hook<kernel::diag::post_bss>();
+
+  size_t memsize = memory_end - free_mem_begin;
+  __machine = os::Machine::create((void*)free_mem_begin, memsize);
+
+  _init_elf_parser();
+  __machine->init();
+  kernel::diag::hook<kernel::diag::post_machine_init>();
+
+  RNG::init();
+  __init_crash_contexts();
+  x86::idt_initialize_for_cpu(0);
+
+  x86::init_libc(magic, addr);
+}
+\end{verbatim}
+
+The rest of this section and the next few sections unpack that flow
+step-by-step.
+
+\subsection{Initial sanity and Multiboot inspection}
+
+Inside \texttt{kernel\_start}, the kernel immediately sanity-checks the
+Multiboot environment and records the available physical memory. This is
+partly in \texttt{kernel\_start.cpp} and partly in
+\texttt{src/kernel/multiboot.cpp}.
+
+The sequence visible in the trace and logs is:
+
+\begin{verbatim}
+kernel_start(magic, addr)
+  → __init_sanity_checks()
+  → kernel::memory_end() / _end
+  → _multiboot_free_begin(addr)
+  → _multiboot_memory_end(addr)
+  → bootinfo(addr)
+  → kprintf / serial1: print Multiboot info
+\end{verbatim}
+
+The same Multiboot data is printed twice in my environment: once by the
+chainloader, and once after the kernel has taken over paging and
+reconstructed its own view of the memory map:
+
+\begin{verbatim}
+< multiboot >Booted with multiboot
+  * Boot flags: 0x24f
+  * Valid memory (%i KiB):
+    0x00000000 - 0x0009fbff (639 KiB)
+    0x00100000 - 0x07fdffff (129920 KiB)
+  * Multiboot provided memory map  (7 entries @ 0x9000)
+    0x0        - 0x9fbff    FREE
+    0x9fc00    - 0x9ffff    RESERVED
+    0xf0000    - 0xfffff    RESERVED
+    0x100000   - 0x7fdffff  FREE
+    0x7fe0000  - 0x7ffffff  RESERVED
+    0xfffc0000 - 0xffffffff RESERVED
+    0xfd00000000 - 0xffffffffff RESERVED
+\end{verbatim}
+
+\subsection{Why this comes before everything else}
+
+There are two core reasons to do Multiboot parsing this early:
+
+\begin{enumerate}
+  \item \textbf{Memory safety and correctness.}  
+    Every later decision about heap placement, paging, and device
+    mapping depends on knowing exactly which physical ranges are usable.
+    If this step is wrong or skipped, later code might:
+    \begin{itemize}
+      \item map over firmware memory,
+      \item clobber the Multiboot info itself, or
+      \item overlap modules with the heap.
+    \end{itemize}
+
+  \item \textbf{Debuggability.}  
+    By printing the memory map twice (once from the chainloader and once
+    from the kernel’s own context) it becomes much easier to spot
+    discrepancies caused by relocation, symbol moves, or bugs in early
+    memory calculations.
+\end{enumerate}
+
+In a unikernel context, there is no “initrd versus root filesystem
+versus userland” to fallback on if early memory setup is wrong. The
+service and the kernel share the same address space, and the heap that
+\texttt{libc} uses is also the heap that the kernel uses. That pushes
+correctness pressure into this phase.
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} implications}
+
+\texttt{libc} and \texttt{libc++} are still completely uninitialised at this
+point, but this phase defines the \emph{constraints} under which they
+will later run:
+
+\begin{itemize}
+  \item the maximum amount of RAM that \texttt{brk}/\texttt{mmap} can ever
+        manage,
+  \item the physical regions that can be safely used for page tables and
+        book-keeping,
+  \item the split between “kernel reserved” and “general” memory.
+\end{itemize}
+
+From the perspective of later code, this is the moment where “the total
+RAM in the VM” becomes a concrete \emph{policy} decision about how much
+of that RAM may become heap.
+
+\section{ELF Symbol Relocation and \texorpdfstring{\texttt{.bss}}{.bss} Safety}
+
+\subsection{What happens}
+
+Before any dynamic memory structures are built, the kernel relocates its
+ELF symbols and clears the \texttt{.bss} (BSS: Block Started by Symbol)
+segment.
+
+This is handled in \texttt{src/kernel/elf.cpp} and is called from
+\texttt{kernel\_start.cpp}. In the trace this appears as:
+
+\begin{verbatim}
+→ _move_symbols(free_mem_begin)
+    → _get_elf_section_datasize(...)
+    → _move_elf_syms_location(old, new)
+    → _get_elf_section_datasize(new)   // sanity re-check
+
+→ _init_bss()
+→ kernel::diag::hook<kernel::diag::post_bss>()
+\end{verbatim}
+
+The relocation code:
+
+\begin{itemize}
+  \item inspects the ELF section headers,
+  \item allocates a new region for the symbol and string tables at
+        the current \texttt{free\_mem\_begin},
+  \item copies the symbol and string tables to this region, and
+  \item verifies that the calculated size is still consistent afterwards.
+\end{itemize}
+
+\texttt{\_init\_bss} then walks the \texttt{.bss} region and zeros it out,
+bringing all implicitly-zeroed globals into a well-defined state. The
+\texttt{post\_bss} diagnostic hook becomes a convenient place for sanity
+checks that rely on global state but still do not require a heap.
+
+\subsection{Why this ordering?}
+
+There are a few subtle ordering constraints here:
+
+\begin{enumerate}
+  \item \textbf{Symbols must move before heap setup.}  
+    The early memory range returned from Multiboot often includes the
+    ELF image and its sections. If the heap is simply placed on “all
+    free memory” without moving symbol sections, a later allocation can
+    overwrite the symbol table. For a unikernel this is particularly
+    painful because there is no user–kernel split where debug helpers
+    might survive.
+
+  \item \textbf{\texttt{.bss} must be zeroed before any C++ global or libc code
+    runs.}  
+    C and C++ treat static-storage-duration variables with no explicit
+    initializer as zero-initialized. Until \texttt{\_init\_bss} runs, that
+    guarantee is not actually true. Any function that reads or writes
+    such globals before this is a bug.
+
+  \item \textbf{Diagnostics after \texttt{.bss}.}  
+    Running \texttt{kernel::diag::post\_bss} immediately after \texttt{.bss}
+    is cleared allows debugging hooks to run in a context where:
+    \begin{itemize}
+      \item stacks are valid,
+      \item global variables are consistent,
+      \item but the heap and \texttt{libc} are still guaranteed not to be
+            used.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+This phase establishes invariants needed by both musl and \texttt{libc++}:
+
+\begin{itemize}
+  \item \textbf{Zeroed globals.}  
+    Internals such as \texttt{errno}, mutexes, and various internal
+    structures in musl often live in \texttt{.bss}.
+
+  \item \textbf{Stable symbol tables.}  
+    While neither musl nor \texttt{libc++} \emph{require} symbol tables
+    to function, having them preserved enables:
+    \begin{itemize}
+      \item meaningful crash reports and backtraces,
+      \item debugging tools layered on top of IncludeOS.
+    \end{itemize}
+\end{itemize}
+
+For the thesis angle: this is a concrete example of how a unikernel can
+remain debuggable even though it is “just a library” linked into a
+service binary. The kernel contradicts the typical “stripped release
+binary” model and instead carefully preserves exactly the symbol data it
+needs.
+
+\section{Machine Construction and the Lstack Allocator}
+
+\subsection{What happens}
+
+With Multiboot parsed and core invariants established, the kernel now
+constructs its internal representation of “the machine” and sets up an
+extremely simple allocator over the physical memory region.
+
+The relevant code lives in \texttt{src/hal/machine.hpp} (for the
+interface) and the platform-specific machine implementation (not all of
+which is in the bundle I used here). From the trace and logs we see
+something like:
+
+\begin{verbatim}
+→ os::Machine::create(mem, size = 128839680)
+    → os::Machine::Machine(this, mem, size = ...)
+    → os::detail::Machine::Machine(this, raw_mem, size = ...)
+        → INFO("[x86_64 PC] constructor")
+
+→ os::Machine::Memory::Lstack()
+    → util::alloc::Lstack::Lstack(mem_begin, size = 128839488)
+    → donate(ptr, size)
+        → bits::is_aligned(A = 64, ptr = 0x502000)
+        → bits::is_aligned(A = 64, size = 128839488)
+    → push(ptr, size)
+\end{verbatim}
+
+At this point, \texttt{os::Machine} has:
+
+\begin{itemize}
+  \item recorded the raw physical memory range provided by Multiboot and
+        \texttt{kernel::memory\_end()},
+  \item wrapped it in a small LIFO-like allocator (\texttt{Lstack}) that
+        manages one or more large contiguous segments,
+  \item verified that the base pointer \texttt{0x502000} and the size are
+        aligned to the requested granularity.
+\end{itemize}
+
+The same base address appears later in the printed virtual memory map:
+
+\begin{verbatim}
+* Assigning heap 0x502000 -> 0x6018fff
+...
+0x0000502000 - 0x0006018fff,  91.090_MiB Dynamic memory
+\end{verbatim}
+
+\subsection{Why an LIFO “Lstack” allocator here?}
+
+The choice of an Lstack allocator at this stage is deliberate:
+
+\begin{enumerate}
+  \item \textbf{Boot-time simplicity.}  
+    Early boot allocators are easier to get right if they support only
+    very constrained operations. The Lstack in
+    \texttt{api/util/alloc\_lstack.hpp} supports a small set of
+    operations (donate a big chunk of memory, hand out large chunks, and
+    occasionally reclaim them) without the complexity of a general
+    \texttt{malloc}.
+
+  \item \textbf{Determinism.}  
+    The allocator deals in large aligned blocks. This keeps the early
+    memory layout deterministic across boots, which greatly simplifies
+    debugging: numerical addresses for key structures are stable or at
+    least constrained.
+
+  \item \textbf{Clear separation of roles.}  
+    Lstack is strictly about \emph{physical} memory partitioning. It
+    does not know about virtual addresses, page tables, or the notion of
+    “heap”. This keeps it focused and makes it reusable for multiple
+    purposes (heap base, reserved machine area, etc.).
+\end{enumerate}
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} implications}
+
+At this stage, \texttt{libc} is still not running, but the Lstack allocator
+sets the stage for it:
+
+\begin{itemize}
+  \item The region carved out by Lstack will be split into:
+    \begin{itemize}
+      \item the \texttt{brk}-backed heap region, and
+      \item the \texttt{mmap}-backed buddy-allocator region.
+    \end{itemize}
+  \item The alignment guarantees enforced here (64-byte chunks, later
+        page-sized, etc.) propagate directly into the heap and buddy
+        allocator invariants.
+\end{itemize}
+
+Instead of designing a heap allocator that can handle arbitrary,
+fragmented physical memory, the kernel first re-shapes everything into a
+nice big block and then builds a more sophisticated allocator on top of
+that.
+
+\section{Main Memory Selection and Reserved Machine Area}
+
+\subsection{What happens}
+
+During \texttt{Machine::init()}, the kernel chooses “its” main memory
+region from what Lstack can provide and reserves a small portion for
+internal use. This is implemented in the platform-specific machine code
+(beyond what I extracted here) and exposed via the HAL.
+
+From the trace:
+
+\begin{verbatim}
+→ os::Machine::init()
+    → os::detail::Machine::init()
+        → Machine::memory()
+            → Lstack::allocate_largest()
+        → INFO("[ Machine ] Main memory detected as 128839488 b")
+        → INFO("[ Machine ] Reserving 1048576 b for machine use")
+\end{verbatim}
+
+The boot log matches this:
+
+\begin{verbatim}
+[ Machine ] Initializing heap
+[ Machine ] Main memory detected as 128839488 b
+[ Machine ] Reserving 1048576 b for machine use
+\end{verbatim}
+
+Conceptually, this step partitions physical memory into:
+
+\begin{itemize}
+  \item a large “main memory” block (\(\approx 123\)~MiB in my run),
+  \item a 1~MiB chunk reserved for “machine use” (page tables, APIC
+        structures, various kernel internal state).
+\end{itemize}
+
+\subsection{Why this split exists}
+
+The separation between a “main memory” block and a “reserved machine
+area” is motivated by:
+
+\begin{enumerate}
+  \item \textbf{Avoiding allocator self-interference.}  
+    Some kernel structures (page tables, APIC mappings, low-level
+    descriptors) need to be allocated before the general-purpose heap is
+    ready, or must live outside it. Reserving a fixed-size region
+    simplifies those early allocations.
+
+  \item \textbf{Keeping the heap contiguous.}  
+    By carving out the machine area as a single contiguous block, the
+    remaining “main memory” region can be treated as one contiguous heap
+    candidate. This improves locality and makes the buddy allocator
+    implementation straightforward.
+
+  \item \textbf{Predictable upper bound for kernel internals.}  
+    A static 1~MiB reservation creates an implicit budget: kernel
+    internals \emph{should} fit into that area. If they do not, some
+    other change (e.g.\ more page tables or CPU features) is probably
+    responsible, and that shows up early as a capacity issue.
+\end{enumerate}
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} implications}
+
+From \texttt{libc}'s point of view, the key outcomes of this phase are:
+
+\begin{itemize}
+  \item there is now a well-defined, contiguous physical region that
+        will become the heap and \texttt{mmap} backend,
+  \item kernel book-keeping is expected to use the reserved machine area,
+        avoiding silent encroachment on the heap.
+\end{itemize}
+
+This explicit partitioning is particularly useful in a unikernel where
+kernel and application share the same address space: it avoids subtle
+interference where kernel growth eats into the application's heap
+without leaving a clear trace.
+
+\section{The Role of \texorpdfstring{\texttt{libc}}{libc} and \texorpdfstring{\texttt{libc++}}{libc++} in the Boot Process}
+
+\subsection{Why \texttt{libc} exists in a C++ unikernel}
+
+IncludeOS is implemented almost entirely in C++, and could in principle
+run without a C library at all. \texttt{libc++} technically only relies
+on a subset of the C library:
+
+\begin{itemize}
+  \item memory allocation (e.g.\ \texttt{malloc}/\texttt{free}),
+  \item low-level memory operations (\texttt{memcpy}, \texttt{memset}, \dots),
+  \item thread-local state (for \texttt{errno} and some C APIs),
+  \item system time functions used indirectly by \texttt{std::chrono}.
+\end{itemize}
+
+A bespoke C++-only runtime could provide these directly. However,
+IncludeOS intentionally ships and exposes a full musl \texttt{libc}. The
+motivation is compatibility: third-party libraries overwhelmingly assume
+the presence of a POSIX-like C environment. If kernel-provided APIs
+diverged from standard \texttt{libc} interfaces, the ecosystem of
+libraries usable inside services would shrink dramatically.
+
+Thus the kernel does not merely use \texttt{libc} internally: it exposes
+a complete \texttt{libc} ABI (Application Binary Interface) to the
+application and any libraries linked into the unikernel. From the point
+of view of a typical C or C++ library, the IncludeOS service “looks
+like” an ordinary userspace process, even though underneath the OS and
+the application are one and the same program.
+
+\subsection{Why \texttt{libc} must be initialised before \texttt{libc++}}
+
+Modern C++ runtime features impose several constraints on the order in
+which \texttt{libc} and \texttt{libc++} can be brought up:
+
+\begin{enumerate}
+  \item \textbf{Global constructors often allocate and synchronise.}  
+    Many global objects in \texttt{libc++} allocate memory or rely on
+    function-local \texttt{static} variables protected by mutexes.
+    These require:
+    \begin{itemize}
+      \item a working heap,
+      \item working atomic operations,
+      % \item working TLS for hidden per-thread state.
+    \end{itemize}
+
+  \item \textbf{Exceptions depend on thread-local state.}  
+    \texttt{libc++abi} uses thread-local state maintained via \texttt{libc}
+    TLS machinery. Without a valid TLS base, any throw/catch would be
+    undefined behaviour as per C++11. TODO: We don't support TLS directly, how do we ensure this works as expected?
+
+  \item \textbf{Standard synchronisation depends on libc locks.}  
+    \texttt{std::mutex}, iostreams, and certain lazy initialisations in
+    \texttt{libc++} depend on underlying locks implemented by musl. These
+    locks are not usable until musl’s own initialisation sequence has
+    run.
+
+  \item \textbf{Time and timing facilities rely on libc’s view of the
+    system clock.}  
+    Both musl and \texttt{libc++} use system time facilities to implement
+    \texttt{std::chrono::steady\_clock}, sleeps, and timed waits. In
+    IncludeOS these go through \texttt{libc}'s syscall shims into the
+    kernel’s timer infrastructure, and they are not meaningful until
+    libc’s internal clock state is established.
+\end{enumerate}
+
+For these reasons, IncludeOS must bring up musl’s bootstrap machinery
+(\texttt{\_\_libc\_start\_main} and related functions) before any C++
+global constructors run. This ordering is reflected in the trace and in
+\texttt{src/platform/x86\_pc/init\_libc.cpp}:
+
+\begin{verbatim}
+→ x86::init_libc(magic, addr)
+    → build argv[] and environment strings
+    → build auxv (ELF auxiliary vector)
+    → setup syscall MSRs (IA32_STAR, IA32_LSTAR)
+    → kernel::state().allow_syscalls = true
+    → __libc_start_main(kernel_main, argc, argv)
+\end{verbatim}
+
+\subsection{Why expose a complete \texttt{libc} surface}
+
+Even if \texttt{libc++} required only a minimal subset of C APIs,
+restricting IncludeOS to that subset would significantly limit the set
+of compatible libraries. Typical microservice stacks (JSON, HTTP,
+crypto, gRPC, etc.) assume:
+
+\begin{itemize}
+  \item POSIX-style file and socket APIs,
+  \item the existence of \texttt{errno},
+  \item standard time functions,
+  \item thread-local C state.
+\end{itemize}
+
+IncludeOS therefore exposes most of musl’s \texttt{libc} surface and
+implements a compatibility layer (in \texttt{src/musl/*.cpp}) that maps
+these C-level expectations onto the unikernel’s event-driven kernel. The
+boot sequence described in this document is precisely what makes it
+possible to present this familiar programming environment on top of a
+single-address-space kernel.
+
+\subsection{Consequences for the boot order}
+
+The outcome of these design decisions is that \textbf{libc must be
+partially initialised very early}:
+
+\begin{itemize}
+  \item the heap must exist,
+  \item the virtual memory layout must be stable,
+  \item the ELF auxiliary vector (auxv) must be populated,
+  \item the syscall entry MSRs must be programmed,
+  \item musl’s startup must execute before the first C++ global
+        constructor.
+\end{itemize}
+
+This explains why the boot sequence performs:
+
+\begin{enumerate}
+  \item memory map parsing,
+  \item symbol relocation,
+  \item \texttt{.bss} initialisation,
+  \item Lstack setup,
+  \item heap and buddy allocator initialisation,
+  \item paging and virtual memory layout setup,
+  \item crash-context and IDT setup,
+  \item and only then: musl \texttt{libc} bootstrap.
+\end{enumerate}
+
+From that point onward, C++ global constructors can safely run, and the
+rest of the kernel can initialise higher-level structures without
+risking undefined behaviour from an uninitialised runtime.
+
+\section{Virtual Memory and Paging Layout}
+
+\subsection{What happens}
+
+The architecture-specific paging code is in
+\texttt{src/arch/x86\_64/paging.cpp}. The entry point is a weak function
+\texttt{\_\_arch\_init\_paging()}:
+
+\begin{verbatim}
+__attribute__((weak))
+void __arch_init_paging() {
+  INFO("x86_64", "Initializing paging");
+  auto default_fl = Flags::present | Flags::writable | Flags::huge
+                    | Flags::no_exec;
+  __pml4 = new Pml4(0);
+  ...
+  INFO2("* Supported page sizes: %s", ...);
+  INFO2("* Adding 512 1GiB entries @ 0x0 -> 0x8000000000");
+  INFO2("* Identity mapping 0 -> 0, size 16.000_GiB, flags 0x%x", ...);
+  INFO2("* Marking page 0 as not present");
+  INFO2("* Allowing execute on 0x201000 -> 0x37dca8");
+  INFO2("* Passing page tables to CPU");
+}
+\end{verbatim}
+
+The log output in my run matches this exactly:
+
+\begin{verbatim}
+[ x86_64 ] Initializing paging
+  * Supported page sizes: 4.000_KiB, 2.000_MiB
+  * Adding 512 1GiB entries @ 0x0 -> 0x8000000000
+  * Identity mapping 0 -> 0, size 16.000_GiB, flags 0x83
+  * Marking page 0 as not present
+  * Allowing execute on 0x201000 -> 0x37dca8
+  * Passing page tables to CPU
+\end{verbatim}
+
+After paging is initialised, the kernel computes and prints a virtual
+memory map from \texttt{src/kernel/memmap.cpp}, showing how different
+regions of physical memory have been classified:
+
+\begin{verbatim}
+[ Kernel ] Total memory detected as 96.098_MiB
+           Assigning fixed memory ranges (Memory map)
+           * ELF symbol table size 0, ignoring.
+           * Assigning heap 0x502000 -> 0x6018fff
+[ Kernel ] Virtual memory map
+           0x0000001000 - 0x0000007fff  Page tables
+           0x0000010000 - 0x000009d3ff  Stack
+           0x000009fc00 - 0x000009ffff  Reserved (Multiboot)
+           0x00000f0000 - 0x00000fffff  Reserved (Multiboot)
+           0x0000201000 - 0x000037dfff  ELF .text
+           0x0000502000 - 0x0006018fff  Dynamic memory
+           ...
+\end{verbatim}
+
+\subsection{Why it matters}
+
+This phase:
+
+\begin{itemize}
+  \item sets up a large, identity-mapped region (16~GiB in the current
+        configuration) so the kernel can treat physical and virtual
+        addresses as the same in early code,
+  \item unmapped page~0 to catch NULL-pointer dereferences as page
+        faults,
+  \item ensures that only the kernel’s \texttt{.text} region is marked
+        executable (the \texttt{Allowing execute on} log line),
+  \item carves out well-defined regions for stack, Multiboot structures,
+        code, heap, and reserved areas.
+\end{itemize}
+
+The printed map doubles as documentation of the chosen layout and as a
+debug tool when hunting memory corruption or mapping bugs.
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+\texttt{libc} and \texttt{libc++} assume a flat virtual address space, but
+they need:
+
+\begin{itemize}
+  \item executable code pages for function pointers and virtual calls,
+  \item a mapped and reasonably sized stack,
+  \item a mapped and writable heap.
+\end{itemize}
+
+All of that is established here, by the combination of
+\texttt{\_\_arch\_init\_paging} and the memmap logic in
+\texttt{memmap.cpp}.
+
+\section{Heap, \texorpdfstring{\texttt{brk}}{brk}, \texorpdfstring{\texttt{mmap}}{mmap} and Buddy Allocator}
+
+\subsection{What happens}
+
+With main memory selected and paging in place, the kernel initialises
+its heap semantics. The relevant code is spread across:
+
+\begin{itemize}
+  \item \texttt{src/kernel/heap.cpp},
+  \item \texttt{src/musl/brk.cpp},
+  \item \texttt{src/musl/mmap.cpp}.
+\end{itemize}
+
+The general flow is:
+
+\begin{verbatim}
+→ kernel::init_heap(free_mem_begin = 0x502000,
+                    memory_end     = 0x6018fff)
+    → kernel::heap_begin()
+    → bits::roundto(4096, free_mem_begin)
+
+    → __init_brk(begin = heap_base, size = 1 MiB)
+    → __init_mmap(addr_begin = heap_base + brk_region,
+                  size       = remaining)
+        → os::mem::buddy::Alloc<false>::create(...)
+\end{verbatim}
+
+The log confirms the resulting heap region:
+
+\begin{verbatim}
+* Assigning heap 0x502000 -> 0x6018fff
+0x0000502000 - 0x0006018fff, 91.090_MiB Dynamic memory
+\end{verbatim}
+
+The \texttt{brk}-backed part is used by musl for the traditional
+contiguous heap; larger allocations and \texttt{mmap}-like calls are
+serviced by the buddy allocator implemented in
+\texttt{api/util/alloc\_buddy.hpp} and its backing code.
+
+\subsection{Why it matters}
+
+Musl uses two main backends for allocation:
+
+\begin{itemize}
+  \item a \texttt{brk}-based contiguous heap region for small/linear
+        growth,
+  \item an \texttt{mmap}-backed region for larger, page-oriented
+        allocations.
+\end{itemize}
+
+The buddy allocator provides efficient splitting and coalescing of page
+ranges for the latter. This is the point where the abstract “main
+memory” chosen earlier becomes a concrete, structured heap.
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+By the end of this phase:
+
+\begin{itemize}
+  \item \texttt{malloc}/\texttt{free} and \texttt{new}/\texttt{delete} have a working
+        backend,
+  \item the heap is page-aligned and non-overlapping with code or
+        stack,
+  \item allocation failures reflect genuine exhaustion, not uninitialised
+        backends.
+\end{itemize}
+
+This is a hard precondition for any global C++ constructor that
+allocates memory.
+
+\section{RNG and Entropy}
+
+\subsection{What happens}
+
+The kernel seeds its RNG (Random Number Generator) in
+\texttt{src/kernel/rng.cpp}, using CPU cycle counters and a
+Keccak-based permutation:
+
+\begin{verbatim}
+→ RNG::init()
+    → rng_reseed_init(fallback_entropy, rounds = 1)
+    → reseed_now()
+        → os::cycles_since_boot()
+            → os::Arch::cpu_cycles()
+        → rng_absorb(...)
+        → keccak_1600_p(...)
+    → per_cpu_help<rng_state, 32>(array)
+\end{verbatim}
+
+\subsection{Why it matters}
+
+This provides a source of randomness early in boot, before other entropy
+sources (for example hardware devices) are available. It can be used
+for non-cryptographic randomness and as a seed for more sophisticated
+RNGs.
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+\texttt{libc}'s \texttt{rand()} does not require strong entropy, but
+higher-level code may. For the build at this commit:
+
+\begin{quote}
+  TODO: document how TLS/crypto libraries (e.g.\ Botan, OpenSSL, s2n)
+  hook into this RNG or provide their own entropy sources.
+\end{quote}
+
+\section{Crash Contexts and IDT}
+
+\subsection{What happens}
+
+The kernel sets up crash contexts and the Interrupt Descriptor Table
+(IDT). The IDT code lives in \texttt{src/platform/x86\_pc/idt.cpp} and
+the crash context support in \texttt{api/kernel/crash\_context.hpp} and
+its implementation.
+
+From the trace and source:
+
+\begin{verbatim}
+→ __init_crash_contexts()
+→ x86::idt_initialize_for_cpu(0)
+    → x86_IDT::init()
+        → memset(entry[], 0, sizeof(entry))
+    → x86_IDT::set_exception_handler(vec, __cpu_except_N)
+    → x86_IDT::set_handler(vec, unused_interrupt_handler)
+\end{verbatim}
+
+This populates exception vectors (divide-by-zero, page fault, etc.) with
+dedicated handlers and hooks up default handlers for unused IRQ lines.
+
+\subsection{Why it matters}
+
+Without a valid IDT, any exception would cause a double or triple fault
+and reset the machine. This step ensures that:
+
+\begin{itemize}
+  \item all critical exception vectors have proper handlers,
+  \item unused IRQs are routed to a safe default handler,
+  \item crash contexts can capture register state for debugging.
+\end{itemize}
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+While user code does not interact with the IDT directly, it relies on
+the fact that faults lead to controlled crashes with useful diagnostics
+rather than abrupt resets. Any use of stack unwinding or signal-like
+behaviour will also depend on this infrastructure being present.
+
+\section{Libc Bootstrap: Auxv, Syscall MSRs, \texorpdfstring{\texttt{\_\_libc\_start\_main}}{__libc\_start\_main}}
+
+\subsection{What happens}
+
+The platform-specific \texttt{x86::init\_libc} function in
+\texttt{src/platform/x86\_pc/init\_libc.cpp} prepares the environment
+for musl and then hands over to \texttt{\_\_libc\_start\_main}.
+
+Its responsibilities are:
+
+\begin{enumerate}
+  \item \textbf{Build \texttt{argv} and minimal environment.}  
+
+    It constructs a small \texttt{argv} array (service name plus a few
+    environment variables like \texttt{"PATH=/"} and \texttt{"LC\_ALL=C"}).
+
+  \item \textbf{Populate the ELF auxiliary vector (auxv).}  
+
+    It then uses an internal \texttt{auxv\_t} helper to fill in entries
+    such as:
+
+    \begin{itemize}
+      \item \texttt{AT\_PAGESZ = 4096},
+      \item \texttt{AT\_CLKTCK = 100},
+      \item \texttt{AT\_PHENT = ehdr->e\_phentsize},
+      \item \texttt{AT\_PHDR = \&phdr[0]},
+      \item \texttt{AT\_PHNUM = ehdr->e\_phnum},
+      \item \texttt{AT\_BASE = nullptr},
+      \item \texttt{AT\_ENTRY = \&kernel\_main},
+      \item \texttt{AT\_HWCAP = 0} (no extra hardware capability flags are
+            advertised here),
+      \item UID/GID/EUID/EGID all set to zero,
+      \item \texttt{AT\_SECURE = 1},
+      \item \texttt{AT\_PLATFORM = "x86\_64"},
+      \item supplemental randomness (via musl’s \texttt{AT\_RANDOM}).
+    \end{itemize}
+
+  \item \textbf{Program syscall-related MSRs.}  
+
+    For x86\_64, it sets up IA32\_STAR and IA32\_LSTAR:
+
+    \begin{verbatim}
+    uint64_t star_kernel_cs = 8ull << 32;
+    uint64_t star_user_cs   = 8ull << 48;
+    uint64_t star = star_kernel_cs | star_user_cs;
+    x86::CPU::write_msr(IA32_STAR,  star);
+    x86::CPU::write_msr(IA32_LSTAR, (uintptr_t) &__syscall_entry);
+    \end{verbatim}
+
+    The actual syscall entry stub \texttt{\_\_syscall\_entry} is implemented in
+    \texttt{src/arch/x86\_64/\_\_syscall\_entry.asm} and is responsible
+    for saving registers and forwarding to the musl syscall layer.
+
+  \item \textbf{Allow syscalls and start musl.}  
+
+    Finally, it marks syscalls as allowed in the kernel state and calls:
+
+    \begin{verbatim}
+    kernel::state().allow_syscalls = true;
+    __libc_start_main(kernel_main, argc, argv.data());
+    \end{verbatim}
+\end{enumerate}
+
+\subsection{Why it matters}
+
+The auxiliary vector tells musl key properties such as page size,
+program headers, and entrypoint. IA32\_STAR and IA32\_LSTAR configure the
+hardware syscall path so that musl’s syscall wrappers can trap into the
+kernel in a controlled way.
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+By the end of this stage, musl and \texttt{libc++} can rely on:
+
+\begin{itemize}
+  \item valid auxv contents (including page size, program headers, and
+        entrypoint),
+  \item a functioning heap backend from earlier steps,
+  \item a working syscall entry path for musl’s internal syscalls.
+\end{itemize}
+
+Global C and C++ constructors can now safely execute; the system log
+constructor is one of the earliest to run.
+
+\section{System Log and stdout Integration}
+
+\subsection{What happens}
+
+As part of musl’s startup, C++ global constructors run. One of these is
+the system log glue in \texttt{src/kernel/system\_log.cpp}, which hooks
+the system log into the OS-level stdout handler list.
+
+Conceptually:
+
+\begin{verbatim}
+→ system_log_gconstr()
+    → delegate<...>(SystemLog::write)
+    → os::add_stdout(delegate)
+\end{verbatim}
+
+\texttt{os::add\_stdout} appends the delegate to a small
+\texttt{Fixed\_vector<os::print\_func, 8>} of print handlers in
+\texttt{src/kernel/kernel.cpp}. Later kernel code and the service may
+emit log lines via this mechanism.
+
+\subsection{Why it matters}
+
+Once global constructors and later kernel code start to log, there needs
+to be a consistent place for that output to go. Doing this inside musl’s
+initialisation path ensures it is in place before user-level service
+code runs.
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+\begin{itemize}
+  \item \texttt{printf}, \texttt{puts}, and C++ streams can be bridged to
+        these stdout handlers via musl and \texttt{libc++}'s iostream
+        implementation.
+  \item Logging from inside constructors, or from early utility code,
+        must not crash because no stdout is registered.
+\end{itemize}
+
+\section{ACPI, SMP, SMBIOS Discovery and \texttt{\_\_platform\_init}}
+
+\subsection{What happens}
+
+After \texttt{\_\_libc\_start\_main} has started \texttt{kernel\_main} and
+run C++ constructors, the platform-specific initialisation function
+\texttt{\_\_platform\_init} in \texttt{src/platform/x86\_pc/platform.cpp}
+is responsible for bringing up hardware-specific subsystems:
+
+\begin{verbatim}
+void __platform_init()
+{
+  // read ACPI tables
+  x86::ACPI::init();
+
+  // read SMBIOS tables
+  x86::SMBIOS::init();
+
+  INFO("x86", "Setting up GDT, TLS, IST");
+#ifdef ARCH_x86_64
+  x86::ist_initialize_for_cpu(0, 0x9D3F0);
+#endif
+
+  INFO("x86", "Initializing CPU 0");
+  x86::initialize_cpu_tables_for_cpu(0);
+  Events::get(0).init_local();
+
+  // setup APIC, APIC timer, SMP etc.
+  x86::APIC::init();
+
+  // enable interrupts
+  asm volatile("sti");
+
+  // optional SMP init
+  x86::init_SMP();  // if enabled
+
+  INFO("x86", "Setting up kernel clock sources");
+  x86::Clocks::init();
+  ...
+  x86::APIC_Timer::calibrate();
+
+  INFO("Initializing drivers");
+  kernel::run_ctors(&__driver_ctors_start, &__driver_ctors_end);
+
+  hw::PCI_manager::init();
+  hw::PCI_manager::init_devices(PCI::STORAGE);
+  hw::PCI_manager::init_devices(PCI::NIC);
+  os::machine().print_devices();
+}
+\end{verbatim}
+
+The logs I see correspond to the first half of this sequence; the later
+parts (driver ctors, PCI scanning) are not yet visible in the current
+trace because the APIC timer calibration is still ongoing.
+
+\subsection{ACPI: discovering LAPIC and IOAPIC}
+
+ACPI support is implemented in \texttt{src/platform/x86\_pc/acpi.cpp} and
+\texttt{acpi.hpp}. \texttt{x86::ACPI::init()} simply calls
+\texttt{ACPI::discover()}, which:
+
+\begin{enumerate}
+  \item looks for the RSDP (Root System Description Pointer) at a QEMU
+        “guess” address (\texttt{0xF68C0}),
+  \item if not found there, scans the BIOS region \texttt{0xE0000} to
+        \texttt{0xFFFFF} for the signature \texttt{"RSD PTR "},
+  \item verifies checksums,
+  \item calls \texttt{ACPI::begin(rsdp)} once a valid RSDP is found.
+\end{enumerate}
+
+\texttt{ACPI::begin} prints:
+
+\begin{verbatim}
+[ ACPI ] Reading headers
+         OEM: BOCHS  Rev. 0
+\end{verbatim}
+
+and then walks the system description table (RSDT/XSDT), collecting:
+
+\begin{itemize}
+  \item LAPIC (Local APIC) entries,
+  \item IOAPIC (I/O APIC) entries,
+  \item interrupt source overrides (IRQ remapping),
+  \item NMI (Non-Maskable Interrupt) configuration.
+\end{itemize}
+
+The APIC information printed in the log comes from this analysis:
+
+\begin{verbatim}
+[ ACPI ] Reading APIC information
+         LAPIC base: 0xfee00000  (flags: 0x1)
+         I/O APIC 0   ADDR 0xfec00000  INTR 0x0
+         IRQ redirect for bus 0 from IRQ 0  to VEC 2
+         IRQ redirect for bus 0 from IRQ 5  to VEC 5
+         IRQ redirect for bus 0 from IRQ 9  to VEC 9
+         IRQ redirect for bus 0 from IRQ 10 to VEC 10
+         IRQ redirect for bus 0 from IRQ 11 to VEC 11
+\end{verbatim}
+
+\subsection{SMP discovery}
+
+ACPI’s MADT (Multiple APIC Description Table) parsing also counts CPUs
+and records LAPIC IDs. This is reported as:
+
+\begin{verbatim}
+[ SMP ] Found 1 APs
+\end{verbatim}
+
+The actual SMP bring-up is guarded by \texttt{INCLUDEOS\_SMP\_ENABLE}
+and implemented in \texttt{src/platform/x86\_pc/smp.cpp}; in my current
+configuration only CPU~0 is active.
+
+\subsection{SMBIOS}
+
+SMBIOS parsing is implemented in
+\texttt{src/platform/x86\_pc/smbios.cpp}. \texttt{x86::SMBIOS::init()}
+locates the SMBIOS entry point and walks the tables, logging:
+
+\begin{verbatim}
+[ SMBIOS ] Version 2.8
+           BIOS vendor: rel-1.16.3-0-ga6ed...
+           Manufacturer: Standard PC (i440FX + PIIX, 1996)
+           Product name: pc-i440fx-9.2
+           Physical memory array with 128 MB capacity
+\end{verbatim}
+
+This is primarily used for information and for potential future
+platform-specific behaviour.
+
+\subsection{Why it matters}
+
+\begin{itemize}
+  \item ACPI identifies LAPIC and IOAPIC addresses and IRQ routing, which
+        are crucial for APIC initialisation.
+  \item SMP information indicates how many application processors are
+        present and what their APIC IDs are.
+  \item SMBIOS provides a standard view of the platform (vendor, model,
+        memory configuration) useful for logging and potential quirks.
+\end{itemize}
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+These steps are mainly OS/hardware concerns and do not directly affect
+\texttt{libc}/\texttt{libc++}. However, any multithreading
+(\texttt{std::thread}, POSIX threads) will be constrained by whatever
+SMP setup is established here.
+
+\section{GDT, TLS, IST and CPU 0 Initialisation}
+
+\subsection{What happens}
+
+The same \texttt{\_\_platform\_init} function continues by setting up
+long-mode segmentation and per-CPU state:
+
+\begin{verbatim}
+INFO("x86", "Setting up GDT, TLS, IST");
+#ifdef ARCH_x86_64
+  x86::ist_initialize_for_cpu(0, 0x9D3F0);
+#endif
+
+INFO("x86", "Initializing CPU 0");
+x86::initialize_cpu_tables_for_cpu(0);
+Events::get(0).init_local();
+\end{verbatim}
+
+The IST (Interrupt Stack Table) logic is implemented in
+\texttt{src/arch/x86\_64/ist.cpp}. \texttt{ist\_initialize\_for\_cpu}
+allocates separate stacks for:
+
+\begin{itemize}
+  \item regular interrupts,
+  \item NMIs,
+  \item double-fault handling.
+\end{itemize}
+
+It stores stack pointers in the AMD64 Task State Segment (TSS) and
+ensures they are aligned, writable and tested (by forcing a write near
+the top of each stack).
+
+\texttt{x86::initialize\_cpu\_tables\_for\_cpu} (implemented in
+\texttt{src/platform/x86\_pc/gdt.cpp} and \texttt{idt.cpp}) then:
+
+\begin{itemize}
+  \item sets up the final GDT entries (code, data, TSS),
+  \item loads the TSS via \texttt{ltr},
+  \item associates the IDT prepared earlier with CPU~0,
+  \item initialises the \texttt{Events} structure for the local CPU.
+\end{itemize}
+
+\subsection{Why it matters}
+
+\begin{itemize}
+  \item The GDT defines code/data segments and the TSS used by the CPU
+        for privilege transitions and IST.
+  \item IST entries provide dedicated stacks for critical exceptions
+        (NMI, double-fault) that must not reuse the normal kernel stack.
+  \item \texttt{Events::get(0).init\_local()} prepares the per-CPU event
+        queue used by the IncludeOS event-driven model.
+\end{itemize}
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+Long mode and basic TLS were already functional before this point, but
+this phase strengthens those guarantees and ensures exceptions use safe
+stacks. Any subsequent fault or interrupt handling by the kernel occurs
+with a well-defined stack and descriptor state.
+
+\section{IOAPIC and xAPIC Setup, Enabling Interrupts}
+
+\subsection{What happens}
+
+Next, the kernel brings IOAPIC and LAPIC online and enables interrupts.
+This logic lives mainly in:
+
+\begin{itemize}
+  \item \texttt{src/platform/x86\_pc/apic.cpp},
+  \item \texttt{src/platform/x86\_pc/ioapic.cpp},
+  \item \texttt{src/platform/x86\_pc/apic\_timer.cpp}.
+\end{itemize}
+
+From \texttt{\_\_platform\_init} and the logs:
+
+\begin{verbatim}
+[ I/O APIC ] Initializing ID=0
+             Addr: 0xfec00000  Version: 0x20  Intr: 0  Entries: 24
+[ xAPIC ] Enabling xAPIC
+           ID: 0  Ver: 50014
+[ x86 ] Enabling interrupts
+\end{verbatim}
+
+In code:
+
+\begin{verbatim}
+x86::APIC::init();
+asm volatile("sti");
+\end{verbatim}
+
+\texttt{x86::APIC::init} configures the local APIC at the physical base
+reported by ACPI (\texttt{0xFEE00000}) and initialises the IOAPIC at
+\texttt{0xFEC00000}, programming redirection entries according to ACPI
+overrides.
+
+After \texttt{sti}, interrupts begin to flow: timer interrupts, any
+device IRQs that have been unmasked, and IPIs (in SMP configurations).
+
+\subsection{Why it matters}
+
+Without a working IOAPIC/LAPIC configuration, the kernel cannot:
+
+\begin{itemize}
+  \item handle timer interrupts,
+  \item respond to device interrupts,
+  \item drive an event loop.
+\end{itemize}
+
+This is the first point where the system becomes truly interrupt-driven.
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+Once interrupts are enabled, \texttt{libc} operations may interleave with
+IRQ handlers. This means:
+
+\begin{itemize}
+  \item any shared state used in both contexts must be properly locked,
+  \item time-related syscalls can start to rely on clock sources once
+        calibration is complete.
+\end{itemize}
+
+\section{CMOS Clock, CPU Frequency, and APIC Timer Calibration}
+
+\subsection{What happens}
+
+Timekeeping and CPU frequency estimation are set up in:
+
+\begin{itemize}
+  \item \texttt{src/platform/x86\_pc/cmos.cpp},
+  \item \texttt{src/platform/x86\_pc/cmos\_clock.cpp},
+  \item \texttt{src/platform/x86\_pc/clocks.cpp},
+  \item \texttt{src/platform/x86\_pc/apic\_timer.cpp}.
+\end{itemize}
+
+The log shows:
+
+\begin{verbatim}
+[ x86 ] Setting up kernel clock sources
+[ CMOS ] Enabling regular clock sync for CMOS clock
+[ x86 ] CMOS clock initialized
+[ CMOS ] Estimating CPU-frequency
+         |
+         +--(18 samples, 0.000100 sec. interval)
+         |
+         Enabled redirected entry 2 ioapic 0 -> 0 on apic 0
+         +--> 3819.505224 MHz
+[ APIC ] Measuring APIC timer...
+\end{verbatim}
+
+\texttt{x86::Clocks::init()} configures the CMOS-based wall clock and a
+TSC (Time Stamp Counter) based monotonic clock. \texttt{CMOS\_clock} is
+used to estimate CPU frequency by sampling TSC deltas over a fixed
+interval (18 samples at 100~µs in my build).
+
+The APIC timer calibration in \texttt{x86::APIC\_Timer::calibrate()} then
+programs the local APIC timer and measures how many APIC ticks correspond
+to a given real-time duration, using the newly estimated CPU frequency
+as a reference.
+
+While this is happening, the APIC timer fires periodically and the
+xAPIC interrupt handler in \texttt{src/platform/x86\_pc/apic\_asm.asm}
+and \texttt{apic.cpp} is hit repeatedly. This is where my captured logs
+stop; the system is running and handling APIC interrupts but has not yet
+completed calibration.
+
+\subsection{Why it matters}
+
+\begin{itemize}
+  \item CPU frequency is needed to translate cycle counts (from the TSC)
+        into time units.
+  \item APIC timer calibration is needed to translate APIC ticks into
+        real-time durations.
+\end{itemize}
+
+Without these calibrations, time-based functionality (timeouts, sleeps,
+scheduling) would be inaccurate or unavailable.
+
+\subsection{libc / \texorpdfstring{\texttt{libc++}}{libc++} requirements}
+
+Functions like \texttt{clock\_gettime}, \texttt{sleep},
+\texttt{nanosleep}, and the \texttt{std::chrono} APIs rely on calibrated
+clocks. In this build, musl’s time syscalls are implemented via shims in
+\texttt{src/musl/clock\_gettime.cpp}, \texttt{gettimeofday.cpp},
+\texttt{nanosleep.cpp}, etc., which ultimately call into the kernel’s
+clock and timer infrastructure initialised here.
+
+\begin{quote}
+  TODO: explicitly map each musl time syscall in \texttt{src/musl/*.cpp}
+  to the underlying kernel API calls, and document their precision and
+  limitations.
+\end{quote}
+
+\section{What This Trace Does Not Cover (Yet)}
+
+The GDB trace and log stop during APIC timer calibration. In this trace,
+there is no direct evidence for:
+
+\begin{itemize}
+  \item the exact runtime ordering of:
+    \begin{itemize}
+      \item \texttt{kernel::start()},
+      \item \texttt{os::start()},
+      \item \texttt{Service::start()} or \texttt{kernel\_main()},
+    \end{itemize}
+  \item PCI scanning and driver initialisation (virtio, vmxnet3, \dots),
+    although \texttt{\_\_platform\_init} clearly calls
+    \texttt{hw::PCI\_manager::init()} and runs driver constructors
+    after APIC timer calibration,
+  \item network stack bring-up (ARP, IP, TCP/UDP),
+  \item entering the main event loop (\texttt{os::event\_loop()}),
+  \item user/service-level code running.
+\end{itemize}
+
+From the source (\texttt{src/platform/x86\_pc/platform.cpp}) we know
+that once APIC timer calibration has completed, driver constructors and
+PCI probing run, followed by storage and NIC device initialisation.
+However, the current logs do not reach those points, so the timing of
+service-level entry relative to these operations is not yet empirically
+verified.
+
+Next steps for this document will either:
+
+\begin{itemize}
+  \item extend the trace to cover these later stages, or
+  \item inspect the relevant source files (\texttt{src/kernel/os.cpp},
+        the service entry points, driver code) and explicitly mark those
+        sections as “derived from code” rather than “derived from logs”.
+\end{itemize}
+
+\section{Summary of libc / \texorpdfstring{\texttt{libc++}}{libc++} Preconditions by Phase}
+
+For convenience, this section summarises which invariants are
+established before \texttt{libc}/\texttt{libc++} rely on them:
+
+\begin{enumerate}
+  \item After \texttt{.bss} clear:
+    \begin{itemize}
+      \item globals are zeroed.
+    \end{itemize}
+
+  \item After Machine + Lstack + heap initialisation:
+    \begin{itemize}
+      \item page-aligned heap and \texttt{mmap} regions exist,
+      \item \texttt{malloc}/\texttt{new} have valid backends.
+    \end{itemize}
+
+  \item After paging layout:
+    \begin{itemize}
+      \item code, stack, and heap are mapped and non-overlapping,
+      \item page~0 is unmapped,
+      \item only \texttt{.text} is executable.
+    \end{itemize}
+
+  \item After RNG:
+    \begin{itemize}
+      \item a basic kernel RNG is seeded.
+    \end{itemize}
+
+  \item After crash contexts + IDT:
+    \begin{itemize}
+      \item exceptions generate crash contexts rather than resets.
+    \end{itemize}
+
+  \item After \texttt{x86::init\_libc}:
+    \begin{itemize}
+      \item auxv is populated,
+      \item syscall MSRs (IA32\_STAR, IA32\_LSTAR) are configured,
+      \item \texttt{\_\_libc\_start\_main} is running.
+    \end{itemize}
+
+  \item After system log constructors:
+    \begin{itemize}
+      \item logging backends are registered via \texttt{os::add\_stdout}.
+    \end{itemize}
+
+  \item After ACPI/IOAPIC/xAPIC and clock setup:
+    \begin{itemize}
+      \item interrupts are enabled,
+      \item CPU frequency and APIC timer calibration are underway.
+    \end{itemize}
+\end{enumerate}
+
+By the end of the observed trace, \texttt{libc} and \texttt{libc++} have
+the basic infrastructure they need, but the kernel is still refining its
+timekeeping and interrupt behaviour. Service-level code and the
+high-level OS facilities come afterwards.
+
+\end{document}

@@ -1,0 +1,2230 @@
+c[?7l[2J[0mSeaBIOS (version 1.16.3-debian-1.16.3-2)
+
+
+iPXE (https://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+BEFCADD0+BEF0ADD0 CA00
+Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
+
+
+Booting from ROM...
+Probing EDD (edd=off to disable)... oc[?7l[2J[0mk[    0.000000] Linux version 6.12.30 (nixbld@localhost) (gcc (GCC) 14.2.1 20250322, GNU ld (GNU Binutils) 2.44) #1-NixOS SMP PREEMPT_DYNAMIC Thu May 22 12:29:54 UTC 2025
+[    0.000000] Command line: console=ttyS0 rdinit=/sbin/init root=/dev/ram0 rw
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000bffdffff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000bffe0000-0x00000000bfffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000013fffffff] usable
+[    0.000000] BIOS-e820: [mem 0x000000fd00000000-0x000000ffffffffff] reserved
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] APIC: Static calls initialized
+[    0.000000] SMBIOS 3.0.0 present.
+[    0.000000] DMI: QEMU Ubuntu 24.04 PC v2 (i440FX + PIIX, arch_caps fix, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    0.000000] DMI: Memory slots populated: 1/1
+[    0.000000] Hypervisor detected: KVM
+[    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
+[    0.000000] kvm-clock: using sched offset of 145325596 cycles
+[    0.000001] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+[    0.000003] tsc: Detected 4691.200 MHz processor
+[    0.000558] last_pfn = 0x140000 max_arch_pfn = 0x400000000
+[    0.000592] MTRR map: 4 entries (3 fixed + 1 variable; max 19), built from 8 variable MTRRs
+[    0.000594] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
+[    0.000635] last_pfn = 0xbffe0 max_arch_pfn = 0x400000000
+[    0.002094] found SMP MP-table at [mem 0x000f5480-0x000f548f]
+[    0.002200] RAMDISK: [mem 0xbfb04000-0xbffdffff]
+[    0.002208] ACPI: Early table checksum verification disabled
+[    0.002209] ACPI: RSDP 0x00000000000F5270 000014 (v00 BOCHS )
+[    0.002211] ACPI: RSDT 0x00000000BFFE1C52 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002213] ACPI: FACP 0x00000000BFFE1B06 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002215] ACPI: DSDT 0x00000000BFFE0040 001AC6 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002217] ACPI: FACS 0x00000000BFFE0000 000040
+[    0.002218] ACPI: APIC 0x00000000BFFE1B7A 000078 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002219] ACPI: HPET 0x00000000BFFE1BF2 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002220] ACPI: WAET 0x00000000BFFE1C2A 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.002221] ACPI: Reserving FACP table memory at [mem 0xbffe1b06-0xbffe1b79]
+[    0.002222] ACPI: Reserving DSDT table memory at [mem 0xbffe0040-0xbffe1b05]
+[    0.002222] ACPI: Reserving FACS table memory at [mem 0xbffe0000-0xbffe003f]
+[    0.002223] ACPI: Reserving APIC table memory at [mem 0xbffe1b7a-0xbffe1bf1]
+[    0.002223] ACPI: Reserving HPET table memory at [mem 0xbffe1bf2-0xbffe1c29]
+[    0.002223] ACPI: Reserving WAET table memory at [mem 0xbffe1c2a-0xbffe1c51]
+[    0.002584] No NUMA configuration found
+[    0.002585] Faking a node at [mem 0x0000000000000000-0x000000013fffffff]
+[    0.002587] NODE_DATA(0) allocated [mem 0x13fffa8c0-0x13ffffdff]
+[    0.002598] Zone ranges:
+[    0.002598]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+[    0.002599]   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+[    0.002600]   Normal   [mem 0x0000000100000000-0x000000013fffffff]
+[    0.002600]   Device   empty
+[    0.002601] Movable zone start for each node
+[    0.002601] Early memory node ranges
+[    0.002601]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.002602]   node   0: [mem 0x0000000000100000-0x00000000bffdffff]
+[    0.002603]   node   0: [mem 0x0000000100000000-0x000000013fffffff]
+[    0.002603] Initmem setup node 0 [mem 0x0000000000001000-0x000000013fffffff]
+[    0.002657] On node 0, zone DMA: 1 pages in unavailable ranges
+[    0.002666] On node 0, zone DMA: 97 pages in unavailable ranges
+[    0.006769] On node 0, zone Normal: 32 pages in unavailable ranges
+[    0.007208] ACPI: PM-Timer IO Port: 0x608
+[    0.007219] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+[    0.007246] IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+[    0.007247] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.007248] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+[    0.007249] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.007250] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+[    0.007250] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+[    0.007252] ACPI: Using ACPI (MADT) for SMP configuration information
+[    0.007253] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.007260] CPU topo: Max. logical packages:   1
+[    0.007260] CPU topo: Max. logical dies:       1
+[    0.007261] CPU topo: Max. dies per package:   1
+[    0.007263] CPU topo: Max. threads per core:   1
+[    0.007263] CPU topo: Num. cores per package:     1
+[    0.007263] CPU topo: Num. threads per package:   1
+[    0.007264] CPU topo: Allowing 1 present CPUs plus 0 hotplug CPUs
+[    0.007278] kvm-guest: APIC: eoi() replaced with kvm_guest_apic_eoi_write()
+[    0.007290] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+[    0.007291] PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
+[    0.007292] PM: hibernation: Registered nosave memory: [mem 0xbffe0000-0xffffffff]
+[    0.007293] [mem 0xc0000000-0xfeffbfff] available for PCI devices
+[    0.007293] Booting paravirtualized kernel on KVM
+[    0.007296] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
+[    0.010073] setup_percpu: NR_CPUS:384 nr_cpumask_bits:1 nr_cpu_ids:1 nr_node_ids:1
+[    0.010219] percpu: Embedded 116 pages/cpu s294912 r65536 d114688 u2097152
+[    0.010241] kvm-guest: PV spinlocks disabled, no host support
+[    0.010242] Kernel command line: console=ttyS0 rdinit=/sbin/init root=/dev/ram0 rw
+[    0.010447] random: crng init done
+[    0.010686] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.010801] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.010815] Fallback order for Node 0: 0 
+[    0.010817] Built 1 zonelists, mobility grouping on.  Total pages: 1048446
+[    0.010817] Policy zone: Normal
+[    0.010949] mem auto-init: stack:all(zero), heap alloc:on, heap free:off
+[    0.010952] software IO TLB: area num 1.
+[    0.021679] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.022153] allocated 8388608 bytes of page_ext
+[    0.022170] ftrace: allocating 46088 entries in 181 pages
+[    0.028793] ftrace: allocated 181 pages with 5 groups
+[    0.029342] Dynamic Preempt: voluntary
+[    0.029459] rcu: Preemptible hierarchical RCU implementation.
+[    0.029459] rcu: 	RCU event tracing is enabled.
+[    0.029460] rcu: 	RCU restricting CPUs from NR_CPUS=384 to nr_cpu_ids=1.
+[    0.029460] 	Trampoline variant of Tasks RCU enabled.
+[    0.029461] 	Rude variant of Tasks RCU enabled.
+[    0.029461] 	Tracing variant of Tasks RCU enabled.
+[    0.029461] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
+[    0.029462] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+[    0.029469] RCU Tasks: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+[    0.029470] RCU Tasks Rude: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+[    0.029471] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+[    0.032095] NR_IRQS: 24832, nr_irqs: 256, preallocated irqs: 16
+[    0.032278] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.032419] kfence: initialized - using 2097152 bytes for 255 objects at 0x(____ptrval____)-0x(____ptrval____)
+[    0.037351] Console: colour VGA+ 80x25
+[    0.037393] printk: legacy console [ttyS0] enabled
+[    0.146258] ACPI: Core revision 20240827
+[    0.146990] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+[    0.148438] APIC: Switch to symmetric I/O mode setup
+[    0.149338] x2apic enabled
+[    0.149970] APIC: Switched APIC routing to: physical x2apic
+[    0.151631] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.152554] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x439ef3b8ee9, max_idle_ns: 440795419215 ns
+[    0.154146] Calibrating delay loop (skipped) preset value.. 9382.40 BogoMIPS (lpj=4691200)
+[    0.156244] Last level iTLB entries: 4KB 512, 2MB 255, 4MB 127
+[    0.157117] Last level dTLB entries: 4KB 512, 2MB 255, 4MB 127, 1GB 0
+[    0.157148] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+[    0.158146] Spectre V2 : Mitigation: Retpolines
+[    0.158835] Spectre V2 : Spectre v2 / SpectreRSB: Filling RSB on context switch and VMEXIT
+[    0.159148] x86/fpu: x87 FPU will use FXSAVE
+[    0.173852] Freeing SMP alternatives memory: 40K
+[    0.174146] pid_max: default: 32768 minimum: 301
+[    0.175168] LSM: initializing lsm=capability,landlock,yama,selinux,bpf
+[    0.176189] landlock: Up and running.
+[    0.176739] Yama: becoming mindful.
+[    0.177149] SELinux:  Initializing.
+[    0.177836] LSM support for eBPF active
+[    0.178159] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.179147] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.283218] smpboot: CPU0: AMD Common KVM processor (family: 0xf, model: 0x6, stepping: 0x1)
+[    0.284325] Performance Events: AMD PMU driver.
+[    0.285147] ... version:                0
+[    0.285753] ... bit width:              48
+[    0.286145] ... generic registers:      4
+[    0.286745] ... value mask:             0000ffffffffffff
+[    0.287145] ... max period:             00007fffffffffff
+[    0.288145] ... fixed-purpose events:   0
+[    0.289145] ... event mask:             000000000000000f
+[    0.290166] signal: max sigframe size: 1440
+[    0.290814] rcu: Hierarchical SRCU implementation.
+[    0.291145] rcu: 	Max phase no-delay instances is 400.
+[    0.292303] smp: Bringing up secondary CPUs ...
+[    0.293153] smp: Brought up 1 node, 1 CPU
+[    0.293758] smpboot: Total of 1 processors activated (9382.40 BogoMIPS)
+[    0.294215] Memory: 3988872K/4193784K available (16384K kernel code, 2627K rwdata, 12952K rodata, 3412K init, 3404K bss, 191576K reserved, 0K cma-reserved)
+[    0.295209] devtmpfs: initialized
+[    0.296176] x86/mm: Memory block size: 128MB
+[    0.297353] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+[    0.298148] futex hash table entries: 256 (order: 2, 16384 bytes, linear)
+[    0.299169] pinctrl core: initialized pinctrl subsystem
+[    0.300257] PM: RTC time: 15:25:10, date: 2026-10-18
+[    0.301372] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.302190] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.303159] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.304228] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.306146] audit: initializing netlink subsys (disabled)
+[    0.306975] audit: type=2000 audit(1792337110.352:1): state=initialized audit_enabled=0 res=1
+[    0.307193] thermal_sys: Registered thermal governor 'bang_bang'
+[    0.307194] thermal_sys: Registered thermal governor 'step_wise'
+[    0.308145] thermal_sys: Registered thermal governor 'user_space'
+[    0.309048] cpuidle: using governor menu
+[    0.310214] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+[    0.311247] PCI: Using configuration type 1 for base access
+[    0.312191] kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
+[    0.328175] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.329145] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.333332] ACPI: Added _OSI(Module Device)
+[    0.333966] ACPI: Added _OSI(Processor Device)
+[    0.334201] ACPI: Added _OSI(3.0 _SCP Extensions)
+[    0.335145] ACPI: Added _OSI(Processor Aggregator Device)
+[    0.336370] ACPI: 1 ACPI AML tables successfully acquired and loaded
+[    0.337647] ACPI: Interpreter enabled
+[    0.338151] ACPI: PM: (supports S0 S3 S4 S5)
+[    0.339145] ACPI: Using IOAPIC for interrupt routing
+[    0.339907] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[    0.340145] PCI: Using E820 reservations for host bridge windows
+[    0.341197] ACPI: Enabled 2 GPEs in block 00 to 0F
+[    0.342985] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+[    0.343147] acpi PNP0A03:00: _OSC: OS supports [ASPM ClockPM Segments MSI HPX-Type3]
+[    0.344146] acpi PNP0A03:00: _OSC: not requesting OS control; OS requires [ExtendedConfig ASPM ClockPM MSI]
+[    0.345150] acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended configuration space under this bridge
+[    0.346265] acpiphp: Slot [3] registered
+[    0.346869] acpiphp: Slot [4] registered
+[    0.347160] acpiphp: Slot [5] registered
+[    0.348149] acpiphp: Slot [6] registered
+[    0.348758] acpiphp: Slot [7] registered
+[    0.349160] acpiphp: Slot [8] registered
+[    0.349762] acpiphp: Slot [9] registered
+[    0.350160] acpiphp: Slot [10] registered
+[    0.351161] acpiphp: Slot [11] registered
+[    0.351780] acpiphp: Slot [12] registered
+[    0.352160] acpiphp: Slot [13] registered
+[    0.352776] acpiphp: Slot [14] registered
+[    0.353161] acpiphp: Slot [15] registered
+[    0.354161] acpiphp: Slot [16] registered
+[    0.354776] acpiphp: Slot [17] registered
+[    0.355160] acpiphp: Slot [18] registered
+[    0.356161] acpiphp: Slot [19] registered
+[    0.356780] acpiphp: Slot [20] registered
+[    0.357160] acpiphp: Slot [21] registered
+[    0.357777] acpiphp: Slot [22] registered
+[    0.358160] acpiphp: Slot [23] registered
+[    0.359160] acpiphp: Slot [24] registered
+[    0.359775] acpiphp: Slot [25] registered
+[    0.360161] acpiphp: Slot [26] registered
+[    0.361160] acpiphp: Slot [27] registered
+[    0.361778] acpiphp: Slot [28] registered
+[    0.362160] acpiphp: Slot [29] registered
+[    0.362777] acpiphp: Slot [30] registered
+[    0.363160] acpiphp: Slot [31] registered
+[    0.364156] PCI host bridge to bus 0000:00
+[    0.364771] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+[    0.365145] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[    0.366145] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+[    0.367145] pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+[    0.368145] pci_bus 0000:00: root bus resource [mem 0x140000000-0x1bfffffff window]
+[    0.369145] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    0.370156] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+[    0.371615] pci 0000:00:01.0: [8086:7000] type 00 class 0x060100 conventional PCI endpoint
+[    0.373754] pci 0000:00:01.1: [8086:7010] type 00 class 0x010180 conventional PCI endpoint
+[    0.376328] pci 0000:00:01.1: BAR 4 [io  0xc040-0xc04f]
+[    0.377726] pci 0000:00:01.1: BAR 0 [io  0x01f0-0x01f7]: legacy IDE quirk
+[    0.378146] pci 0000:00:01.1: BAR 1 [io  0x03f6]: legacy IDE quirk
+[    0.379145] pci 0000:00:01.1: BAR 2 [io  0x0170-0x0177]: legacy IDE quirk
+[    0.380145] pci 0000:00:01.1: BAR 3 [io  0x0376]: legacy IDE quirk
+[    0.381297] pci 0000:00:01.3: [8086:7113] type 00 class 0x068000 conventional PCI endpoint
+[    0.383523] pci 0000:00:01.3: quirk: [io  0x0600-0x063f] claimed by PIIX4 ACPI
+[    0.384155] pci 0000:00:01.3: quirk: [io  0x0700-0x070f] claimed by PIIX4 SMB
+[    0.385364] pci 0000:00:02.0: [1234:1111] type 00 class 0x030000 conventional PCI endpoint
+[    0.386751] pci 0000:00:02.0: BAR 0 [mem 0xfd000000-0xfdffffff pref]
+[    0.388581] pci 0000:00:02.0: BAR 2 [mem 0xfebb0000-0xfebb0fff]
+[    0.391780] pci 0000:00:02.0: ROM [mem 0xfeba0000-0xfebaffff pref]
+[    0.392216] pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+[    0.393294] pci 0000:00:03.0: [8086:100e] type 00 class 0x020000 conventional PCI endpoint
+[    0.395145] pci 0000:00:03.0: BAR 0 [mem 0xfeb80000-0xfeb9ffff]
+[    0.396293] pci 0000:00:03.0: BAR 1 [io  0xc000-0xc03f]
+[    0.402273] pci 0000:00:03.0: ROM [mem 0xfeb00000-0xfeb7ffff pref]
+[    0.403833] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+[    0.404230] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+[    0.405225] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+[    0.406223] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+[    0.407191] ACPI: PCI: Interrupt link LNKS configured for IRQ 9
+[    0.408259] iommu: Default domain type: Translated
+[    0.409145] iommu: DMA domain TLB invalidation policy: lazy mode
+[    0.410158] ACPI: bus type USB registered
+[    0.411154] usbcore: registered new interface driver usbfs
+[    0.411971] usbcore: registered new interface driver hub
+[    0.412149] usbcore: registered new device driver usb
+[    0.413264] NetLabel: Initializing
+[    0.414145] NetLabel:  domain hash size = 128
+[    0.414794] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    0.415153] NetLabel:  unlabeled traffic allowed by default
+[    0.416145] PCI: Using ACPI for IRQ routing
+[    0.417288] pci 0000:00:02.0: vgaarb: setting as boot VGA device
+[    0.418144] pci 0000:00:02.0: vgaarb: bridge control possible
+[    0.418144] pci 0000:00:02.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+[    0.418145] vgaarb: loaded
+[    0.418563] hpet: 3 channels of 0 reserved for per-cpu timers
+[    0.419152] hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+[    0.420145] hpet0: 3 comparators, 64-bit 100.000000 MHz counter
+[    0.425159] clocksource: Switched to clocksource kvm-clock
+[    0.426324] VFS: Disk quotas dquot_6.6.0
+[    0.426938] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    0.427992] pnp: PnP ACPI init
+[    0.428606] pnp: PnP ACPI: found 6 devices
+[    0.434309] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[    0.435646] NET: Registered PF_INET protocol family
+[    0.436402] IP idents hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.443312] tcp_listen_portaddr_hash hash table entries: 2048 (order: 3, 32768 bytes, linear)
+[    0.444616] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.445787] TCP established hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.447006] TCP bind hash table entries: 32768 (order: 8, 1048576 bytes, linear)
+[    0.448151] TCP: Hash tables configured (established 32768 bind 32768)
+[    0.449291] MPTCP token hash table entries: 4096 (order: 4, 98304 bytes, linear)
+[    0.450408] UDP hash table entries: 2048 (order: 4, 65536 bytes, linear)
+[    0.451417] UDP-Lite hash table entries: 2048 (order: 4, 65536 bytes, linear)
+[    0.452507] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.453368] NET: Registered PF_XDP protocol family
+[    0.454096] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+[    0.455025] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+[    0.455952] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+[    0.456983] pci_bus 0000:00: resource 7 [mem 0xc0000000-0xfebfffff window]
+[    0.458012] pci_bus 0000:00: resource 8 [mem 0x140000000-0x1bfffffff window]
+[    0.459099] pci 0000:00:01.0: PIIX3: Enabling Passive Release
+[    0.459981] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+[    0.460930] PCI: CLS 0 bytes, default 64
+[    0.461588] Trying to unpack rootfs image as initramfs...
+[    0.463353] Freeing initrd memory: 4976K
+[    0.463961] PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
+[    0.464929] software IO TLB: mapped [mem 0x00000000bbb04000-0x00000000bfb04000] (64MB)
+[    0.466124] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x439ef3b8ee9, max_idle_ns: 440795419215 ns
+[    0.477661] Initialise system trusted keyrings
+[    0.478383] workingset: timestamp_bits=40 max_order=20 bucket_order=0
+[    0.485066] Key type asymmetric registered
+[    0.485706] Asymmetric key parser 'x509' registered
+[    0.486477] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 251)
+[    0.487638] io scheduler mq-deadline registered
+[    0.488345] io scheduler kyber registered
+[    0.489099] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+[    0.490192] 00:04: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    0.491577] Linux agpgart interface v0.103
+[    0.492221] ACPI: bus type drm_connector registered
+[    0.493065] usbcore: registered new interface driver usbserial_generic
+[    0.494068] usbserial: USB Serial support registered for generic
+[    0.494981] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+[    0.496126] drop_monitor: Initializing network drop monitor service
+[    0.497194] NET: Registered PF_INET6 protocol family
+[    0.498112] Segment Routing with IPv6
+[    0.498673] In-situ OAM (IOAM) with IPv6
+[    0.499355] IPI shorthand broadcast: enabled
+[    0.500617] sched_clock: Marking stable (382149722, 117858974)->(515667595, -15658899)
+[    0.501957] registered taskstats version 1
+[    0.502635] Loading compiled-in X.509 certificates
+[    0.504669] Demotion targets for Node 0: null
+[    0.505368] Key type .fscrypt registered
+[    0.505970] Key type fscrypt-provisioning registered
+[    0.506755] PM:   Magic number: 14:343:437
+[    0.508838] RAS: Correctable Errors collector initialized.
+[    0.514724] clk: Disabling unused clocks
+[    0.515351] PM: genpd: Disabling unused power domains
+[    0.517070] Freeing unused decrypted memory: 2028K
+[    0.517763] Freeing unused kernel image (initmem) memory: 3412K
+[    0.518452] Write protecting the kernel read-only data: 30720k
+[    0.519221] Freeing unused kernel image (rodata/data gap) memory: 1384K
+[    0.540912] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[    0.541548] Run /sbin/init as init process
++ mount -t proc none /proc
++ mount -t sysfs none /sys
++ echo 'running ./hello...'
+running ./hello...
++ ulimit -v 2097152
++ /bin/hello
+testing with custom allocator!
+buddy:
+  cfg.region:   [0x7f4228800000, 0x7f4268800000) (1073741824 bytes)
+  overbooking:   false
+  min_block:     16
+  resource_base: 0x7f4228800000
+  pool_base:     0x7f42288000e0
+  pool_end:      0x7f42488000e0
+  pool_size:     536870912 bytes (2^29)
+  min_order:     4 (min bud = 16 bytes)
+  max_order:     29 (max bud = 536870912 bytes) 
+starting test (seed=3735928559)
+full! 44 allocations
+
+=== allocation profile ===
+alloc calls: 77
+free calls : 55
+bytes requested : 998114814
+bytes freed     : 765945642
+live bytes      : 232169172
+peak live bytes : 484686522
+malloc total ns: 146640 (avg 1904.4 ns)
+free total ns  : 29798 (avg 541.8 ns)
+live allocations still tracked: 22
+
+size histogram (pow2 buckets):
+  <2^12..=2^13> : 3
+  <2^13..=2^14> : 3
+  <2^14..=2^15> : 3
+  <2^15..=2^16> : 10
+  <2^16..=2^17> : 5
+  <2^17..=2^18> : 3
+  <2^18..=2^19> : 4
+  <2^19..=2^20> : 7
+  <2^20..=2^21> : 2
+  <2^21..=2^22> : 3
+  <2^22..=2^23> : 4
+  <2^23..=2^24> : 2
+  <2^24..=2^25> : 4
+  <2^25..=2^26> : 24
+==========================
+
+==BEGIN_TRACE==
+seq,t_ns,cycle_count,op,addr,size,repeats
+0,432622170,29422,request,0x7f42288000e0,727224,1
+1,432720304,450213,touch,0x7f42288000e0,727224,1
+2,432763395,193264,touchsample,0x7f42288000e0,727224,10
+3,432765519,329,free,0x7f42288000e0,727224,1
+4,432767222,282,request,0x7f42288000e0,33554432,1
+5,438321338,26043875,touch,0x7f42288000e0,33554432,1
+6,450029191,54912262,touchsample,0x7f42288000e0,33554432,10
+7,450031476,282,request,0x7f422a8000e0,32884507,1
+8,455335624,24871131,touch,0x7f422a8000e0,32884507,1
+9,466876084,54121346,touchsample,0x7f422a8000e0,32884507,10
+10,466878949,1034,free,0x7f42288000e0,33554432,1
+11,466881003,564,request,0x7f42288000e0,3744414,1
+12,466955122,338447,touch,0x7f42288000e0,3744414,1
+13,467210400,1188254,touchsample,0x7f42288000e0,3744414,10
+14,467212072,141,free,0x7f422a8000e0,32884507,1
+15,467213946,1081,request,0x7f4228c000e0,15002,1
+16,467216541,3713,touch,0x7f4228c000e0,15002,1
+17,467230908,4089,touchsample,0x7f4228c000e0,15002,10
+18,467232621,141,request,0x7f4228c100e0,42497,1
+19,467235527,6110,touch,0x7f4228c100e0,42497,1
+20,467239444,11421,touchsample,0x7f4228c100e0,42497,10
+21,467241217,94,free,0x7f42288000e0,3744414,1
+22,467243281,188,request,0x7f42290000e0,5415442,1
+23,467324924,374449,touch,0x7f42290000e0,5415442,1
+24,469242092,8984567,touchsample,0x7f42290000e0,5415442,10
+25,469243725,188,request,0x7f42288000e0,2256944,1
+26,469261158,72333,touch,0x7f42288000e0,2256944,1
+27,469410608,692122,touchsample,0x7f42288000e0,2256944,10
+28,469412431,141,free,0x7f42290000e0,5415442,1
+29,469414004,47,free,0x7f42288000e0,2256944,1
+30,469415627,235,free,0x7f4228c000e0,15002,1
+31,469417550,1551,free,0x7f4228c100e0,42497,1
+32,469419344,188,request,0x7f42288000e0,33554432,1
+33,469946561,2378294,touch,0x7f42288000e0,33554432,1
+34,481688288,55072908,touchsample,0x7f42288000e0,33554432,10
+35,481690192,893,request,0x7f422a8000e0,22978,1
+36,481692195,1927,touch,0x7f422a8000e0,22978,1
+37,481695001,6204,touchsample,0x7f422a8000e0,22978,10
+38,481696613,94,free,0x7f42288000e0,33554432,1
+39,481698416,470,free,0x7f422a8000e0,22978,1
+40,481700521,1645,request,0x7f42288000e0,322100,1
+41,481707834,26790,touch,0x7f42288000e0,322100,1
+42,481727421,84882,touchsample,0x7f42288000e0,322100,10
+43,481729024,188,request,0x7f422a8000e0,33554432,1
+44,482298940,2665041,touch,0x7f422a8000e0,33554432,1
+45,494025640,55002079,touchsample,0x7f422a8000e0,33554432,10
+46,494027393,329,request,0x7f42288800e0,7887,1
+47,494029277,1880,touch,0x7f42288800e0,7887,1
+48,494031220,2209,touchsample,0x7f42288800e0,7887,10
+49,494033835,4606,request,0x7f422c8000e0,33554432,1
+50,499434083,25322284,touch,0x7f422c8000e0,33554432,1
+51,511126748,54842138,touchsample,0x7f422c8000e0,33554432,10
+52,511129734,2397,free,0x7f42288800e0,7887,1
+53,511131837,141,request,0x7f422e8000e0,33554432,1
+54,516588090,25585296,touch,0x7f422e8000e0,33554432,1
+55,528326962,55058244,touchsample,0x7f422e8000e0,33554432,10
+56,528329656,1974,request,0x7f42288800e0,46576,1
+57,528332412,5734,touch,0x7f42288800e0,46576,1
+58,528336549,12502,touchsample,0x7f42288800e0,46576,10
+59,528339545,141,request,0x7f42288c00e0,256348,1
+60,528347209,27166,touch,0x7f42288c00e0,256348,1
+61,528363169,67539,touchsample,0x7f42288c00e0,256348,10
+62,528365143,940,free,0x7f422a8000e0,33554432,1
+63,528366917,94,request,0x7f42288a00e0,105976,1
+64,528371325,11938,touch,0x7f42288a00e0,105976,1
+65,528406199,28059,touchsample,0x7f42288a00e0,105976,10
+66,528407823,94,request,0x7f42288900e0,34031,1
+67,528410508,5123,touch,0x7f42288900e0,34031,1
+68,528413934,9165,touchsample,0x7f42288900e0,34031,10
+69,528415777,141,free,0x7f42288c00e0,256348,1
+70,528417411,94,free,0x7f42288a00e0,105976,1
+71,528419124,141,request,0x7f422a8000e0,33554432,1
+72,528921234,2347321,touch,0x7f422a8000e0,33554432,1
+73,540687457,55187447,touchsample,0x7f422a8000e0,33554432,10
+74,540689440,376,request,0x7f42288c00e0,134973,1
+75,540691885,4559,touch,0x7f42288c00e0,134973,1
+76,540700942,35579,touchsample,0x7f42288c00e0,134973,10
+77,540702655,611,request,0x7f4228a000e0,1938405,1
+78,540741678,173759,touch,0x7f4228a000e0,1938405,1
+79,540870039,592482,touchsample,0x7f4228a000e0,1938405,10
+80,540871982,987,request,0x7f42298000e0,12678605,1
+81,541090220,1014589,touch,0x7f42298000e0,12678605,1
+82,545515503,20750735,touchsample,0x7f42298000e0,12678605,10
+83,545517667,282,request,0x7f42288a00e0,8910,1
+84,545519230,376,touch,0x7f42288a00e0,8910,1
+85,545521234,2491,touchsample,0x7f42288a00e0,8910,10
+86,545523017,658,request,0x7f42289000e0,148739,1
+87,545527546,13818,touch,0x7f42289000e0,148739,1
+88,545537364,39151,touchsample,0x7f42289000e0,148739,10
+89,545541001,9071,request,0x7f42308000e0,33554432,1
+90,550915741,25200977,touch,0x7f42308000e0,33554432,1
+91,562633823,54961753,touchsample,0x7f42308000e0,33554432,10
+92,562636569,1034,request,0x7f42328000e0,33554432,1
+93,568051183,25392972,touch,0x7f42328000e0,33554432,1
+94,579805995,55133350,touchsample,0x7f42328000e0,33554432,10
+95,579810484,3055,request,0x7f42289400e0,69524,1
+96,579813759,7661,touch,0x7f42289400e0,69524,1
+97,579819170,18471,touchsample,0x7f42289400e0,69524,10
+98,579822255,1175,free,0x7f42288000e0,322100,1
+99,579823979,94,free,0x7f42328000e0,33554432,1
+100,579825772,987,free,0x7f422c8000e0,33554432,1
+101,579827746,141,free,0x7f422e8000e0,33554432,1
+102,579829529,564,free,0x7f42288c00e0,134973,1
+103,579831132,94,request,0x7f42328000e0,33554432,1
+104,580324967,2307935,touch,0x7f42328000e0,33554432,1
+105,592080269,55136311,touchsample,0x7f42328000e0,33554432,10
+106,592082173,1081,request,0x7f42288a40e0,7788,1
+107,592084086,1833,touch,0x7f42288a40e0,7788,1
+108,592086029,2162,touchsample,0x7f42288a40e0,7788,10
+109,592087722,235,request,0x7f422c8000e0,33554432,1
+110,592586717,2331717,touch,0x7f422c8000e0,33554432,1
+111,604324767,55056223,touchsample,0x7f422c8000e0,33554432,10
+112,604326931,1175,request,0x7f4228c000e0,586102,1
+113,604340376,55742,touch,0x7f4228c000e0,586102,1
+114,604374710,154160,touchsample,0x7f4228c000e0,586102,10
+115,604376373,141,request,0x7f4228e000e0,1963739,1
+116,604420475,197400,touch,0x7f4228e000e0,1963739,1
+117,604552273,609402,touchsample,0x7f4228e000e0,1963739,10
+118,604553946,376,free,0x7f42328000e0,33554432,1
+119,604555759,893,request,0x7f42288a80e0,19588,1
+120,604558264,4371,touch,0x7f42288a80e0,19588,1
+121,604560959,5311,touchsample,0x7f42288a80e0,19588,10
+122,604562732,564,request,0x7f42288b00e0,30981,1
+123,604565317,4841,touch,0x7f42288b00e0,30981,1
+124,604568563,8366,touchsample,0x7f42288b00e0,30981,10
+125,604570417,94,request,0x7f42288000e0,521457,1
+126,604584934,58797,touch,0x7f42288000e0,521457,1
+127,604615681,137240,touchsample,0x7f42288000e0,521457,10
+128,604617284,188,request,0x7f4228d000e0,635694,1
+129,604661267,69701,touch,0x7f4228d000e0,635694,1
+130,604698406,167320,touchsample,0x7f4228d000e0,635694,10
+131,604702123,517,free,0x7f4228a000e0,1938405,1
+132,604703856,658,request,0x7f42290000e0,3263408,1
+133,604774208,320728,touch,0x7f42290000e0,3263408,1
+134,604988549,996682,touchsample,0x7f42290000e0,3263408,10
+135,604990213,188,request,0x7f42328000e0,33554432,1
+136,605506579,2413732,touch,0x7f42328000e0,33554432,1
+137,617285185,55246244,touchsample,0x7f42328000e0,33554432,10
+138,617287058,752,request,0x7f42289600e0,41132,1
+139,617289803,5405,touch,0x7f42289600e0,41132,1
+140,617293730,11374,touchsample,0x7f42289600e0,41132,10
+141,617295414,188,request,0x7f42288b80e0,11216,1
+142,617297358,1739,touch,0x7f42288b80e0,11216,1
+143,617299532,3149,touchsample,0x7f42288b80e0,11216,10
+144,617301606,1927,request,0x7f422e8000e0,4361832,1
+145,617385703,334969,touch,0x7f422e8000e0,4361832,1
+146,618885580,7024667,touchsample,0x7f422e8000e0,4361832,10
+147,618887304,188,free,0x7f4228d000e0,635694,1
+148,618888937,282,free,0x7f4228c000e0,586102,1
+149,618890559,235,request,0x7f422f8000e0,15963916,1
+150,619136129,1143228,touch,0x7f422f8000e0,15963916,1
+151,624721974,26193006,touchsample,0x7f422f8000e0,15963916,10
+152,624724959,5875,request,0x7f42348000e0,27845075,1
+153,629247335,21204191,touch,0x7f42348000e0,27845075,1
+154,638883090,45192051,touchsample,0x7f42348000e0,27845075,10
+155,638885644,1692,request,0x7f42368000e0,33554432,1
+156,644350713,25626421,touch,0x7f42368000e0,33554432,1
+157,656121775,55209067,touchsample,0x7f42368000e0,33554432,10
+158,656127225,15557,request,0x7f42388000e0,33554432,1
+159,661506564,25223067,touch,0x7f42388000e0,33554432,1
+160,673290400,55269462,touchsample,0x7f42388000e0,33554432,10
+161,673293275,1786,request,0x7f42289700e0,37243,1
+162,673296091,5640,touch,0x7f42289700e0,37243,1
+163,673299708,10105,touchsample,0x7f42289700e0,37243,10
+164,673302242,564,free,0x7f42288000e0,521457,1
+165,673304076,94,request,0x7f423a8000e0,33554432,1
+166,678691399,25261466,touch,0x7f423a8000e0,33554432,1
+167,690472600,55256114,touchsample,0x7f423a8000e0,33554432,10
+168,690476266,2209,free,0x7f4228e000e0,1963739,1
+169,690478621,1739,request,0x7f422f0000e0,5304616,1
+170,690558551,366647,touch,0x7f422f0000e0,5304616,1
+171,692352669,8404446,touchsample,0x7f422f0000e0,5304616,10
+172,692355975,7191,request,0x7f423c8000e0,31314313,1
+173,697338381,23361538,touch,0x7f423c8000e0,31314313,1
+174,708091517,50434807,touchsample,0x7f423c8000e0,31314313,10
+175,708094663,1786,free,0x7f42368000e0,33554432,1
+176,708096947,1363,request,0x7f42288a60e0,7129,1
+177,708098821,1504,touch,0x7f42288a60e0,7129,1
+178,708100725,1974,touchsample,0x7f42288a60e0,7129,10
+179,708102618,940,request,0x7f4228a000e0,769469,1
+180,708119349,68526,touch,0x7f4228a000e0,769469,1
+181,708163972,202288,touchsample,0x7f4228a000e0,769469,10
+182,708165836,141,request,0x7f42368000e0,33554432,1
+183,708665181,2331529,touch,0x7f42368000e0,33554432,1
+184,720412217,55097301,touchsample,0x7f42368000e0,33554432,10
+185,720414312,423,request,0x7f423e8000e0,33554432,1
+186,725892806,25689307,touch,0x7f423e8000e0,33554432,1
+187,737507445,54475820,touchsample,0x7f423e8000e0,33554432,10
+188,737511903,1598,free,0x7f42288900e0,34031,1
+189,737516963,11656,request,0x7f42408000e0,33554432,1
+190,742879330,25145141,touch,0x7f42408000e0,33554432,1
+191,754589688,54924435,touchsample,0x7f42408000e0,33554432,10
+192,754592814,1880,request,0x7f42288c00e0,70136,1
+193,754596440,9400,touch,0x7f42288c00e0,70136,1
+194,754601951,18612,touchsample,0x7f42288c00e0,70136,10
+195,754604876,94,request,0x7f42288e00e0,126025,1
+196,754609675,15040,touch,0x7f42288e00e0,126025,1
+197,754618232,33276,touchsample,0x7f42288e00e0,126025,10
+198,754622229,9212,request,0x7f42428000e0,5440656,1
+199,755515861,4183235,touch,0x7f42428000e0,5440656,1
+200,757440043,9016104,touchsample,0x7f42428000e0,5440656,10
+201,757442097,752,request,0x7f42288900e0,46812,1
+202,757445233,7238,touch,0x7f42288900e0,46812,1
+203,757449441,12502,touchsample,0x7f42288900e0,46812,10
+204,757451404,940,free,0x7f422a8000e0,33554432,1
+205,757453378,987,free,0x7f423a8000e0,33554432,1
+206,757455101,141,request,0x7f423a8000e0,33554432,1
+207,757954877,2329790,touch,0x7f423a8000e0,33554432,1
+208,769681575,55002267,touchsample,0x7f423a8000e0,33554432,10
+209,769683670,423,request,0x7f422a8000e0,33554432,1
+210,770188535,2359917,touch,0x7f422a8000e0,33554432,1
+211,781974664,55281212,touchsample,0x7f422a8000e0,33554432,10
+212,781976628,846,free,0x7f42348000e0,27845075,1
+213,781978281,141,free,0x7f423c8000e0,31314313,1
+214,781980144,1034,request,0x7f4228b000e0,899098,1
+215,782000943,84553,touch,0x7f4228b000e0,899098,1
+216,782061958,278898,touchsample,0x7f4228b000e0,899098,10
+217,782063952,141,request,0x7f42288000e0,349633,1
+218,782072808,32054,touch,0x7f42288000e0,349633,1
+219,782094018,92214,touchsample,0x7f42288000e0,349633,10
+220,782096122,1222,request,0x7f42289800e0,49153,1
+221,782099298,7614,touch,0x7f42289800e0,49153,1
+222,782103565,13113,touchsample,0x7f42289800e0,49153,10
+223,782135585,94,request,0x7f42289900e0,54948,1
+224,782138892,8272,touch,0x7f42289900e0,54948,1
+225,782143480,14664,touchsample,0x7f42289900e0,54948,10
+226,782145314,940,request,0x7f4228c000e0,988498,1
+227,782167445,95222,touch,0x7f4228c000e0,988498,1
+228,782225213,262730,touchsample,0x7f4228c000e0,988498,10
+229,782226937,329,request,0x7f423c8000e0,29933364,1
+230,782672120,2078340,touch,0x7f423c8000e0,29933364,1
+231,793024947,48557862,touchsample,0x7f423c8000e0,29933364,10
+232,793026660,376,request,0x7f42289a00e0,71789,1
+233,793029876,7849,touch,0x7f42289a00e0,71789,1
+234,793035407,19082,touchsample,0x7f42289a00e0,71789,10
+235,793037290,1504,request,0x7f42289c00e0,54728,1
+236,793040316,6486,touch,0x7f42289c00e0,54728,1
+237,793044964,14617,touchsample,0x7f42289c00e0,54728,10
+238,793046858,282,request,0x7f42348000e0,33554432,1
+239,794355427,6130210,touch,0x7f42348000e0,33554432,1
+240,806078740,54986193,touchsample,0x7f42348000e0,33554432,10
+241,806081525,5170,request,0x7f42448000e0,33554432,1
+242,811536245,25577823,touch,0x7f42448000e0,33554432,1
+243,823285966,55109709,touchsample,0x7f42448000e0,33554432,10
+244,823288531,1410,request,0x7f42468000e0,33554432,1
+245,828702675,25388272,touch,0x7f42468000e0,33554432,1
+246,840459621,55142609,touchsample,0x7f42468000e0,33554432,10
+247,840462716,3525,request,0x7f4228d000e0,379826,1
+248,840472344,37647,touch,0x7f4228d000e0,379826,1
+249,840495147,100016,touchsample,0x7f4228d000e0,379826,10
+250,840498102,1927,free,0x7f42328000e0,33554432,1
+251,840500367,1457,free,0x7f423a8000e0,33554432,1
+252,840502301,893,request,0x7f4228e000e0,738701,1
+253,840519803,73555,touch,0x7f4228e000e0,738701,1
+254,840562834,194533,touchsample,0x7f4228e000e0,738701,10
+255,840564888,1034,request,0x7f42289d00e0,59299,1
+256,840568394,8507,touch,0x7f42289d00e0,59299,1
+257,840603050,15886,touchsample,0x7f42289d00e0,59299,10
+258,840604752,188,request,0x7f423a8000e0,33554432,1
+259,841146587,2531608,touch,0x7f423a8000e0,33554432,1
+260,852957774,55398524,touchsample,0x7f423a8000e0,33554432,10
+261,852959827,470,request,0x7f42328000e0,33554432,1
+262,853464683,2359682,touch,0x7f42328000e0,33554432,1
+263,865125728,54695216,touchsample,0x7f42328000e0,33554432,10
+264,865599956,113881,touchrandom,0x7f42288000e0,349633,10
+265,865605366,17155,touchrandom,0x7f42288800e0,46576,10
+266,865610456,16779,touchrandom,0x7f42288900e0,46812,10
+267,865613201,5922,touchrandom,0x7f42288a00e0,8910,10
+268,865615505,3901,touchrandom,0x7f42288a40e0,7788,10
+269,865617919,4371,touchrandom,0x7f42288a60e0,7129,10
+270,865621165,8178,touchrandom,0x7f42288a80e0,19588,10
+271,865625223,12032,touchrandom,0x7f42288b00e0,30981,10
+272,865627718,4747,touchrandom,0x7f42288b80e0,11216,10
+273,865634531,24675,touchrandom,0x7f42288c00e0,70136,10
+274,865645811,45496,touchrandom,0x7f42288e00e0,126025,10
+275,865658085,50243,touchrandom,0x7f42289000e0,148739,10
+276,865664737,24064,touchrandom,0x7f42289400e0,69524,10
+277,865669456,15181,touchrandom,0x7f42289600e0,41132,10
+278,865674235,15369,touchrandom,0x7f42289700e0,37243,10
+279,865679725,18565,touchrandom,0x7f42289800e0,49153,10
+280,865685396,19411,touchrandom,0x7f42289900e0,54948,10
+281,865692489,25991,touchrandom,0x7f42289a00e0,71789,10
+282,865698410,20633,touchrandom,0x7f42289c00e0,54728,10
+283,865703490,16638,touchrandom,0x7f42289d00e0,59299,10
+284,865761117,261884,touchrandom,0x7f4228a000e0,769469,10
+285,865828243,306111,touchrandom,0x7f4228b000e0,899098,10
+286,865900689,331256,touchrandom,0x7f4228c000e0,988498,10
+287,865924092,102319,touchrandom,0x7f4228d000e0,379826,10
+288,865968927,201630,touchrandom,0x7f4228e000e0,738701,10
+289,866253449,1325682,touchrandom,0x7f42290000e0,3263408,10
+290,870687728,20780486,touchrandom,0x7f42298000e0,12678605,10
+291,882331602,54614235,touchrandom,0x7f422a8000e0,33554432,10
+292,894023156,54838331,touchrandom,0x7f422c8000e0,33554432,10
+293,895451630,6689792,touchrandom,0x7f422e8000e0,4361832,10
+294,897281134,8573129,touchrandom,0x7f422f0000e0,5304616,10
+295,902852772,26127065,touchrandom,0x7f422f8000e0,15963916,10
+296,914507476,54664478,touchrandom,0x7f42308000e0,33554432,10
+297,926125331,54492552,touchrandom,0x7f42328000e0,33554432,10
+298,937861548,55047058,touchrandom,0x7f42348000e0,33554432,10
+299,949507586,54623823,touchrandom,0x7f42368000e0,33554432,10
+300,961277225,55204179,touchrandom,0x7f42388000e0,33554432,10
+301,973020114,55079112,touchrandom,0x7f423a8000e0,33554432,10
+302,983019090,46897916,touchrandom,0x7f423c8000e0,29933364,10
+303,994768300,55107923,touchrandom,0x7f423e8000e0,33554432,10
+304,1006505559,55051805,touchrandom,0x7f42408000e0,33554432,10
+305,1008427236,9004777,touchrandom,0x7f42428000e0,5440656,10
+306,1020126874,54875085,touchrandom,0x7f42448000e0,33554432,10
+307,1020129259,470,free,0x7f42288000e0,349633,1
+308,1020130862,94,free,0x7f42288900e0,46812,1
+309,1020132765,94,free,0x7f42288a40e0,7788,1
+310,1020134368,94,free,0x7f42288a80e0,19588,1
+311,1020136072,564,free,0x7f42288b80e0,11216,1
+312,1020137664,235,free,0x7f42288e00e0,126025,1
+313,1020139238,141,free,0x7f42289400e0,69524,1
+314,1020140811,141,free,0x7f42289700e0,37243,1
+315,1020142383,141,free,0x7f42289900e0,54948,1
+316,1020144057,188,free,0x7f42289c00e0,54728,1
+317,1020145650,188,free,0x7f4228a000e0,769469,1
+318,1020147232,188,free,0x7f4228c000e0,988498,1
+319,1020148805,235,free,0x7f4228e000e0,738701,1
+320,1020150558,658,free,0x7f42298000e0,12678605,1
+321,1020152131,188,free,0x7f422c8000e0,33554432,1
+322,1020153795,564,free,0x7f422f0000e0,5304616,1
+323,1020155367,141,free,0x7f42308000e0,33554432,1
+324,1020156930,141,free,0x7f42348000e0,33554432,1
+325,1020158503,141,free,0x7f42388000e0,33554432,1
+326,1020160087,235,free,0x7f423c8000e0,29933364,1
+327,1020161669,235,free,0x7f42408000e0,33554432,1
+328,1020163253,235,free,0x7f42448000e0,33554432,1
+==END_TRACE==
+ok!
+test finished
+buddy:
+  cfg.region:   [0x7f4228800000, 0x7f4268800000) (1073741824 bytes)
+  overbooking:   false
+  min_block:     16
+  resource_base: 0x7f4228800000
+  pool_base:     0x7f42288000e0
+  pool_end:      0x7f42488000e0
+  pool_size:     536870912 bytes (2^29)
+  min_order:     4 (min bud = 16 bytes)
+  max_order:     29 (max bud = 536870912 bytes) 
+testing with custom allocator!
+buddy:
+  cfg.region:   [0x7f4228800000, 0x7f4268800000) (1073741824 bytes)
+  overbooking:   false
+  min_block:     16
+  resource_base: 0x7f4228800000
+  pool_base:     0x7f42288000e0
+  pool_end:      0x7f42488000e0
+  pool_size:     536870912 bytes (2^29)
+  min_order:     4 (min bud = 16 bytes)
+  max_order:     29 (max bud = 536870912 bytes) 
+starting test (seed=134217861)
+full! 53 allocations
+
+=== allocation profile ===
+alloc calls: 75
+free calls : 49
+bytes requested : 644604399
+bytes freed     : 407995703
+live bytes      : 236608696
+peak live bytes : 503568753
+malloc total ns: 209150 (avg 2788.7 ns)
+free total ns  : 14053 (avg 286.8 ns)
+live allocations still tracked: 26
+
+size histogram (pow2 buckets):
+  <2^12..=2^13> : 6
+  <2^13..=2^14> : 9
+  <2^14..=2^15> : 9
+  <2^15..=2^16> : 2
+  <2^16..=2^17> : 6
+  <2^17..=2^18> : 6
+  <2^18..=2^19> : 6
+  <2^20..=2^21> : 7
+  <2^21..=2^22> : 2
+  <2^22..=2^23> : 2
+  <2^23..=2^24> : 3
+  <2^24..=2^25> : 1
+  <2^25..=2^26> : 16
+==========================
+
+==BEGIN_TRACE==
+seq,t_ns,cycle_count,op,addr,size,repeats
+0,1260929846,56118,request,0x7f42288000e0,6313,1
+1,1260932510,3290,touch,0x7f42288000e0,6313,1
+2,1260934695,1833,touchsample,0x7f42288000e0,6313,10
+3,1260936598,94,request,0x7f42288080e0,17212,1
+4,1260940776,12267,touch,0x7f42288080e0,17212,1
+5,1260943421,4982,touchsample,0x7f42288080e0,17212,10
+6,1260945194,94,free,0x7f42288080e0,17212,1
+7,1260946777,94,request,0x7f42288040e0,14904,1
+8,1260950314,9259,touch,0x7f42288040e0,14904,1
+9,1260952799,4136,touchsample,0x7f42288040e0,14904,10
+10,1260954452,141,request,0x7f422a8000e0,33554432,1
+11,1267380339,30133768,touch,0x7f422a8000e0,33554432,1
+12,1279088403,54914377,touchsample,0x7f422a8000e0,33554432,10
+13,1279090517,846,request,0x7f42288080e0,15327,1
+14,1279092741,3196,touch,0x7f42288080e0,15327,1
+15,1279095116,4136,touchsample,0x7f42288080e0,15327,10
+16,1279098171,6063,request,0x7f422c8000e0,33554432,1
+17,1285390699,29487424,touch,0x7f422c8000e0,33554432,1
+18,1297120784,55017213,touchsample,0x7f422c8000e0,33554432,10
+19,1297123058,1645,request,0x7f42288200e0,92597,1
+20,1297141513,79054,touch,0x7f42288200e0,92597,1
+21,1297148446,24628,touchsample,0x7f42288200e0,92597,10
+22,1297151031,4324,request,0x7f42288100e0,21046,1
+23,1297156110,16309,touch,0x7f42288100e0,21046,1
+24,1297158906,5781,touchsample,0x7f42288100e0,21046,10
+25,1297160679,94,free,0x7f42288200e0,92597,1
+26,1297162352,564,request,0x7f42288800e0,306924,1
+27,1297217015,248583,touch,0x7f42288800e0,306924,1
+28,1297235830,81263,touchsample,0x7f42288800e0,306924,10
+29,1297237543,188,request,0x7f422e8000e0,33554432,1
+30,1303417921,28983396,touch,0x7f422e8000e0,33554432,1
+31,1315129772,54932002,touchsample,0x7f422e8000e0,33554432,10
+32,1315133790,10763,request,0x7f42308000e0,33554432,1
+33,1320993286,27373364,touch,0x7f42308000e0,33554432,1
+34,1332689769,54860468,touchsample,0x7f42308000e0,33554432,10
+35,1332691973,1128,request,0x7f4228a000e0,1210591,1
+36,1332929297,1104782,touch,0x7f4228a000e0,1210591,1
+37,1333021850,425303,touchsample,0x7f4228a000e0,1210591,10
+38,1333023603,658,request,0x7f422880c0e0,9299,1
+39,1333026569,6580,touch,0x7f422880c0e0,9299,1
+40,1333028593,2585,touchsample,0x7f422880c0e0,9299,10
+41,1333030336,611,free,0x7f42288100e0,21046,1
+42,1333031959,141,request,0x7f42288100e0,25914,1
+43,1333034985,5969,touch,0x7f42288100e0,25914,1
+44,1333037950,7050,touchsample,0x7f42288100e0,25914,10
+45,1333040736,5029,request,0x7f4228c000e0,1781921,1
+46,1333324116,1320559,touch,0x7f4228c000e0,1781921,1
+47,1333445072,558595,touchsample,0x7f4228c000e0,1781921,10
+48,1333447597,4136,request,0x7f42288180e0,10221,1
+49,1333451414,10716,touch,0x7f42288180e0,10221,1
+50,1333453488,2820,touchsample,0x7f42288180e0,10221,10
+51,1333455152,188,free,0x7f42288080e0,15327,1
+52,1333456845,188,free,0x7f42288800e0,306924,1
+53,1333458588,987,request,0x7f42288400e0,154393,1
+54,1333483795,110920,touch,0x7f42288400e0,154393,1
+55,1333494035,41172,touchsample,0x7f42288400e0,154393,10
+56,1333495678,141,request,0x7f42288800e0,167828,1
+57,1333500586,15745,touch,0x7f42288800e0,167828,1
+58,1333511497,44274,touchsample,0x7f42288800e0,167828,10
+59,1333513961,141,request,0x7f4228e000e0,1707432,1
+60,1333778937,1233985,touch,0x7f4228e000e0,1707432,1
+61,1333892430,523580,touchsample,0x7f4228e000e0,1707432,10
+62,1333895937,8789,request,0x7f42290000e0,1920011,1
+63,1334202260,1428706,touch,0x7f42290000e0,1920011,1
+64,1334335419,615794,touchsample,0x7f42290000e0,1920011,10
+65,1334342362,470,free,0x7f42288040e0,14904,1
+66,1334344176,141,request,0x7f42294000e0,2143636,1
+67,1334682268,1577179,touch,0x7f42294000e0,2143636,1
+68,1334828502,676800,touchsample,0x7f42294000e0,2143636,10
+69,1334830225,423,free,0x7f422c8000e0,33554432,1
+70,1334832720,3854,request,0x7f42289000e0,289666,1
+71,1334880369,216106,touch,0x7f42289000e0,289666,1
+72,1334898253,76939,touchsample,0x7f42289000e0,289666,10
+73,1334900046,611,request,0x7f42288200e0,30919,1
+74,1334902751,5640,touch,0x7f42288200e0,30919,1
+75,1334906017,8366,touchsample,0x7f42288200e0,30919,10
+76,1334907620,188,free,0x7f422a8000e0,33554432,1
+77,1334909223,94,request,0x7f42288300e0,62527,1
+78,1334917088,29469,touch,0x7f42288300e0,62527,1
+79,1334922157,16826,touchsample,0x7f42288300e0,62527,10
+80,1334923730,188,free,0x7f42290000e0,1920011,1
+81,1334925443,376,free,0x7f42308000e0,33554432,1
+82,1334927056,94,request,0x7f422a8000e0,33554432,1
+83,1335423936,2321236,touch,0x7f422a8000e0,33554432,1
+84,1347129736,54903849,touchsample,0x7f422a8000e0,33554432,10
+85,1347131480,423,free,0x7f42288300e0,62527,1
+86,1347133083,235,request,0x7f42288280e0,27286,1
+87,1347135627,4606,touch,0x7f42288280e0,27286,1
+88,1347138673,7379,touchsample,0x7f42288280e0,27286,10
+89,1347140346,611,request,0x7f42298000e0,15218206,1
+90,1349693775,11969584,touch,0x7f42298000e0,15218206,1
+91,1355037237,25058191,touchsample,0x7f42298000e0,15218206,10
+92,1355039100,752,free,0x7f422880c0e0,9299,1
+93,1355040723,235,request,0x7f422c8000e0,33554432,1
+94,1355531722,2294164,touch,0x7f422c8000e0,33554432,1
+95,1367281945,55113328,touchsample,0x7f422c8000e0,33554432,10
+96,1367283708,376,free,0x7f42288100e0,25914,1
+97,1367285371,235,request,0x7f42290000e0,1945898,1
+98,1367305469,85023,touch,0x7f42290000e0,1945898,1
+99,1367433689,592670,touchsample,0x7f42290000e0,1945898,10
+100,1367435403,423,request,0x7f42308000e0,33554432,1
+101,1367923917,2283072,touch,0x7f42308000e0,33554432,1
+102,1379673418,55109333,touchsample,0x7f42308000e0,33554432,10
+103,1379677316,376,request,0x7f42288040e0,10975,1
+104,1379679600,3666,touch,0x7f42288040e0,10975,1
+105,1379681714,3008,touchsample,0x7f42288040e0,10975,10
+106,1379683417,188,request,0x7f42288100e0,17157,1
+107,1379685471,2397,touch,0x7f42288100e0,17157,1
+108,1379688016,4700,touchsample,0x7f42288100e0,17157,10
+109,1379690079,940,request,0x7f42288c00e0,221378,1
+110,1379720937,136018,touch,0x7f42288c00e0,221378,1
+111,1379734893,58609,touchsample,0x7f42288c00e0,221378,10
+112,1379736536,94,request,0x7f42328000e0,33554432,1
+113,1385524260,27141983,touch,0x7f42328000e0,33554432,1
+114,1397281966,55148296,touchsample,0x7f42328000e0,33554432,10
+115,1397287336,16309,request,0x7f42348000e0,2600336,1
+116,1397691583,1887379,touch,0x7f42348000e0,2600336,1
+117,1397863184,796180,touchsample,0x7f42348000e0,2600336,10
+118,1397864837,282,request,0x7f42289800e0,431532,1
+119,1397934929,321104,touch,0x7f42289800e0,431532,1
+120,1397960636,113599,touchsample,0x7f42289800e0,431532,10
+121,1397962239,188,request,0x7f42368000e0,33554432,1
+122,1403751896,27151101,touch,0x7f42368000e0,33554432,1
+123,1415498162,55094152,touchsample,0x7f42368000e0,33554432,10
+124,1415499995,705,request,0x7f42288020e0,7499,1
+125,1415502680,5405,touch,0x7f42288020e0,7499,1
+126,1415504593,2115,touchsample,0x7f42288020e0,7499,10
+127,1415507369,5452,request,0x7f42292000e0,520184,1
+128,1415589453,377316,touch,0x7f42292000e0,520184,1
+129,1415625590,137475,touchsample,0x7f42292000e0,520184,10
+130,1415627784,2585,request,0x7f422881c0e0,7892,1
+131,1415629838,2350,touch,0x7f422881c0e0,7892,1
+132,1415631781,2209,touchsample,0x7f422881c0e0,7892,10
+133,1415633555,1034,request,0x7f42358000e0,12714700,1
+134,1417774452,10034312,touch,0x7f42358000e0,12714700,1
+135,1422229150,20887646,touchsample,0x7f42358000e0,12714700,10
+136,1422232295,6157,request,0x7f42292800e0,123136,1
+137,1422252974,89676,touch,0x7f42292800e0,123136,1
+138,1422261370,32477,touchsample,0x7f42292800e0,123136,10
+139,1422266840,15557,request,0x7f42388000e0,14140042,1
+140,1424597252,10923270,touch,0x7f42388000e0,14140042,1
+141,1429561685,23278677,touchsample,0x7f42388000e0,14140042,10
+142,1429564419,846,request,0x7f423a8000e0,33554432,1
+143,1435401575,27374069,touch,0x7f423a8000e0,33554432,1
+144,1447117063,54949298,touchsample,0x7f423a8000e0,33554432,10
+145,1447119137,470,request,0x7f42288080e0,15967,1
+146,1447121301,2820,touch,0x7f42288080e0,15967,1
+147,1447123685,4277,touchsample,0x7f42288080e0,15967,10
+148,1447125218,94,request,0x7f422880c0e0,13873,1
+149,1447128715,8930,touch,0x7f422880c0e0,13873,1
+150,1447131029,3948,touchsample,0x7f422880c0e0,13873,10
+151,1447139364,5499,request,0x7f4234c000e0,1984282,1
+152,1447452491,1460055,touch,0x7f4234c000e0,1984282,1
+153,1447587082,622609,touchsample,0x7f4234c000e0,1984282,10
+154,1447588786,658,request,0x7f42292a00e0,130609,1
+155,1447610216,93248,touch,0x7f42292a00e0,130609,1
+156,1447619052,34451,touchsample,0x7f42292a00e0,130609,10
+157,1447621768,5029,request,0x7f423c8000e0,33554432,1
+158,1453542519,27764921,touch,0x7f423c8000e0,33554432,1
+159,1465288694,55094199,touchsample,0x7f423c8000e0,33554432,10
+160,1465291871,6909,request,0x7f42293000e0,437700,1
+161,1465360619,315323,touch,0x7f42293000e0,437700,1
+162,1465386668,115197,touchsample,0x7f42293000e0,437700,10
+163,1465388241,94,request,0x7f423e8000e0,33554432,1
+164,1471237118,27428542,touch,0x7f423e8000e0,33554432,1
+165,1482988433,55117699,touchsample,0x7f423e8000e0,33554432,10
+166,1482991008,4230,request,0x7f42292c00e0,123319,1
+167,1483017307,116090,touch,0x7f42292c00e0,123319,1
+168,1483025713,32524,touchsample,0x7f42292c00e0,123319,10
+169,1483027266,94,request,0x7f42292e00e0,81704,1
+170,1483041944,61664,touch,0x7f42292e00e0,81704,1
+171,1483048035,21667,touchsample,0x7f42292e00e0,81704,10
+172,1483050299,329,free,0x7f422881c0e0,7892,1
+173,1483052012,235,request,0x7f42288300e0,25205,1
+174,1483054496,4371,touch,0x7f42288300e0,25205,1
+175,1483060638,6862,touchsample,0x7f42288300e0,25205,10
+176,1483062241,94,request,0x7f422881c0e0,5572,1
+177,1483064015,705,touch,0x7f422881c0e0,5572,1
+178,1483065818,1551,touchsample,0x7f422881c0e0,5572,10
+179,1483068162,3196,request,0x7f42293800e0,193419,1
+180,1483099230,138415,touch,0x7f42293800e0,193419,1
+181,1483111664,50948,touchsample,0x7f42293800e0,193419,10
+182,1483113467,987,request,0x7f42350000e0,5847845,1
+183,1484099092,4616293,touch,0x7f42350000e0,5847845,1
+184,1486083116,9298715,touchsample,0x7f42350000e0,5847845,10
+185,1486084829,329,request,0x7f42288380e0,13529,1
+186,1486086843,2209,touch,0x7f42288380e0,13529,1
+187,1486089096,3666,touchsample,0x7f42288380e0,13529,10
+188,1486091902,5546,request,0x7f42398000e0,7023616,1
+189,1487239930,5376847,touch,0x7f42398000e0,7023616,1
+190,1489703832,11548840,touchsample,0x7f42398000e0,7023616,10
+191,1489705826,376,request,0x7f42293c00e0,161384,1
+192,1489732146,115808,touch,0x7f42293c00e0,161384,1
+193,1489742785,42958,touchsample,0x7f42293c00e0,161384,10
+194,1489745951,7238,request,0x7f42408000e0,33554432,1
+195,1495530298,27126097,touch,0x7f42408000e0,33554432,1
+196,1507286341,55139366,touchsample,0x7f42408000e0,33554432,10
+197,1507288275,329,request,0x7f42428000e0,33554432,1
+198,1513054297,27041309,touch,0x7f42428000e0,33554432,1
+199,1524812125,55147967,touchsample,0x7f42428000e0,33554432,10
+200,1524814239,611,free,0x7f4234c000e0,1984282,1
+201,1524815992,705,request,0x7f4234c000e0,437214,1
+202,1524821252,17484,touch,0x7f4234c000e0,437214,1
+203,1524847290,115150,touchsample,0x7f4234c000e0,437214,10
+204,1524848874,235,request,0x7f4234c800e0,30712,1
+205,1524850697,1551,touch,0x7f4234c800e0,30712,1
+206,1524853943,8319,touchsample,0x7f4234c800e0,30712,10
+207,1524857058,5640,request,0x7f42448000e0,33554432,1
+208,1530674608,27281996,touch,0x7f42448000e0,33554432,1
+209,1542331255,54673314,touchsample,0x7f42448000e0,33554432,10
+210,1542333239,517,free,0x7f422881c0e0,5572,1
+211,1542334872,282,request,0x7f4234e000e0,1662985,1
+212,1542598034,1225337,touch,0x7f4234e000e0,1662985,1
+213,1542710626,518974,touchsample,0x7f4234e000e0,1662985,10
+214,1542712368,235,request,0x7f422881c0e0,4945,1
+215,1542713971,611,touch,0x7f422881c0e0,4945,1
+216,1542715745,1410,touchsample,0x7f422881c0e0,4945,10
+217,1542717498,564,free,0x7f42288c00e0,221378,1
+218,1542719131,94,request,0x7f422881e0e0,7934,1
+219,1542721906,4371,touch,0x7f422881e0e0,7934,1
+220,1542723850,2209,touchsample,0x7f422881e0e0,7934,10
+221,1542725483,141,free,0x7f42292800e0,123136,1
+222,1542727297,517,free,0x7f4228c000e0,1781921,1
+223,1542728970,94,request,0x7f42288c00e0,242095,1
+224,1542738046,35250,touch,0x7f42288c00e0,242095,1
+225,1542753114,63779,touchsample,0x7f42288c00e0,242095,10
+226,1542754677,141,request,0x7f4234c880e0,17552,1
+227,1542756461,1081,touch,0x7f4234c880e0,17552,1
+228,1542758965,4841,touchsample,0x7f4234c880e0,17552,10
+229,1542760599,188,free,0x7f42428000e0,33554432,1
+230,1542762182,94,request,0x7f42428000e0,33554432,1
+231,1543256838,2311648,touch,0x7f42428000e0,33554432,1
+232,1555024463,55194544,touchsample,0x7f42428000e0,33554432,10
+233,1555026337,611,free,0x7f42292e00e0,81704,1
+234,1555027920,188,request,0x7f4234c900e0,36608,1
+235,1555029893,1927,touch,0x7f4234c900e0,36608,1
+236,1555033460,9823,touchsample,0x7f4234c900e0,36608,10
+237,1555035093,282,request,0x7f42468000e0,31134244,1
+238,1560444117,25365618,touch,0x7f42468000e0,31134244,1
+239,1571031173,49656769,touchsample,0x7f42468000e0,31134244,10
+240,1571032986,470,free,0x7f42398000e0,7023616,1
+241,1571034609,329,request,0x7f42292e00e0,115185,1
+242,1571042454,29234,touch,0x7f42292e00e0,115185,1
+243,1571050429,30503,touchsample,0x7f42292e00e0,115185,10
+244,1571052032,188,request,0x7f422883c0e0,11087,1
+245,1571054016,2115,touch,0x7f422883c0e0,11087,1
+246,1571056200,3008,touchsample,0x7f422883c0e0,11087,10
+247,1571422876,4700,touchrandom,0x7f42288000e0,6313,10
+248,1571425561,4747,touchrandom,0x7f42288020e0,7499,10
+249,1571428146,5123,touchrandom,0x7f42288040e0,10975,10
+250,1571431262,7661,touchrandom,0x7f42288080e0,15967,10
+251,1571433827,5029,touchrandom,0x7f422880c0e0,13873,10
+252,1571436702,6533,touchrandom,0x7f42288100e0,17157,10
+253,1571439537,5029,touchrandom,0x7f42288180e0,10221,10
+254,1571441962,2726,touchrandom,0x7f422881c0e0,4945,10
+255,1571444236,3384,touchrandom,0x7f422881e0e0,7934,10
+256,1571448273,11656,touchrandom,0x7f42288200e0,30919,10
+257,1571462249,9541,touchrandom,0x7f42288280e0,27286,10
+258,1571465866,9917,touchrandom,0x7f42288300e0,25205,10
+259,1571469323,9353,touchrandom,0x7f42288380e0,13529,10
+260,1571471557,3572,touchrandom,0x7f422883c0e0,11087,10
+261,1571487728,68949,touchrandom,0x7f42288400e0,154393,10
+262,1571501523,57716,touchrandom,0x7f42288800e0,167828,10
+263,1571519708,78020,touchrandom,0x7f42288c00e0,242095,10
+264,1571542891,100909,touchrandom,0x7f42289000e0,289666,10
+265,1571577656,154771,touchrandom,0x7f42289800e0,431532,10
+266,1571676230,453550,touchrandom,0x7f4228a000e0,1210591,10
+267,1571800944,576220,touchrandom,0x7f4228e000e0,1707432,10
+268,1571938441,636051,touchrandom,0x7f42290000e0,1945898,10
+269,1571976211,169717,touchrandom,0x7f42292000e0,520184,10
+270,1571987092,43287,touchrandom,0x7f42292a00e0,130609,10
+271,1571996720,37177,touchrandom,0x7f42292c00e0,123319,10
+272,1572019393,98888,touchrandom,0x7f42292e00e0,115185,10
+273,1572056101,164829,touchrandom,0x7f42293000e0,437700,10
+274,1572077702,94047,touchrandom,0x7f42293800e0,193419,10
+275,1572091127,55977,touchrandom,0x7f42293c00e0,161384,10
+276,1572259111,779213,touchrandom,0x7f42294000e0,2143636,10
+277,1577624614,25160651,touchrandom,0x7f42298000e0,15218206,10
+278,1589422345,55335544,touchrandom,0x7f422a8000e0,33554432,10
+279,1601132103,54923401,touchrandom,0x7f422c8000e0,33554432,10
+280,1612945373,55408253,touchrandom,0x7f422e8000e0,33554432,10
+281,1624694355,55106748,touchrandom,0x7f42308000e0,33554432,10
+282,1636467279,55219125,touchrandom,0x7f42328000e0,33554432,10
+283,1636660080,895115,touchrandom,0x7f42348000e0,2600336,10
+284,1636687742,121918,touchrandom,0x7f4234c000e0,437214,10
+285,1636691189,9118,touchrandom,0x7f4234c800e0,30712,10
+286,1636693804,5358,touchrandom,0x7f4234c880e0,17552,10
+287,1636698803,10857,touchrandom,0x7f4234c900e0,36608,10
+288,1636817986,550370,touchrandom,0x7f4234e000e0,1662985,10
+289,1638886087,9691823,touchrandom,0x7f42350000e0,5847845,10
+290,1643339943,20883369,touchrandom,0x7f42358000e0,12714700,10
+291,1655082852,55078313,touchrandom,0x7f42368000e0,33554432,10
+292,1660041073,23250947,touchrandom,0x7f42388000e0,14140042,10
+293,1671835719,55320927,touchrandom,0x7f423a8000e0,33554432,10
+294,1683630696,55322666,touchrandom,0x7f423c8000e0,33554432,10
+295,1695371161,55067221,touchrandom,0x7f423e8000e0,33554432,10
+296,1707090265,54966218,touchrandom,0x7f42408000e0,33554432,10
+297,1718895561,55370230,touchrandom,0x7f42428000e0,33554432,10
+298,1730665331,55204320,touchrandom,0x7f42448000e0,33554432,10
+299,1730667935,752,free,0x7f42288000e0,6313,1
+300,1730669789,94,free,0x7f42288040e0,10975,1
+301,1730671482,188,free,0x7f422880c0e0,13873,1
+302,1730673135,141,free,0x7f42288180e0,10221,1
+303,1730674718,141,free,0x7f422881e0e0,7934,1
+304,1730676301,141,free,0x7f42288280e0,27286,1
+305,1730677884,141,free,0x7f42288380e0,13529,1
+306,1730679537,235,free,0x7f42288400e0,154393,1
+307,1730681170,188,free,0x7f42288c00e0,242095,1
+308,1730682743,94,free,0x7f42289800e0,431532,1
+309,1730684396,517,free,0x7f4228e000e0,1707432,1
+310,1730685989,235,free,0x7f42292000e0,520184,1
+311,1730687582,282,free,0x7f42292c00e0,123319,1
+312,1730689205,141,free,0x7f42293000e0,437700,1
+313,1730690788,188,free,0x7f42293c00e0,161384,1
+314,1730692381,282,free,0x7f42298000e0,15218206,1
+315,1730693994,141,free,0x7f422c8000e0,33554432,1
+316,1730695567,141,free,0x7f42308000e0,33554432,1
+317,1730697180,188,free,0x7f42348000e0,2600336,1
+318,1730698743,141,free,0x7f4234c800e0,30712,1
+319,1730700286,94,free,0x7f4234c900e0,36608,1
+320,1730701859,235,free,0x7f42350000e0,5847845,1
+321,1730703472,188,free,0x7f42368000e0,33554432,1
+322,1730705325,188,free,0x7f423a8000e0,33554432,1
+323,1730706888,188,free,0x7f423e8000e0,33554432,1
+324,1730708462,188,free,0x7f42428000e0,33554432,1
+325,1730710065,282,free,0x7f42468000e0,31134244,1
+==END_TRACE==
+ok!
+test finished
+buddy:
+  cfg.region:   [0x7f4228800000, 0x7f4268800000) (1073741824 bytes)
+  overbooking:   false
+  min_block:     16
+  resource_base: 0x7f4228800000
+  pool_base:     0x7f42288000e0
+  pool_end:      0x7f42488000e0
+  pool_size:     536870912 bytes (2^29)
+  min_order:     4 (min bud = 16 bytes)
+  max_order:     29 (max bud = 536870912 bytes) 
+testing with custom allocator!
+buddy:
+  cfg.region:   [0x7f4228800000, 0x7f4268800000) (1073741824 bytes)
+  overbooking:   false
+  min_block:     16
+  resource_base: 0x7f4228800000
+  pool_base:     0x7f42288000e0
+  pool_end:      0x7f42488000e0
+  pool_size:     536870912 bytes (2^29)
+  min_order:     4 (min bud = 16 bytes)
+  max_order:     29 (max bud = 536870912 bytes) 
+starting test (seed=3405705229)
+full! 35 allocations
+
+=== allocation profile ===
+alloc calls: 47
+free calls : 30
+bytes requested : 578506332
+bytes freed     : 346431277
+live bytes      : 232075055
+peak live bytes : 501075317
+malloc total ns: 151105 (avg 3215.0 ns)
+free total ns  : 8366 (avg 278.9 ns)
+live allocations still tracked: 17
+
+size histogram (pow2 buckets):
+  <2^12..=2^13> : 4
+  <2^14..=2^15> : 3
+  <2^15..=2^16> : 1
+  <2^16..=2^17> : 4
+  <2^17..=2^18> : 3
+  <2^18..=2^19> : 3
+  <2^19..=2^20> : 2
+  <2^20..=2^21> : 6
+  <2^21..=2^22> : 1
+  <2^22..=2^23> : 3
+  <2^23..=2^24> : 1
+  <2^24..=2^25> : 2
+  <2^25..=2^26> : 14
+==========================
+
+==BEGIN_TRACE==
+seq,t_ns,cycle_count,op,addr,size,repeats
+0,1969907380,29798,request,0x7f42288000e0,1381111,1
+1,1970139424,1073480,touch,0x7f42288000e0,1381111,1
+2,1970238620,448944,touchsample,0x7f42288000e0,1381111,10
+3,1970240724,282,request,0x7f42290000e0,6189002,1
+4,1971352575,5204921,touch,0x7f42290000e0,6189002,1
+5,1973521705,10165254,touchsample,0x7f42290000e0,6189002,10
+6,1973525092,7097,request,0x7f4228a000e0,267691,1
+7,1973577129,235658,touch,0x7f4228a000e0,267691,1
+8,1973594010,72004,touchsample,0x7f4228a000e0,267691,10
+9,1973595944,611,request,0x7f422a8000e0,33554432,1
+10,1979948774,29792031,touch,0x7f422a8000e0,33554432,1
+11,1991675053,55000293,touchsample,0x7f422a8000e0,33554432,10
+12,1991677978,5358,request,0x7f422c8000e0,33554432,1
+13,1997980876,29557219,touch,0x7f422c8000e0,33554432,1
+14,2009690262,54921098,touchsample,0x7f422c8000e0,33554432,10
+15,2009693658,7379,request,0x7f4228a800e0,99444,1
+16,2009713115,83942,touch,0x7f4228a800e0,99444,1
+17,2009723895,26461,touchsample,0x7f4228a800e0,99444,10
+18,2009726400,4230,request,0x7f4228c000e0,2001536,1
+19,2010097595,1733830,touch,0x7f4228c000e0,2001536,1
+20,2010230894,616452,touchsample,0x7f4228c000e0,2001536,10
+21,2010232567,329,request,0x7f422e8000e0,33554432,1
+22,2016443572,29127827,touch,0x7f422e8000e0,33554432,1
+23,2028136858,54846180,touchsample,0x7f422e8000e0,33554432,10
+24,2028138963,376,free,0x7f42290000e0,6189002,1
+25,2028140716,611,free,0x7f42288000e0,1381111,1
+26,2028142409,282,request,0x7f42290000e0,2269544,1
+27,2028201720,267195,touch,0x7f42290000e0,2269544,1
+28,2028360266,734845,touchsample,0x7f42290000e0,2269544,10
+29,2028362010,705,free,0x7f4228a800e0,99444,1
+30,2028365486,8789,request,0x7f42308000e0,33554432,1
+31,2034137760,27070872,touch,0x7f42308000e0,33554432,1
+32,2045869298,55024498,touchsample,0x7f42308000e0,33554432,10
+33,2045881922,893,request,0x7f4228a800e0,120905,1
+34,2045888465,23218,touch,0x7f4228a800e0,120905,1
+35,2045896750,31913,touchsample,0x7f4228a800e0,120905,10
+36,2045898353,141,request,0x7f42328000e0,33554432,1
+37,2051649447,26969963,touch,0x7f42328000e0,33554432,1
+38,2063414969,55183781,touchsample,0x7f42328000e0,33554432,10
+39,2063419387,10716,request,0x7f4228aa00e0,5731,1
+40,2063421861,3243,touch,0x7f4228aa00e0,5731,1
+41,2063423675,1598,touchsample,0x7f4228aa00e0,5731,10
+42,2063425278,94,request,0x7f4228aa20e0,6227,1
+43,2063427442,3008,touch,0x7f4228aa20e0,6227,1
+44,2063429296,1739,touchsample,0x7f4228aa20e0,6227,10
+45,2063431710,3478,request,0x7f42298000e0,5041936,1
+46,2064269518,3921351,touch,0x7f42298000e0,5041936,1
+47,2066021688,8212216,touchsample,0x7f42298000e0,5041936,10
+48,2066023471,235,free,0x7f4228a000e0,267691,1
+49,2066025855,3525,request,0x7f4228aa40e0,7247,1
+50,2066028009,2914,touch,0x7f4228aa40e0,7247,1
+51,2066030003,2021,touchsample,0x7f4228aa40e0,7247,10
+52,2066031576,188,request,0x7f4228aa80e0,27307,1
+53,2066036996,17437,touch,0x7f4228aa80e0,27307,1
+54,2066040052,7426,touchsample,0x7f4228aa80e0,27307,10
+55,2066041625,94,free,0x7f4228aa40e0,7247,1
+56,2066043999,3384,request,0x7f42348000e0,33554432,1
+57,2071790645,26949236,touch,0x7f42348000e0,33554432,1
+58,2083511373,54974114,touchsample,0x7f42348000e0,33554432,10
+59,2083513447,423,free,0x7f4228aa20e0,6227,1
+60,2083515160,611,request,0x7f4228ac00e0,188423,1
+61,2083546218,138415,touch,0x7f4228ac00e0,188423,1
+62,2083558341,49961,touchsample,0x7f4228ac00e0,188423,10
+63,2083560785,1551,request,0x7f4228a000e0,100907,1
+64,2083564423,9635,touch,0x7f4228a000e0,100907,1
+65,2083576946,26743,touchsample,0x7f4228a000e0,100907,10
+66,2083578509,141,request,0x7f4228a400e0,261430,1
+67,2083619476,184757,touch,0x7f4228a400e0,261430,1
+68,2083635636,68761,touchsample,0x7f4228a400e0,261430,10
+69,2083637349,94,request,0x7f4228aa20e0,4131,1
+70,2083639092,987,touch,0x7f4228aa20e0,4131,1
+71,2083640825,1175,touchsample,0x7f4228aa20e0,4131,10
+72,2083642388,94,request,0x7f42288000e0,1269700,1
+73,2083655783,54144,touch,0x7f42288000e0,1269700,1
+74,2083746443,416561,touchsample,0x7f42288000e0,1269700,10
+75,2083749880,235,request,0x7f42368000e0,33554432,1
+76,2089533374,27122337,touch,0x7f42368000e0,33554432,1
+77,2101286112,55124655,touchsample,0x7f42368000e0,33554432,10
+78,2101287946,846,request,0x7f4228a200e0,68567,1
+79,2101291101,7238,touch,0x7f4228a200e0,68567,1
+80,2101296522,18236,touchsample,0x7f4228a200e0,68567,10
+81,2101298195,235,request,0x7f4228e000e0,1216675,1
+82,2101487519,878947,touch,0x7f4228e000e0,1216675,1
+83,2101570555,380700,touchsample,0x7f4228e000e0,1216675,10
+84,2101573450,5922,request,0x7f42294000e0,1064920,1
+85,2101594950,91932,touch,0x7f42294000e0,1064920,1
+86,2101659852,295630,touchsample,0x7f42294000e0,1064920,10
+87,2101663889,11139,request,0x7f42388000e0,33554432,1
+88,2107420053,26993980,touch,0x7f42388000e0,33554432,1
+89,2119246960,55472784,touchsample,0x7f42388000e0,33554432,10
+90,2119248953,329,request,0x7f423a8000e0,33554432,1
+91,2125093032,27407768,touch,0x7f423a8000e0,33554432,1
+92,2136878070,55276042,touchsample,0x7f423a8000e0,33554432,10
+93,2136882017,8225,request,0x7f423c8000e0,16590610,1
+94,2139721722,13312609,touch,0x7f423c8000e0,16590610,1
+95,2145561242,27383798,touchsample,0x7f423c8000e0,16590610,10
+96,2145563075,846,request,0x7f4228b000e0,668587,1
+97,2145669234,490210,touch,0x7f4228b000e0,668587,1
+98,2145708137,175545,touchsample,0x7f4228b000e0,668587,10
+99,2145710011,235,free,0x7f4228a200e0,68567,1
+100,2145711734,141,free,0x7f4228a800e0,120905,1
+101,2145713988,2820,request,0x7f42296000e0,950874,1
+102,2145902521,873965,touch,0x7f42296000e0,950874,1
+103,2145959327,258312,touchsample,0x7f42296000e0,950874,10
+104,2145961020,329,request,0x7f423e8000e0,30825418,1
+105,2151268174,24887816,touch,0x7f423e8000e0,30825418,1
+106,2162054252,50590565,touchsample,0x7f423e8000e0,30825418,10
+107,2162057007,4794,request,0x7f42297000e0,440117,1
+108,2162130324,319177,touch,0x7f42297000e0,440117,1
+109,2162156503,115855,touchsample,0x7f42297000e0,440117,10
+110,2162158207,235,free,0x7f4228a400e0,261430,1
+111,2162159800,188,free,0x7f42388000e0,33554432,1
+112,2162161473,141,request,0x7f42388000e0,33554432,1
+113,2162650267,2284294,touch,0x7f42388000e0,33554432,1
+114,2174421970,55213579,touchsample,0x7f42388000e0,33554432,10
+115,2174425737,8977,request,0x7f42408000e0,33554432,1
+116,2180238878,27261551,touch,0x7f42408000e0,33554432,1
+117,2191991596,55123574,touchsample,0x7f42408000e0,33554432,10
+118,2191995543,8930,request,0x7f422a0000e0,1920527,1
+119,2192348894,1648055,touch,0x7f422a0000e0,1920527,1
+120,2192476995,592059,touchsample,0x7f422a0000e0,1920527,10
+121,2192478678,470,request,0x7f42297800e0,350157,1
+122,2192533210,247972,touch,0x7f42297800e0,350157,1
+123,2192554409,92496,touchsample,0x7f42297800e0,350157,10
+124,2192556333,235,request,0x7f4228ab00e0,44922,1
+125,2192564909,32947,touch,0x7f4228ab00e0,44922,1
+126,2192568946,12079,touchsample,0x7f4228ab00e0,44922,10
+127,2192571040,188,request,0x7f42428000e0,26909755,1
+128,2197205905,21734351,touch,0x7f42428000e0,26909755,1
+129,2206604376,44026592,touchsample,0x7f42428000e0,26909755,10
+130,2206607362,5076,request,0x7f42448000e0,33554432,1
+131,2212404272,27185223,touch,0x7f42448000e0,33554432,1
+132,2224119129,54945961,touchsample,0x7f42448000e0,33554432,10
+133,2224121032,846,free,0x7f422a0000e0,1920527,1
+134,2224122715,282,free,0x7f423a8000e0,33554432,1
+135,2224124439,752,request,0x7f4228a800e0,28274,1
+136,2224126853,3666,touch,0x7f4228a800e0,28274,1
+137,2224129959,7661,touchsample,0x7f4228a800e0,28274,10
+138,2224131522,141,request,0x7f423a8000e0,33554432,1
+139,2224620117,2282602,touch,0x7f423a8000e0,33554432,1
+140,2236350332,55013876,touchsample,0x7f423a8000e0,33554432,10
+141,2236352105,470,request,0x7f422a0000e0,8235100,1
+142,2237416097,4982329,touch,0x7f422a0000e0,8235100,1
+143,2240279096,13421132,touchsample,0x7f422a0000e0,8235100,10
+144,2240280809,376,request,0x7f4228a400e0,171121,1
+145,2240285768,16027,touch,0x7f4228a400e0,171121,1
+146,2240296859,45120,touchsample,0x7f4228a400e0,171121,10
+147,2240303441,282,request,0x7f4228a880e0,16388,1
+148,2240305575,2585,touch,0x7f4228a880e0,16388,1
+149,2240308020,4559,touchsample,0x7f4228a880e0,16388,10
+150,2240309643,282,request,0x7f42468000e0,33554432,1
+151,2246068221,27006905,touch,0x7f42468000e0,33554432,1
+152,2257827050,55152996,touchsample,0x7f42468000e0,33554432,10
+153,2258265852,467274,touchrandom,0x7f42288000e0,1269700,10
+154,2258274688,33840,touchrandom,0x7f4228a000e0,100907,10
+155,2258288003,55225,touchrandom,0x7f4228a400e0,171121,10
+156,2258291489,9353,touchrandom,0x7f4228a800e0,28274,10
+157,2258294385,6533,touchrandom,0x7f4228a880e0,16388,10
+158,2258296539,3149,touchrandom,0x7f4228aa00e0,5731,10
+159,2258298553,2397,touchrandom,0x7f4228aa20e0,4131,10
+160,2258302200,9870,touchrandom,0x7f4228aa80e0,27307,10
+161,2258306978,15369,touchrandom,0x7f4228ab00e0,44922,10
+162,2258322237,63920,touchrandom,0x7f4228ac00e0,188423,10
+163,2258371188,221276,touchrandom,0x7f4228b000e0,668587,10
+164,2258521189,694801,touchrandom,0x7f4228c000e0,2001536,10
+165,2258609234,404200,touchrandom,0x7f4228e000e0,1216675,10
+166,2258772209,755713,touchrandom,0x7f42290000e0,2269544,10
+167,2258846288,338635,touchrandom,0x7f42294000e0,1064920,10
+168,2258912752,303103,touchrandom,0x7f42296000e0,950874,10
+169,2258944351,140624,touchrandom,0x7f42297000e0,440117,10
+170,2258971031,117312,touchrandom,0x7f42297800e0,350157,10
+171,2260770479,8431377,touchrandom,0x7f42298000e0,5041936,10
+172,2263663785,13562696,touchrandom,0x7f422a0000e0,8235100,10
+173,2275417755,55130342,touchrandom,0x7f422a8000e0,33554432,10
+174,2287125298,54912779,touchrandom,0x7f422c8000e0,33554432,10
+175,2298895107,55203474,touchrandom,0x7f422e8000e0,33554432,10
+176,2310648937,55129214,touchrandom,0x7f42308000e0,33554432,10
+177,2322420210,55211088,touchrandom,0x7f42328000e0,33554432,10
+178,2334126981,54908032,touchrandom,0x7f42348000e0,33554432,10
+179,2345948457,55446652,touchrandom,0x7f42368000e0,33554432,10
+180,2357713949,55184204,touchrandom,0x7f42388000e0,33554432,10
+181,2369469491,55137157,touchrandom,0x7f423a8000e0,33554432,10
+182,2375287912,27285051,touchrandom,0x7f423c8000e0,16590610,10
+183,2386056086,50506153,touchrandom,0x7f423e8000e0,30825418,10
+184,2397849680,55315992,touchrandom,0x7f42408000e0,33554432,10
+185,2407298867,44317945,touchrandom,0x7f42428000e0,26909755,10
+186,2419037628,55059231,touchrandom,0x7f42448000e0,33554432,10
+187,2419039742,376,free,0x7f42288000e0,1269700,1
+188,2419041465,188,free,0x7f4228a400e0,171121,1
+189,2419043118,141,free,0x7f4228a880e0,16388,1
+190,2419044812,188,free,0x7f4228aa20e0,4131,1
+191,2419046605,658,free,0x7f4228ab00e0,44922,1
+192,2419048188,94,free,0x7f4228b000e0,668587,1
+193,2419049761,141,free,0x7f4228e000e0,1216675,1
+194,2419051324,188,free,0x7f42294000e0,1064920,1
+195,2419052907,188,free,0x7f42297000e0,440117,1
+196,2419054470,188,free,0x7f42298000e0,5041936,1
+197,2419056364,141,free,0x7f422a8000e0,33554432,1
+198,2419061783,235,free,0x7f422e8000e0,33554432,1
+199,2419063396,188,free,0x7f42328000e0,33554432,1
+200,2419065149,188,free,0x7f42368000e0,33554432,1
+201,2419066723,235,free,0x7f423a8000e0,33554432,1
+202,2419068285,188,free,0x7f423e8000e0,30825418,1
+203,2419069848,235,free,0x7f42428000e0,26909755,1
+204,2419071441,235,free,0x7f42468000e0,33554432,1
+==END_TRACE==
+ok!
+test finished
+buddy:
+  cfg.region:   [0x7f4228800000, 0x7f4268800000) (1073741824 bytes)
+  overbooking:   false
+  min_block:     16
+  resource_base: 0x7f4228800000
+  pool_base:     0x7f42288000e0
+  pool_end:      0x7f42488000e0
+  pool_size:     536870912 bytes (2^29)
+  min_order:     4 (min bud = 16 bytes)
+  max_order:     29 (max bud = 536870912 bytes) 
+testing with custom allocator!
+buddy:
+  cfg.region:   [0x7f4228800000, 0x7f4268800000) (1073741824 bytes)
+  overbooking:   false
+  min_block:     16
+  resource_base: 0x7f4228800000
+  pool_base:     0x7f42288000e0
+  pool_end:      0x7f42488000e0
+  pool_size:     536870912 bytes (2^29)
+  min_order:     4 (min bud = 16 bytes)
+  max_order:     29 (max bud = 536870912 bytes) 
+starting test (seed=464367618)
+full! 43 allocations
+
+=== allocation profile ===
+alloc calls: 68
+free calls : 47
+bytes requested : 780891545
+bytes freed     : 547906814
+live bytes      : 232984731
+peak live bytes : 491289564
+malloc total ns: 222310 (avg 3269.3 ns)
+free total ns  : 13160 (avg 280.0 ns)
+live allocations still tracked: 21
+
+size histogram (pow2 buckets):
+  <2^12..=2^13> : 10
+  <2^13..=2^14> : 9
+  <2^15..=2^16> : 4
+  <2^16..=2^17> : 4
+  <2^17..=2^18> : 3
+  <2^18..=2^19> : 1
+  <2^19..=2^20> : 6
+  <2^20..=2^21> : 1
+  <2^21..=2^22> : 4
+  <2^22..=2^23> : 1
+  <2^23..=2^24> : 3
+  <2^24..=2^25> : 2
+  <2^25..=2^26> : 20
+==========================
+
+==BEGIN_TRACE==
+seq,t_ns,cycle_count,op,addr,size,repeats
+0,2582254131,53956,request,0x7f42288000e0,5148,1
+1,2582256696,3290,touch,0x7f42288000e0,5148,1
+2,2582258769,1504,touchsample,0x7f42288000e0,5148,10
+3,2582260743,282,free,0x7f42288000e0,5148,1
+4,2582262517,329,request,0x7f42288000e0,33554432,1
+5,2588604777,29742399,touch,0x7f42288000e0,33554432,1
+6,2600344471,55063555,touchsample,0x7f42288000e0,33554432,10
+7,2600353467,34122,request,0x7f422a8000e0,6811,1
+8,2600355681,3196,touch,0x7f422a8000e0,6811,1
+9,2600357736,1974,touchsample,0x7f422a8000e0,6811,10
+10,2600359469,141,request,0x7f422a8200e0,118186,1
+11,2600381099,94141,touch,0x7f422a8200e0,118186,1
+12,2600389294,31490,touchsample,0x7f422a8200e0,118186,10
+13,2600390998,141,request,0x7f422a8020e0,5739,1
+14,2600393162,2914,touch,0x7f422a8020e0,5739,1
+15,2600395005,1645,touchsample,0x7f422a8020e0,5739,10
+16,2600397400,3572,request,0x7f422c8000e0,33554432,1
+17,2606655262,29331619,touch,0x7f422c8000e0,33554432,1
+18,2618414482,55154594,touchsample,0x7f422c8000e0,33554432,10
+19,2618416587,846,request,0x7f422a9000e0,885245,1
+20,2618576075,740297,touch,0x7f422a9000e0,885245,1
+21,2618628312,237162,touchsample,0x7f422a9000e0,885245,10
+22,2618630927,4230,request,0x7f422aa000e0,931689,1
+23,2618795395,762152,touch,0x7f422aa000e0,931689,1
+24,2618850178,249006,touchsample,0x7f422aa000e0,931689,10
+25,2618851921,235,free,0x7f42288000e0,33554432,1
+26,2618853634,141,free,0x7f422a8200e0,118186,1
+27,2618855277,141,free,0x7f422a8000e0,6811,1
+28,2618856961,564,request,0x7f422a8400e0,216685,1
+29,2618897376,181185,touch,0x7f422a8400e0,216685,1
+30,2618911102,57434,touchsample,0x7f422a8400e0,216685,10
+31,2618912684,141,request,0x7f42288000e0,33554432,1
+32,2619408243,2316207,touch,0x7f42288000e0,33554432,1
+33,2631134570,54974067,touchsample,0x7f42288000e0,33554432,10
+34,2631136434,376,request,0x7f422a8200e0,76255,1
+35,2631139881,8601,touch,0x7f422a8200e0,76255,1
+36,2631145671,20210,touchsample,0x7f422a8200e0,76255,10
+37,2631147455,282,free,0x7f42288000e0,33554432,1
+38,2631149027,94,request,0x7f42288000e0,33554432,1
+39,2631654063,2358648,touch,0x7f42288000e0,33554432,1
+40,2643416900,55171937,touchsample,0x7f42288000e0,33554432,10
+41,2643419745,5311,request,0x7f422ac000e0,1557289,1
+42,2643697685,1295179,touch,0x7f422ac000e0,1557289,1
+43,2643803543,487719,touchsample,0x7f422ac000e0,1557289,10
+44,2643805186,329,request,0x7f422e8000e0,33554432,1
+45,2650044905,29263986,touch,0x7f422e8000e0,33554432,1
+46,2661807451,55170480,touchsample,0x7f422e8000e0,33554432,10
+47,2661809555,893,request,0x7f422a8040e0,11813,1
+48,2661812801,7990,touch,0x7f422a8040e0,11813,1
+49,2661814955,3196,touchsample,0x7f422a8040e0,11813,10
+50,2661818262,7896,request,0x7f42308000e0,27721657,1
+51,2666702523,22903335,touch,0x7f42308000e0,27721657,1
+52,2676438977,45664918,touchsample,0x7f42308000e0,27721657,10
+53,2676440920,799,request,0x7f422ab000e0,830715,1
+54,2676570212,598545,touch,0x7f422ab000e0,830715,1
+55,2676618863,220806,touchsample,0x7f422ab000e0,830715,10
+56,2676620557,188,free,0x7f422a8200e0,76255,1
+57,2676623162,4230,request,0x7f422b0000e0,2661339,1
+58,2677045152,1971979,touch,0x7f422b0000e0,2661339,1
+59,2677363206,1482897,touchsample,0x7f422b0000e0,2661339,10
+60,2677365741,4042,request,0x7f422a8080e0,10950,1
+61,2677368947,7567,touch,0x7f422a8080e0,10950,1
+62,2677371052,2961,touchsample,0x7f422a8080e0,10950,10
+63,2677372624,94,free,0x7f422a8080e0,10950,1
+64,2677374277,517,request,0x7f422a8100e0,46022,1
+65,2677390337,30597,touch,0x7f422a8100e0,46022,1
+66,2677394425,12314,touchsample,0x7f422a8100e0,46022,10
+67,2677396759,611,request,0x7f422b8000e0,16266371,1
+68,2680209173,13183829,touch,0x7f422b8000e0,16266371,1
+69,2685922477,26792021,touchsample,0x7f422b8000e0,16266371,10
+70,2685924301,423,free,0x7f422ab000e0,830715,1
+71,2685926024,752,free,0x7f42288000e0,33554432,1
+72,2685927707,235,request,0x7f422a8200e0,34429,1
+73,2685930382,3619,touch,0x7f422a8200e0,34429,1
+74,2685933828,9259,touchsample,0x7f422a8200e0,34429,10
+75,2685935482,611,free,0x7f422b0000e0,2661339,1
+76,2685937125,94,request,0x7f422b0000e0,2976210,1
+77,2686017024,366224,touch,0x7f422b0000e0,2976210,1
+78,2686229502,987893,touchsample,0x7f422b0000e0,2976210,10
+79,2686231145,188,request,0x7f42288000e0,33554432,1
+80,2686719769,2283495,touch,0x7f42288000e0,33554432,1
+81,2698494629,55228008,touchsample,0x7f42288000e0,33554432,10
+82,2698496352,423,free,0x7f42288000e0,33554432,1
+83,2698500289,10857,request,0x7f422a8800e0,127388,1
+84,2698521639,92825,touch,0x7f422a8800e0,127388,1
+85,2698530365,34028,touchsample,0x7f422a8800e0,127388,10
+86,2698532108,564,request,0x7f422a8080e0,8709,1
+87,2698534022,1692,touch,0x7f422a8080e0,8709,1
+88,2698536006,2397,touchsample,0x7f422a8080e0,8709,10
+89,2698537719,564,free,0x7f422b0000e0,2976210,1
+90,2698539292,94,request,0x7f42288000e0,33554432,1
+91,2699043696,2355969,touch,0x7f42288000e0,33554432,1
+92,2710811482,55195155,touchsample,0x7f42288000e0,33554432,10
+93,2710813326,423,request,0x7f42328000e0,33554432,1
+94,2716546847,26887666,touch,0x7f42328000e0,33554432,1
+95,2728319522,55218467,touchsample,0x7f42328000e0,33554432,10
+96,2728321235,470,request,0x7f422a8000e0,7723,1
+97,2728323038,1269,touch,0x7f422a8000e0,7723,1
+98,2728324972,2115,touchsample,0x7f422a8000e0,7723,10
+99,2728330312,3713,request,0x7f42348000e0,33554432,1
+100,2734057782,26859701,touch,0x7f42348000e0,33554432,1
+101,2745832621,55213015,touchsample,0x7f42348000e0,33554432,10
+102,2745834785,329,free,0x7f42308000e0,27721657,1
+103,2745837330,3995,request,0x7f422a80c0e0,4302,1
+104,2745839454,2444,touch,0x7f422a80c0e0,4302,1
+105,2745841257,1269,touchsample,0x7f422a80c0e0,4302,10
+106,2745842830,141,request,0x7f42308000e0,33554432,1
+107,2747170485,6219980,touch,0x7f42308000e0,33554432,1
+108,2758956244,55279426,touchsample,0x7f42308000e0,33554432,10
+109,2758957998,423,request,0x7f422ab000e0,891401,1
+110,2758982624,107771,touch,0x7f422ab000e0,891401,1
+111,2759040081,261461,touchsample,0x7f422ab000e0,891401,10
+112,2759041815,611,request,0x7f422a8300e0,13544,1
+113,2759043799,2021,touch,0x7f422a8300e0,13544,1
+114,2759046063,3666,touchsample,0x7f422a8300e0,13544,10
+115,2759047716,235,request,0x7f42368000e0,33554432,1
+116,2764832583,27128776,touch,0x7f42368000e0,33554432,1
+117,2776510481,54772343,touchsample,0x7f42368000e0,33554432,10
+118,2776514929,12502,request,0x7f42388000e0,33554432,1
+119,2782217953,26745444,touch,0x7f42388000e0,33554432,1
+120,2793978125,55159012,touchsample,0x7f42388000e0,33554432,10
+121,2793980109,517,request,0x7f422a80e0e0,7426,1
+122,2793982543,4183,touch,0x7f422a80e0e0,7426,1
+123,2793984447,2068,touchsample,0x7f422a80e0e0,7426,10
+124,2793986110,282,request,0x7f422b0000e0,2328609,1
+125,2794010205,105468,touch,0x7f422b0000e0,2328609,1
+126,2794167890,730897,touchsample,0x7f422b0000e0,2328609,10
+127,2794169603,188,free,0x7f422b0000e0,2328609,1
+128,2794172429,5546,request,0x7f423a8000e0,9454681,1
+129,2795671294,6980534,touch,0x7f423a8000e0,9454681,1
+130,2798993943,15577210,touchsample,0x7f423a8000e0,9454681,10
+131,2798995676,470,request,0x7f422a8340e0,5515,1
+132,2798997380,705,touch,0x7f422a8340e0,5515,1
+133,2798999193,1598,touchsample,0x7f422a8340e0,5515,10
+134,2799001858,2726,request,0x7f422ae000e0,540152,1
+135,2799100953,457545,touch,0x7f422ae000e0,540152,1
+136,2799132783,142363,touchsample,0x7f422ae000e0,540152,10
+137,2799135388,4700,request,0x7f423c8000e0,33554432,1
+138,2804845806,26776605,touch,0x7f423c8000e0,33554432,1
+139,2816508084,54699728,touchsample,0x7f423c8000e0,33554432,10
+140,2816510108,940,request,0x7f422a8360e0,4289,1
+141,2816511861,1034,touch,0x7f422a8360e0,4289,1
+142,2816513595,1222,touchsample,0x7f422a8360e0,4289,10
+143,2816515538,188,free,0x7f422a80c0e0,4302,1
+144,2816517181,141,free,0x7f422a8340e0,5515,1
+145,2816518845,94,request,0x7f423e8000e0,17531729,1
+146,2819438990,13689972,touch,0x7f423e8000e0,17531729,1
+147,2825567932,28741111,touchsample,0x7f423e8000e0,17531729,10
+148,2825569785,329,free,0x7f42368000e0,33554432,1
+149,2825571359,94,free,0x7f423e8000e0,17531729,1
+150,2825573091,752,request,0x7f422a8380e0,13119,1
+151,2825575175,2538,touch,0x7f422a8380e0,13119,1
+152,2825577410,3572,touchsample,0x7f422a8380e0,13119,10
+153,2825578963,47,request,0x7f423e8000e0,33554432,1
+154,2828516210,13770013,touch,0x7f423e8000e0,33554432,1
+155,2840279448,55173817,touchsample,0x7f423e8000e0,33554432,10
+156,2840281341,846,request,0x7f422a8a00e0,127275,1
+157,2840303202,95222,touch,0x7f422a8a00e0,127275,1
+158,2840311848,33605,touchsample,0x7f422a8a00e0,127275,10
+159,2840313972,658,request,0x7f422a83c0e0,15820,1
+160,2840317479,8742,touch,0x7f422a83c0e0,15820,1
+161,2840319933,4277,touchsample,0x7f422a83c0e0,15820,10
+162,2840321696,282,request,0x7f422b0000e0,3018509,1
+163,2840351543,131083,touch,0x7f422b0000e0,3018509,1
+164,2840550755,925712,touchsample,0x7f422b0000e0,3018509,10
+165,2840552479,329,free,0x7f42308000e0,33554432,1
+166,2840556476,11186,request,0x7f422a8c00e0,16215,1
+167,2840560032,9447,touch,0x7f422a8c00e0,16215,1
+168,2840562467,4512,touchsample,0x7f422a8c00e0,16215,10
+169,2840564050,141,request,0x7f42308000e0,33554432,1
+170,2841078263,2402593,touch,0x7f42308000e0,33554432,1
+171,2852819619,55070934,touchsample,0x7f42308000e0,33554432,10
+172,2852821422,423,request,0x7f422a8c40e0,12169,1
+173,2852824989,9447,touch,0x7f422a8c40e0,12169,1
+174,2852827163,3337,touchsample,0x7f422a8c40e0,12169,10
+175,2852833525,329,request,0x7f422a8340e0,4789,1
+176,2852835328,846,touch,0x7f422a8340e0,4789,1
+177,2852837152,1410,touchsample,0x7f422a8340e0,4789,10
+178,2852838804,235,free,0x7f422a8100e0,46022,1
+179,2852841049,2773,request,0x7f422a8c80e0,15648,1
+180,2852844545,7990,touch,0x7f422a8c80e0,15648,1
+181,2852846990,4183,touchsample,0x7f422a8c80e0,15648,10
+182,2852849625,4888,request,0x7f422af000e0,245592,1
+183,2852890151,182830,touch,0x7f422af000e0,245592,1
+184,2852905430,64672,touchsample,0x7f422af000e0,245592,10
+185,2852907052,141,free,0x7f422a8080e0,8709,1
+186,2852908646,235,free,0x7f423e8000e0,33554432,1
+187,2852910308,94,request,0x7f422a8100e0,48604,1
+188,2852913034,5499,touch,0x7f422a8100e0,48604,1
+189,2852917342,12972,touchsample,0x7f422a8100e0,48604,10
+190,2852918945,188,free,0x7f422a8800e0,127388,1
+191,2852920557,94,request,0x7f423e8000e0,33554432,1
+192,2853416025,2315643,touch,0x7f423e8000e0,33554432,1
+193,2865126042,54923448,touchsample,0x7f423e8000e0,33554432,10
+194,2865127826,517,request,0x7f42368000e0,33554432,1
+195,2865616280,2282555,touch,0x7f42368000e0,33554432,1
+196,2877339122,54983749,touchsample,0x7f42368000e0,33554432,10
+197,2877342459,7473,request,0x7f42408000e0,33554432,1
+198,2883079587,26905808,touch,0x7f42408000e0,33554432,1
+199,2894847543,55195484,touchsample,0x7f42408000e0,33554432,10
+200,2894849366,893,request,0x7f422af400e0,158066,1
+201,2894874854,111907,touch,0x7f422af400e0,158066,1
+202,2894885303,42065,touchsample,0x7f422af400e0,158066,10
+203,2894888249,5499,request,0x7f422b4000e0,1035867,1
+204,2895056123,779918,touch,0x7f422b4000e0,1035867,1
+205,2895122487,302633,touchsample,0x7f422b4000e0,1035867,10
+206,2895124401,376,request,0x7f423b8000e0,11471130,1
+207,2897054323,9045385,touch,0x7f423b8000e0,11471130,1
+208,2901048288,18727009,touchsample,0x7f423b8000e0,11471130,10
+209,2901050122,893,request,0x7f422af800e0,357918,1
+210,2901109994,273258,touch,0x7f422af800e0,357918,1
+211,2901131625,94188,touchsample,0x7f422af800e0,357918,10
+212,2901133338,329,request,0x7f422a80c0e0,5699,1
+213,2901135101,1081,touch,0x7f422a80c0e0,5699,1
+214,2901136915,1598,touchsample,0x7f422a80c0e0,5699,10
+215,2901138698,141,free,0x7f422af000e0,245592,1
+216,2901140691,705,free,0x7f422a83c0e0,15820,1
+217,2901142485,188,request,0x7f422a8d00e0,52791,1
+218,2901152153,37835,touch,0x7f422a8d00e0,52791,1
+219,2901156721,14147,touchsample,0x7f422a8d00e0,52791,10
+220,2901159747,6298,request,0x7f42428000e0,7915673,1
+221,2902454831,6066525,touch,0x7f42428000e0,7915673,1
+222,2905229595,13007062,touchsample,0x7f42428000e0,7915673,10
+223,2905232180,4089,request,0x7f42448000e0,33554432,1
+224,2910940664,26770401,touch,0x7f42448000e0,33554432,1
+225,2922635584,54853324,touchsample,0x7f42448000e0,33554432,10
+226,2922637567,282,request,0x7f42468000e0,33554432,1
+227,2928377621,26918592,touch,0x7f42468000e0,33554432,1
+228,2940125950,55103176,touchsample,0x7f42468000e0,33554432,10
+229,2952131741,54835182,touchrandom,0x7f42288000e0,33554432,10
+230,2952134136,3525,touchrandom,0x7f422a8000e0,7723,10
+231,2952136451,3854,touchrandom,0x7f422a8020e0,5739,10
+232,2952139096,5405,touchrandom,0x7f422a8040e0,11813,10
+233,2952141169,2726,touchrandom,0x7f422a80c0e0,5699,10
+234,2952143483,3572,touchrandom,0x7f422a80e0e0,7426,10
+235,2952148674,17390,touchrandom,0x7f422a8100e0,48604,10
+236,2952152841,12267,touchrandom,0x7f422a8200e0,34429,10
+237,2952155566,5405,touchrandom,0x7f422a8300e0,13544,10
+238,2952157440,1786,touchrandom,0x7f422a8340e0,4789,10
+239,2952159734,3431,touchrandom,0x7f422a8360e0,4289,10
+240,2952162399,5499,touchrandom,0x7f422a8380e0,13119,10
+241,2952179621,72897,touchrandom,0x7f422a8400e0,216685,10
+242,2952190601,44227,touchrandom,0x7f422a8a00e0,127275,10
+243,2952193708,6674,touchrandom,0x7f422a8c00e0,16215,10
+244,2952196172,4559,touchrandom,0x7f422a8c40e0,12169,10
+245,2952199008,6298,touchrandom,0x7f422a8c80e0,15648,10
+246,2952204267,17578,touchrandom,0x7f422a8d00e0,52791,10
+247,2952269700,298215,touchrandom,0x7f422a9000e0,885245,10
+248,2952343198,336708,touchrandom,0x7f422aa000e0,931689,10
+249,2952405995,286042,touchrandom,0x7f422ab000e0,891401,10
+250,2952526821,557890,touchrandom,0x7f422ac000e0,1557289,10
+251,2952565443,173383,touchrandom,0x7f422ae000e0,540152,10
+252,2952578217,52405,touchrandom,0x7f422af400e0,158066,10
+253,2952605308,118910,touchrandom,0x7f422af800e0,357918,10
+254,2952818196,989726,touchrandom,0x7f422b0000e0,3018509,10
+255,2952886164,309965,touchrandom,0x7f422b4000e0,1035867,10
+256,2958638841,26977013,touchrandom,0x7f422b8000e0,16266371,10
+257,2970428087,55222227,touchrandom,0x7f422c8000e0,33554432,10
+258,2982142603,54944786,touchrandom,0x7f422e8000e0,33554432,10
+259,2993943761,55351054,touchrandom,0x7f42308000e0,33554432,10
+260,3005722147,55244223,touchrandom,0x7f42328000e0,33554432,10
+261,3017486196,55176073,touchrandom,0x7f42348000e0,33554432,10
+262,3029244353,55150364,touchrandom,0x7f42368000e0,33554432,10
+263,3041007981,55176167,touchrandom,0x7f42388000e0,33554432,10
+264,3044326302,15557188,touchrandom,0x7f423a8000e0,9454681,10
+265,3048321610,18731333,touchrandom,0x7f423b8000e0,11471130,10
+266,3060041376,54970448,touchrandom,0x7f423c8000e0,33554432,10
+267,3071816055,55227350,touchrandom,0x7f423e8000e0,33554432,10
+268,3083589741,55222556,touchrandom,0x7f42408000e0,33554432,10
+269,3086355288,12963728,touchrandom,0x7f42428000e0,7915673,10
+270,3098085032,55016649,touchrandom,0x7f42448000e0,33554432,10
+271,3098087137,423,free,0x7f42288000e0,33554432,1
+272,3098088890,235,free,0x7f422a8020e0,5739,1
+273,3098090643,141,free,0x7f422a80c0e0,5699,1
+274,3098092326,141,free,0x7f422a8100e0,48604,1
+275,3098094009,423,free,0x7f422a8300e0,13544,1
+276,3098095683,235,free,0x7f422a8360e0,4289,1
+277,3098097286,141,free,0x7f422a8400e0,216685,1
+278,3098098868,188,free,0x7f422a8c00e0,16215,1
+279,3098100461,188,free,0x7f422a8c80e0,15648,1
+280,3098102154,752,free,0x7f422a9000e0,885245,1
+281,3098103768,329,free,0x7f422ab000e0,891401,1
+282,3098105350,235,free,0x7f422ae000e0,540152,1
+283,3098106974,188,free,0x7f422af800e0,357918,1
+284,3098109528,282,free,0x7f422b4000e0,1035867,1
+285,3098111112,188,free,0x7f422c8000e0,33554432,1
+286,3098112684,235,free,0x7f42308000e0,33554432,1
+287,3098114267,235,free,0x7f42348000e0,33554432,1
+288,3098115830,141,free,0x7f42388000e0,33554432,1
+289,3098117473,282,free,0x7f423b8000e0,11471130,1
+290,3098119036,188,free,0x7f423e8000e0,33554432,1
+291,3098120650,376,free,0x7f42428000e0,7915673,1
+292,3098122222,235,free,0x7f42468000e0,33554432,1
+==END_TRACE==
+ok!
+test finished
+buddy:
+  cfg.region:   [0x7f4228800000, 0x7f4268800000) (1073741824 bytes)
+  overbooking:   false
+  min_block:     16
+  resource_base: 0x7f4228800000
+  pool_base:     0x7f42288000e0
+  pool_end:      0x7f42488000e0
+  pool_size:     536870912 bytes (2^29)
+  min_order:     4 (min bud = 16 bytes)
+  max_order:     29 (max bud = 536870912 bytes) 
+testing with custom allocator!
+buddy:
+  cfg.region:   [0x7f4228800000, 0x7f4268800000) (1073741824 bytes)
+  overbooking:   false
+  min_block:     16
+  resource_base: 0x7f4228800000
+  pool_base:     0x7f42288000e0
+  pool_end:      0x7f42488000e0
+  pool_size:     536870912 bytes (2^29)
+  min_order:     4 (min bud = 16 bytes)
+  max_order:     29 (max bud = 536870912 bytes) 
+starting test (seed=732803074)
+full! 61 allocations
+
+=== allocation profile ===
+alloc calls: 102
+free calls : 72
+bytes requested : 808812901
+bytes freed     : 583859425
+live bytes      : 224953476
+peak live bytes : 479778867
+malloc total ns: 284679 (avg 2791.0 ns)
+free total ns  : 21432 (avg 297.7 ns)
+live allocations still tracked: 30
+
+size histogram (pow2 buckets):
+  <2^12..=2^13> : 9
+  <2^13..=2^14> : 12
+  <2^14..=2^15> : 11
+  <2^15..=2^16> : 8
+  <2^16..=2^17> : 10
+  <2^17..=2^18> : 5
+  <2^18..=2^19> : 7
+  <2^19..=2^20> : 5
+  <2^20..=2^21> : 2
+  <2^21..=2^22> : 4
+  <2^22..=2^23> : 4
+  <2^23..=2^24> : 3
+  <2^24..=2^25> : 1
+  <2^25..=2^26> : 21
+==========================
+
+==BEGIN_TRACE==
+seq,t_ns,cycle_count,op,addr,size,repeats
+0,3315987210,36895,request,0x7f42288000e0,424962,1
+1,3316079102,421966,touch,0x7f42288000e0,424962,1
+2,3316105532,115103,touchsample,0x7f42288000e0,424962,10
+3,3316107516,329,free,0x7f42288000e0,424962,1
+4,3316109219,329,request,0x7f42288000e0,33554432,1
+5,3322340812,29223848,touch,0x7f42288000e0,33554432,1
+6,3334085936,55088418,touchsample,0x7f42288000e0,33554432,10
+7,3334087750,282,request,0x7f422a8000e0,33554432,1
+8,3340402057,29612350,touch,0x7f422a8000e0,33554432,1
+9,3352119910,54960484,touchsample,0x7f422a8000e0,33554432,10
+10,3352131051,43240,request,0x7f422c8000e0,4251,1
+11,3352133455,3760,touch,0x7f422c8000e0,4251,1
+12,3352135218,1316,touchsample,0x7f422c8000e0,4251,10
+13,3352136912,94,request,0x7f422c8080e0,31886,1
+14,3352143434,23406,touch,0x7f422c8080e0,31886,1
+15,3352146740,8648,touchsample,0x7f422c8080e0,31886,10
+16,3352148934,2820,request,0x7f422c8100e0,29806,1
+17,3352158482,22842,touch,0x7f422c8100e0,29806,1
+18,3352161688,8084,touchsample,0x7f422c8100e0,29806,10
+19,3352163401,141,free,0x7f422c8080e0,31886,1
+20,3352164964,188,free,0x7f422c8100e0,29806,1
+21,3352166557,282,free,0x7f422c8000e0,4251,1
+22,3352168151,329,request,0x7f422c8000e0,11386,1
+23,3352169703,376,touch,0x7f422c8000e0,11386,1
+24,3352171838,3102,touchsample,0x7f422c8000e0,11386,10
+25,3352173401,94,request,0x7f422c8100e0,39345,1
+26,3352175795,4042,touch,0x7f422c8100e0,39345,1
+27,3352179522,10575,touchsample,0x7f422c8100e0,39345,10
+28,3352181074,94,free,0x7f422c8000e0,11386,1
+29,3352182637,141,request,0x7f422e8000e0,33554432,1
+30,3358445249,29368420,touch,0x7f422e8000e0,33554432,1
+31,3370135950,54832738,touchsample,0x7f422e8000e0,33554432,10
+32,3370137935,1222,free,0x7f422c8100e0,39345,1
+33,3370146431,94,request,0x7f422c8000e0,33554432,1
+34,3376056242,27716323,touch,0x7f422c8000e0,33554432,1
+35,3387808599,55122117,touchsample,0x7f422c8000e0,33554432,10
+36,3387812025,7661,request,0x7f42308000e0,33554432,1
+37,3393544695,26884094,touch,0x7f42308000e0,33554432,1
+38,3405287985,55079817,touchsample,0x7f42308000e0,33554432,10
+39,3405295780,27495,request,0x7f42328000e0,30381,1
+40,3405302603,24722,touch,0x7f42328000e0,30381,1
+41,3405305908,8225,touchsample,0x7f42328000e0,30381,10
+42,3405308163,2914,request,0x7f42348000e0,33554432,1
+43,3411025113,26811573,touch,0x7f42348000e0,33554432,1
+44,3422688083,54702971,touchsample,0x7f42348000e0,33554432,10
+45,3422690137,799,request,0x7f42328800e0,355037,1
+46,3422746482,257043,touch,0x7f42328800e0,355037,1
+47,3422767912,93530,touchsample,0x7f42328800e0,355037,10
+48,3422769565,376,free,0x7f42308000e0,33554432,1
+49,3422771289,564,request,0x7f42330000e0,5391662,1
+50,3423624325,3992744,touch,0x7f42330000e0,5391662,1
+51,3425478335,8687386,touchsample,0x7f42330000e0,5391662,10
+52,3425480119,376,request,0x7f42308000e0,33554432,1
+53,3425968243,2281145,touch,0x7f42308000e0,33554432,1
+54,3437685794,54959638,touchsample,0x7f42308000e0,33554432,10
+55,3437688890,5076,request,0x7f42338000e0,5870336,1
+56,3438670938,4598057,touch,0x7f42338000e0,5870336,1
+57,3440712649,9567978,touchsample,0x7f42338000e0,5870336,10
+58,3440714523,752,request,0x7f42328200e0,72540,1
+59,3440727818,55037,touch,0x7f42328200e0,72540,1
+60,3440733428,19364,touchsample,0x7f42328200e0,72540,10
+61,3440735251,611,request,0x7f42328080e0,21113,1
+62,3440739971,14899,touch,0x7f42328080e0,21113,1
+63,3440742686,5828,touchsample,0x7f42328080e0,21113,10
+64,3440744880,2914,request,0x7f42328400e0,129022,1
+65,3440773763,91462,touch,0x7f42328400e0,129022,1
+66,3440786127,47611,touchsample,0x7f42328400e0,129022,10
+67,3440788782,2867,request,0x7f42329000e0,308412,1
+68,3440837082,219114,touch,0x7f42329000e0,308412,1
+69,3440855898,81357,touchsample,0x7f42329000e0,308412,10
+70,3440857460,94,request,0x7f42328600e0,71367,1
+71,3440870234,52499,touch,0x7f42328600e0,71367,1
+72,3440875805,19223,touchsample,0x7f42328600e0,71367,10
+73,3440878420,4512,request,0x7f42329800e0,99668,1
+74,3440894229,66881,touch,0x7f42329800e0,99668,1
+75,3440901322,26367,touchsample,0x7f42329800e0,99668,10
+76,3440903085,94,free,0x7f42328800e0,355037,1
+77,3440904679,188,free,0x7f42338000e0,5870336,1
+78,3440907634,6345,request,0x7f42328100e0,9482,1
+79,3440910379,5734,touch,0x7f42328100e0,9482,1
+80,3440912414,2585,touchsample,0x7f42328100e0,9482,10
+81,3440913956,94,request,0x7f42328180e0,30993,1
+82,3440920649,24205,touch,0x7f42328180e0,30993,1
+83,3440923915,8366,touchsample,0x7f42328180e0,30993,10
+84,3440925989,2303,request,0x7f42328140e0,4756,1
+85,3440928043,2397,touch,0x7f42328140e0,4756,1
+86,3440929815,1363,touchsample,0x7f42328140e0,4756,10
+87,3440934504,7755,request,0x7f42329a00e0,12708,1
+88,3440937661,7661,touch,0x7f42329a00e0,12708,1
+89,3440939865,3431,touchsample,0x7f42329a00e0,12708,10
+90,3440941428,94,request,0x7f42329a80e0,16730,1
+91,3440945255,10810,touch,0x7f42329a80e0,16730,1
+92,3440947729,4653,touchsample,0x7f42329a80e0,16730,10
+93,3440949283,94,request,0x7f42329a40e0,12074,1
+94,3440952438,7614,touch,0x7f42329a40e0,12074,1
+95,3440954613,3290,touchsample,0x7f42329a40e0,12074,10
+96,3440956185,94,free,0x7f42328100e0,9482,1
+97,3440957728,141,request,0x7f42328160e0,7038,1
+98,3440959792,2491,touch,0x7f42328160e0,7038,1
+99,3440961685,1927,touchsample,0x7f42328160e0,7038,10
+100,3440963269,94,request,0x7f42338000e0,5647374,1
+101,3441071060,497730,touch,0x7f42338000e0,5647374,1
+102,3443034605,9202882,touchsample,0x7f42338000e0,5647374,10
+103,3443036299,376,free,0x7f42348000e0,33554432,1
+104,3443037931,141,request,0x7f42348000e0,33554432,1
+105,3443528871,2293882,touch,0x7f42348000e0,33554432,1
+106,3455286958,55150176,touchsample,0x7f42348000e0,33554432,10
+107,3455288691,329,free,0x7f42329800e0,99668,1
+108,3455290304,94,free,0x7f42328000e0,30381,1
+109,3455292148,141,request,0x7f42368000e0,33554432,1
+110,3461045917,26984204,touch,0x7f42368000e0,33554432,1
+111,3472808653,55171373,touchsample,0x7f42368000e0,33554432,10
+112,3472810798,470,request,0x7f42329800e0,75315,1
+113,3472814154,8460,touch,0x7f42329800e0,75315,1
+114,3472819885,20022,touchsample,0x7f42329800e0,75315,10
+115,3472821458,188,request,0x7f42328000e0,24725,1
+116,3472823751,3431,touch,0x7f42328000e0,24725,1
+117,3472826668,6721,touchsample,0x7f42328000e0,24725,10
+118,3472828300,517,request,0x7f42328100e0,9826,1
+119,3472830304,2444,touch,0x7f42328100e0,9826,1
+120,3472832348,2679,touchsample,0x7f42328100e0,9826,10
+121,3472837307,15369,request,0x7f42388000e0,33554432,1
+122,3478565609,26863461,touch,0x7f42388000e0,33554432,1
+123,3490319699,55131047,touchsample,0x7f42388000e0,33554432,10
+124,3490321552,329,request,0x7f423a8000e0,33554432,1
+125,3495981556,26542780,touch,0x7f423a8000e0,33554432,1
+126,3507690362,54917385,touchsample,0x7f423a8000e0,33554432,10
+127,3507693417,4935,request,0x7f42329b00e0,20380,1
+128,3507698226,15416,touch,0x7f42329b00e0,20380,1
+129,3507710249,5593,touchsample,0x7f42329b00e0,20380,10
+130,3507711912,141,free,0x7f42329b00e0,20380,1
+131,3507713665,141,free,0x7f42328100e0,9826,1
+132,3507716781,6956,request,0x7f423c8000e0,11437424,1
+133,3509603262,8840794,touch,0x7f423c8000e0,11437424,1
+134,3513630610,18883237,touchsample,0x7f423c8000e0,11437424,10
+135,3513632333,282,free,0x7f42328080e0,21113,1
+136,3513635309,3196,request,0x7f4232a000e0,690137,1
+137,3513744253,503464,touch,0x7f4232a000e0,690137,1
+138,3513784588,182031,touchsample,0x7f4232a000e0,690137,10
+139,3513786241,141,request,0x7f42328100e0,14603,1
+140,3513788897,4888,touch,0x7f42328100e0,14603,1
+141,3513791211,3948,touchsample,0x7f42328100e0,14603,10
+142,3513792774,235,request,0x7f42329b00e0,55653,1
+143,3513798775,20915,touch,0x7f42329b00e0,55653,1
+144,3513803413,14852,touchsample,0x7f42329b00e0,55653,10
+145,3513805026,282,request,0x7f42340000e0,6279629,1
+146,3514839402,4843538,touch,0x7f42340000e0,6279629,1
+147,3516998393,10116750,touchsample,0x7f42340000e0,6279629,10
+148,3517000838,470,free,0x7f42328180e0,30993,1
+149,3517002491,94,free,0x7f42329a00e0,12708,1
+150,3517004235,564,request,0x7f42329c00e0,181366,1
+151,3517037827,150259,touch,0x7f42329c00e0,181366,1
+152,3517049509,47893,touchsample,0x7f42329c00e0,181366,10
+153,3517051062,94,free,0x7f42328140e0,4756,1
+154,3517052675,282,free,0x7f42308000e0,33554432,1
+155,3517054329,94,request,0x7f42308000e0,33554432,1
+156,3517546630,2300744,touch,0x7f42308000e0,33554432,1
+157,3529288938,55076245,touchsample,0x7f42308000e0,33554432,10
+158,3529290641,376,request,0x7f4232b000e0,933309,1
+159,3529436454,676095,touch,0x7f4232b000e0,933309,1
+160,3529490956,247596,touchsample,0x7f4232b000e0,933309,10
+161,3529492739,658,request,0x7f4232c000e0,3894081,1
+162,3530121796,2943328,touch,0x7f4232c000e0,3894081,1
+163,3530381052,1207383,touchsample,0x7f4232c000e0,3894081,10
+164,3530382765,376,request,0x7f423e8000e0,33554432,1
+165,3536086731,26750661,touch,0x7f423e8000e0,33554432,1
+166,3547853515,55190267,touchsample,0x7f423e8000e0,33554432,10
+167,3547858404,12737,request,0x7f423d8000e0,4146037,1
+168,3548546262,3217526,touch,0x7f423d8000e0,4146037,1
+169,3548818912,1270222,touchsample,0x7f423d8000e0,4146037,10
+170,3548820706,235,free,0x7f4232a000e0,690137,1
+171,3548822389,564,request,0x7f42328800e0,498795,1
+172,3548853317,137193,touch,0x7f42328800e0,498795,1
+173,3548882782,131224,touchsample,0x7f42328800e0,498795,10
+174,3548884425,188,free,0x7f422e8000e0,33554432,1
+175,3548886117,282,request,0x7f4232a000e0,53734,1
+176,3548888923,5828,touch,0x7f4232a000e0,53734,1
+177,3548893512,14288,touchsample,0x7f4232a000e0,53734,10
+178,3548895315,47,request,0x7f4232a400e0,192218,1
+179,3548901006,18941,touch,0x7f4232a400e0,192218,1
+180,3548913299,50666,touchsample,0x7f4232a400e0,192218,10
+181,3548914891,188,free,0x7f4232c000e0,3894081,1
+182,3548916545,235,free,0x7f422c8000e0,33554432,1
+183,3548918118,94,request,0x7f4232a100e0,39575,1
+184,3548920632,4230,touch,0x7f4232a100e0,39575,1
+185,3548924370,10622,touchsample,0x7f4232a100e0,39575,10
+186,3548925892,94,free,0x7f4232a000e0,53734,1
+187,3548927535,564,free,0x7f42328160e0,7038,1
+188,3548929168,94,free,0x7f42329c00e0,181366,1
+189,3548930782,188,free,0x7f42348000e0,33554432,1
+190,3548932484,658,free,0x7f42329a80e0,16730,1
+191,3548934078,94,request,0x7f4232c000e0,2306720,1
+192,3548953604,82485,touch,0x7f4232c000e0,2306720,1
+193,3549115517,750449,touchsample,0x7f4232c000e0,2306720,10
+194,3549117210,235,request,0x7f42328140e0,6734,1
+195,3549119265,1316,touch,0x7f42328140e0,6734,1
+196,3549121138,1880,touchsample,0x7f42328140e0,6734,10
+197,3549122731,188,request,0x7f423dc000e0,2800668,1
+198,3549565549,2068423,touch,0x7f423dc000e0,2800668,1
+199,3549752690,869077,touchsample,0x7f423dc000e0,2800668,10
+200,3549756808,11374,request,0x7f423e0000e0,809335,1
+201,3549885318,594926,touch,0x7f423e0000e0,809335,1
+202,3549932286,213145,touchsample,0x7f423e0000e0,809335,10
+203,3549933939,188,request,0x7f4232a800e0,399544,1
+204,3549978362,200079,touch,0x7f4232a800e0,399544,1
+205,3550006766,126007,touchsample,0x7f4232a800e0,399544,10
+206,3550009240,3901,request,0x7f423e1000e0,467140,1
+207,3550086324,354192,touch,0x7f423e1000e0,467140,1
+208,3550114167,123610,touchsample,0x7f423e1000e0,467140,10
+209,3550115789,235,free,0x7f42388000e0,33554432,1
+210,3550117432,188,free,0x7f42288000e0,33554432,1
+211,3550119136,235,request,0x7f42288000e0,12993824,1
+212,3550309412,884258,touch,0x7f42288000e0,12993824,1
+213,3554868635,21378279,touchsample,0x7f42288000e0,12993824,10
+214,3554870639,423,request,0x7f4232a200e0,101405,1
+215,3554873935,8272,touch,0x7f4232a200e0,101405,1
+216,3554881119,26790,touchsample,0x7f4232a200e0,101405,10
+217,3554882682,188,request,0x7f42328160e0,7754,1
+218,3554884525,1598,touch,0x7f42328160e0,7754,1
+219,3554886459,2115,touchsample,0x7f42328160e0,7754,10
+220,3554888092,282,free,0x7f4232c000e0,2306720,1
+221,3554889674,188,request,0x7f42329a80e0,22055,1
+222,3554892671,6721,touch,0x7f42329a80e0,22055,1
+223,3554895415,5969,touchsample,0x7f42329a80e0,22055,10
+224,3554897039,188,request,0x7f42329a00e0,4109,1
+225,3554898771,1034,touch,0x7f42329a00e0,4109,1
+226,3554900505,1222,touchsample,0x7f42329a00e0,4109,10
+227,3554906877,329,request,0x7f42388000e0,33554432,1
+228,3555402805,2318087,touch,0x7f42388000e0,33554432,1
+229,3567120627,54960625,touchsample,0x7f42388000e0,33554432,10
+230,3567122300,282,free,0x7f42328100e0,14603,1
+231,3567123924,235,free,0x7f4232a100e0,39575,1
+232,3567125496,94,request,0x7f4232a000e0,52723,1
+233,3567127580,2162,touch,0x7f4232a000e0,52723,1
+234,3567132059,14100,touchsample,0x7f4232a000e0,52723,10
+235,3567133622,94,request,0x7f42328100e0,10214,1
+236,3567135816,2914,touch,0x7f42328100e0,10214,1
+237,3567137879,2773,touchsample,0x7f42328100e0,10214,10
+238,3567139493,329,request,0x7f42348000e0,33554432,1
+239,3567628789,2285140,touch,0x7f42348000e0,33554432,1
+240,3579342122,54940039,touchsample,0x7f42348000e0,33554432,10
+241,3579343826,282,free,0x7f42330000e0,5391662,1
+242,3579345448,282,request,0x7f42329a20e0,4833,1
+243,3579347212,1034,touch,0x7f42329a20e0,4833,1
+244,3579348975,1363,touchsample,0x7f42329a20e0,4833,10
+245,3579350558,188,request,0x7f42329c00e0,251920,1
+246,3579366358,66787,touch,0x7f42329c00e0,251920,1
+247,3579381987,66364,touchsample,0x7f42329c00e0,251920,10
+248,3579383600,376,free,0x7f423d8000e0,4146037,1
+249,3579385173,188,request,0x7f42328180e0,21605,1
+250,3579387457,3525,touch,0x7f42328180e0,21605,1
+251,3579390192,5875,touchsample,0x7f42328180e0,21605,10
+252,3579392787,4747,request,0x7f423e1800e0,70581,1
+253,3579405601,52875,touch,0x7f423e1800e0,70581,1
+254,3579411082,18800,touchsample,0x7f423e1800e0,70581,10
+255,3579412645,94,free,0x7f42328140e0,6734,1
+256,3579414248,188,free,0x7f42328180e0,21605,1
+257,3579422472,141,request,0x7f42328140e0,6079,1
+258,3579424106,705,touch,0x7f42328140e0,6079,1
+259,3579425939,1692,touchsample,0x7f42328140e0,6079,10
+260,3579427513,235,request,0x7f422c8000e0,33554432,1
+261,3579919643,2300462,touch,0x7f422c8000e0,33554432,1
+262,3591677220,55146557,touchsample,0x7f422c8000e0,33554432,10
+263,3591678943,282,request,0x7f422e8000e0,33554432,1
+264,3592176114,2323915,touch,0x7f422e8000e0,33554432,1
+265,3603959689,55269180,touchsample,0x7f422e8000e0,33554432,10
+266,3603963196,8319,request,0x7f42408000e0,33554432,1
+267,3609916058,27916261,touch,0x7f42408000e0,33554432,1
+268,3621510079,54379611,touchsample,0x7f42408000e0,33554432,10
+269,3621512393,1222,request,0x7f423e2000e0,1875082,1
+270,3621808397,1379403,touch,0x7f423e2000e0,1875082,1
+271,3621935925,589051,touchsample,0x7f423e2000e0,1875082,10
+272,3621937719,376,request,0x7f42328180e0,14235,1
+273,3621939873,2820,touch,0x7f42328180e0,14235,1
+274,3621942177,3807,touchsample,0x7f42328180e0,14235,10
+275,3621944291,1316,request,0x7f423e1a00e0,68549,1
+276,3621956093,47940,touch,0x7f423e1a00e0,68549,1
+277,3621961443,18236,touchsample,0x7f423e1a00e0,68549,10
+278,3621963146,564,request,0x7f4232a100e0,48685,1
+279,3621965831,5311,touch,0x7f4232a100e0,48685,1
+280,3621970079,13066,touchsample,0x7f4232a100e0,48685,10
+281,3621971703,141,request,0x7f42428000e0,33554432,1
+282,3627672512,26731720,touch,0x7f42428000e0,33554432,1
+283,3639333258,54692631,touchsample,0x7f42428000e0,33554432,10
+284,3639335823,1645,free,0x7f423dc000e0,2800668,1
+285,3639337967,611,request,0x7f42328080e0,24713,1
+286,3639341363,8225,touch,0x7f42328080e0,24713,1
+287,3639344268,6721,touchsample,0x7f42328080e0,24713,10
+288,3639346012,564,request,0x7f423281c0e0,15746,1
+289,3639348276,2867,touch,0x7f423281c0e0,15746,1
+290,3639350650,4183,touchsample,0x7f423281c0e0,15746,10
+291,3639355199,10763,request,0x7f423e1c00e0,13936,1
+292,3639359587,13113,touch,0x7f423e1c00e0,13936,1
+293,3639361871,3760,touchsample,0x7f423e1c00e0,13936,10
+294,3639364527,4559,request,0x7f42448000e0,33554432,1
+295,3645129727,27037784,touch,0x7f42448000e0,33554432,1
+296,3656880992,55116148,touchsample,0x7f42448000e0,33554432,10
+297,3656883206,1222,request,0x7f423e1d00e0,39115,1
+298,3656890891,28482,touch,0x7f423e1d00e0,39115,1
+299,3656894607,10528,touchsample,0x7f423e1d00e0,39115,10
+300,3656896592,1363,request,0x7f4232c000e0,623737,1
+301,3656911179,60395,touch,0x7f4232c000e0,623737,1
+302,3656947637,164077,touchsample,0x7f4232c000e0,623737,10
+303,3656949510,517,free,0x7f423e1000e0,467140,1
+304,3656951334,564,request,0x7f423e1000e0,245263,1
+305,3656958507,25239,touch,0x7f423e1000e0,245263,1
+306,3656973745,64531,touchsample,0x7f423e1000e0,245263,10
+307,3656975459,188,request,0x7f4232e000e0,2096134,1
+308,3657070637,438322,touch,0x7f4232e000e0,2096134,1
+309,3657209577,642960,touchsample,0x7f4232e000e0,2096134,10
+310,3657211350,611,request,0x7f423e1e00e0,75567,1
+311,3657225306,58186,touch,0x7f423e1e00e0,75567,1
+312,3657231067,20069,touchsample,0x7f423e1e00e0,75567,10
+313,3657233201,1269,free,0x7f422e8000e0,33554432,1
+314,3657234814,141,request,0x7f423e1400e0,197358,1
+315,3657240936,21150,touch,0x7f423e1400e0,197358,1
+316,3657253500,51982,touchsample,0x7f423e1400e0,197358,10
+317,3657255553,141,request,0x7f422e8000e0,33554432,1
+318,3657756431,2339566,touch,0x7f422e8000e0,33554432,1
+319,3669510901,55132504,touchsample,0x7f422e8000e0,33554432,10
+320,3669512905,1269,request,0x7f423e1c40e0,12591,1
+321,3669516862,11139,touch,0x7f423e1c40e0,12591,1
+322,3669519066,3431,touchsample,0x7f423e1c40e0,12591,10
+323,3669520750,235,request,0x7f42468000e0,18555987,1
+324,3672608429,14475436,touch,0x7f42468000e0,18555987,1
+325,3679067859,30294508,touchsample,0x7f42468000e0,18555987,10
+326,3679070564,4371,request,0x7f423e1c80e0,9129,1
+327,3679073180,4982,touch,0x7f423e1c80e0,9129,1
+328,3679075193,2491,touchsample,0x7f423e1c80e0,9129,10
+329,3679077177,1880,request,0x7f423e1cc0e0,7536,1
+330,3679079181,2068,touch,0x7f423e1cc0e0,7536,1
+331,3679081094,2115,touchsample,0x7f423e1cc0e0,7536,10
+332,3679083248,564,request,0x7f4232d000e0,353769,1
+333,3679091654,31678,touch,0x7f4232d000e0,353769,1
+334,3679113084,93201,touchsample,0x7f4232d000e0,353769,10
+335,3679117161,11139,request,0x7f423e4000e0,537225,1
+336,3679240342,569734,touch,0x7f423e4000e0,537225,1
+337,3679272312,142692,touchsample,0x7f423e4000e0,537225,10
+338,3679274165,987,request,0x7f42298000e0,11694169,1
+339,3679455164,839467,touch,0x7f42298000e0,11694169,1
+340,3683531484,19111845,touchsample,0x7f42298000e0,11694169,10
+341,3683534219,752,request,0x7f4232d800e0,102200,1
+342,3683538257,11374,touch,0x7f4232d800e0,102200,1
+343,3683545490,27072,touchsample,0x7f4232d800e0,102200,10
+344,3683547223,141,request,0x7f4232da00e0,42724,1
+345,3683550359,5781,touch,0x7f4232da00e0,42724,1
+346,3683554256,11421,touchsample,0x7f4232da00e0,42724,10
+347,3688502798,21471386,touchrandom,0x7f42288000e0,12993824,10
+348,3692566404,19051403,touchrandom,0x7f42298000e0,11694169,10
+349,3704320524,55131329,touchrandom,0x7f422a8000e0,33554432,10
+350,3716025713,54902251,touchrandom,0x7f422c8000e0,33554432,10
+351,3727785844,55158824,touchrandom,0x7f422e8000e0,33554432,10
+352,3739507033,54976323,touchrandom,0x7f42308000e0,33554432,10
+353,3739510760,9870,touchrandom,0x7f42328000e0,24725,10
+354,3739514347,9917,touchrandom,0x7f42328080e0,24713,10
+355,3739519237,5311,touchrandom,0x7f42328100e0,10214,10
+356,3739521370,3055,touchrandom,0x7f42328140e0,6079,10
+357,3739523685,3901,touchrandom,0x7f42328160e0,7754,10
+358,3739526430,5922,touchrandom,0x7f42328180e0,14235,10
+359,3739529255,6298,touchrandom,0x7f423281c0e0,15746,10
+360,3739536418,26696,touchrandom,0x7f42328200e0,72540,10
+361,3739547469,44932,touchrandom,0x7f42328400e0,129022,10
+362,3739554041,23876,touchrandom,0x7f42328600e0,71367,10
+363,3739590179,161962,touchrandom,0x7f42328800e0,498795,10
+364,3739614434,105797,touchrandom,0x7f42329000e0,308412,10
+365,3739622199,29187,touchrandom,0x7f42329800e0,75315,10
+366,3739624383,2397,touchrandom,0x7f42329a00e0,4109,10
+367,3739626477,2914,touchrandom,0x7f42329a20e0,4833,10
+368,3739629363,6580,touchrandom,0x7f42329a40e0,12074,10
+369,3739632809,9165,touchrandom,0x7f42329a80e0,22055,10
+370,3739638629,20210,touchrandom,0x7f42329b00e0,55653,10
+371,3739658808,87091,touchrandom,0x7f42329c00e0,251920,10
+372,3739664508,19646,touchrandom,0x7f4232a000e0,52723,10
+373,3739670048,18894,touchrandom,0x7f4232a100e0,48685,10
+374,3739679166,35391,touchrandom,0x7f4232a200e0,101405,10
+375,3739694554,64813,touchrandom,0x7f4232a400e0,192218,10
+376,3739725302,136253,touchrandom,0x7f4232a800e0,399544,10
+377,3739794792,317109,touchrandom,0x7f4232b000e0,933309,10
+378,3739835769,185039,touchrandom,0x7f4232c000e0,623737,10
+379,3739858040,96491,touchrandom,0x7f4232d000e0,353769,10
+380,3739865664,28200,touchrandom,0x7f4232d800e0,102200,10
+381,3739869682,11938,touchrandom,0x7f4232da00e0,42724,10
+382,3740015635,675766,touchrandom,0x7f4232e000e0,2096134,10
+383,3741965114,9133933,touchrandom,0x7f42338000e0,5647374,10
+384,3744119106,10095882,touchrandom,0x7f42340000e0,6279629,10
+385,3755880089,55163054,touchrandom,0x7f42348000e0,33554432,10
+386,3767639208,55154312,touchrandom,0x7f42368000e0,33554432,10
+387,3779416211,55238113,touchrandom,0x7f42388000e0,33554432,10
+388,3791129115,54937360,touchrandom,0x7f423a8000e0,33554432,10
+389,3795089597,18570405,touchrandom,0x7f423c8000e0,11437424,10
+390,3795153146,289755,touchrandom,0x7f423e0000e0,809335,10
+391,3795173685,88031,touchrandom,0x7f423e1000e0,245263,10
+392,3795189745,68291,touchrandom,0x7f423e1400e0,197358,10
+393,3795197490,29422,touchrandom,0x7f423e1800e0,70581,10
+394,3795204813,27448,touchrandom,0x7f423e1a00e0,68549,10
+395,3795207899,7567,touchrandom,0x7f423e1c00e0,13936,10
+396,3795210373,4653,touchrandom,0x7f423e1c40e0,12591,10
+397,3795212507,3055,touchrandom,0x7f423e1c80e0,9129,10
+398,3795214451,2209,touchrandom,0x7f423e1cc0e0,7536,10
+399,3795219130,14993,touchrandom,0x7f423e1d00e0,39115,10
+400,3795226865,29093,touchrandom,0x7f423e1e00e0,75567,10
+401,3795398907,798248,touchrandom,0x7f423e2000e0,1875082,10
+402,3795431367,144243,touchrandom,0x7f423e4000e0,537225,10
+403,3807237965,55377186,touchrandom,0x7f423e8000e0,33554432,10
+404,3818995272,55145852,touchrandom,0x7f42408000e0,33554432,10
+405,3830694749,54874615,touchrandom,0x7f42428000e0,33554432,10
+406,3842456153,55165169,touchrandom,0x7f42448000e0,33554432,10
+407,3842458298,376,free,0x7f42288000e0,12993824,1
+408,3842459970,188,free,0x7f422a8000e0,33554432,1
+409,3842461704,188,free,0x7f422e8000e0,33554432,1
+410,3842463317,188,free,0x7f42328000e0,24725,1
+411,3842464920,141,free,0x7f42328100e0,10214,1
+412,3842466563,282,free,0x7f42328160e0,7754,1
+413,3842468216,94,free,0x7f423281c0e0,15746,1
+414,3842469789,94,free,0x7f42328400e0,129022,1
+415,3842471452,517,free,0x7f42328800e0,498795,1
+416,3842473095,94,free,0x7f42329800e0,75315,1
+417,3842475179,141,free,0x7f42329a20e0,4833,1
+418,3842476822,94,free,0x7f42329a80e0,22055,1
+419,3842478555,564,free,0x7f42329c00e0,251920,1
+420,3842480198,188,free,0x7f4232a100e0,48685,1
+421,3842481771,141,free,0x7f4232a400e0,192218,1
+422,3842483364,235,free,0x7f4232b000e0,933309,1
+423,3842484927,141,free,0x7f4232d000e0,353769,1
+424,3842486580,235,free,0x7f4232da00e0,42724,1
+425,3842488504,1786,free,0x7f42338000e0,5647374,1
+426,3842490067,141,free,0x7f42348000e0,33554432,1
+427,3842491650,188,free,0x7f42388000e0,33554432,1
+428,3842494245,188,free,0x7f423c8000e0,11437424,1
+429,3842495818,188,free,0x7f423e1000e0,245263,1
+430,3842497381,235,free,0x7f423e1800e0,70581,1
+431,3842499004,141,free,0x7f423e1c00e0,13936,1
+432,3842500577,141,free,0x7f423e1c80e0,9129,1
+433,3842502129,141,free,0x7f423e1d00e0,39115,1
+434,3842503703,235,free,0x7f423e2000e0,1875082,1
+435,3842505295,329,free,0x7f423e8000e0,33554432,1
+436,3842506879,235,free,0x7f42428000e0,33554432,1
+437,3842508501,235,free,0x7f42468000e0,18555987,1
+==END_TRACE==
+ok!
+test finished
+buddy:
+  cfg.region:   [0x7f4228800000, 0x7f4268800000) (1073741824 bytes)
+  overbooking:   false
+  min_block:     16
+  resource_base: 0x7f4228800000
+  pool_base:     0x7f42288000e0
+  pool_end:      0x7f42488000e0
+  pool_size:     536870912 bytes (2^29)
+  min_order:     4 (min bud = 16 bytes)
+  max_order:     29 (max bud = 536870912 bytes) 
+
++ echo 'done!'
+done!
++ poweroff -f
+[    4.266653] ACPI: PM: Preparing to enter system sleep state S5
+[    4.267344] reboot: Power down

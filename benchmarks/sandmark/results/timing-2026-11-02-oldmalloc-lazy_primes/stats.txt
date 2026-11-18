@@ -1,0 +1,18 @@
+benchmark    field                 variant                 n          mean      stddev      cv           min           max
+--------------------------------------------------------------------------------------------------------------------------
+lazy_primes  caml_startup_cycles   linux.kvm              30  1267794255.7  17367059.5    1.4%  1248753246.0  1314706090.0
+                                   linux.unpatched.kvm    30  1263794823.6  12913436.2    1.0%  1248517729.0  1302059706.0
+                                   includeos.kvm          30  1442758219.8  12307305.5    0.9%  1429206080.0  1481278508.0
+lazy_primes  ocaml_entry_cycles    linux.kvm              30         618.8       147.6   23.9%         235.0         799.0
+                                   linux.unpatched.kvm    30         800.6       378.9   47.3%         376.0        2021.0
+                                   includeos.kvm          30        1176.6      1577.2  134.1%         423.0        9212.0
+lazy_primes  peak_requested_bytes  linux.kvm              30   399040512.0         0.0    0.0%   399040512.0   399040512.0
+                                   linux.unpatched.kvm    30   399040512.0         0.0    0.0%   399040512.0   399040512.0
+                                   includeos.kvm          30   414170526.0         0.0    0.0%   414170526.0   414170526.0
+lazy_primes  peak_rss_kb           linux.kvm              30      129308.0         0.0    0.0%      129308.0      129308.0
+                                   linux.unpatched.kvm    30      129436.0         0.0    0.0%      129436.0      129436.0
+lazy_primes  count_alloc           linux.kvm              30           9.0         0.2    2.0%           8.0           9.0
+                                   linux.unpatched.kvm    30           3.9         0.3    6.5%           3.0           4.0
+                                   includeos.kvm          30        4008.0         0.0    0.0%        4008.0        4008.0
+             count_alloc_at        includeos.kvm          30           1.0         0.0    0.0%           1.0           1.0
+

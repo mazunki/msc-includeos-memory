@@ -1,0 +1,87 @@
+\begin{figure}[htb]
+\centering
+\begin{tikzpicture}[
+  every node/.style={font=\footnotesize},
+  inh/.style={-{Triangle[open, length=8pt, width=7pt]}, thick},
+]
+
+%% std::pmr::memory_resource
+\draw[fill=gray!10] (0,6.8) rectangle (12.4,8.2);
+\node[anchor=west, font=\small\bfseries] at (0.2,8.0)
+  {\texttt{std::pmr::memory\_resource}};
+\node[anchor=east, font=\scriptsize\itshape, text=gray] at (12.2,8.0)
+  {C++ standard};
+\draw[gray] (0,7.75) -- (12.4,7.75);
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,7.55)
+  {+ do\_allocate(size, align)};
+\node[anchor=east, font=\scriptsize\itshape] at (12.2,7.55) {[pure virtual]};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,7.25)
+  {+ do\_deallocate(p, size, align)};
+\node[anchor=east, font=\scriptsize\itshape] at (12.2,7.25) {[pure virtual]};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,6.95)
+  {+ do\_is\_equal(other)};
+\node[anchor=east, font=\scriptsize\itshape] at (12.2,6.95) {[pure virtual]};
+
+%% inheritance arrow
+\draw[inh] (6.2,6.80) -- (6.2,6.20);
+\node[anchor=west, font=\scriptsize\itshape] at (6.4,6.50) {extends};
+
+%% os::mem::mem_resource
+\draw[fill=blue!10] (0,4.0) rectangle (12.4,6.15);
+\node[anchor=west, font=\small\bfseries] at (0.2,5.95)
+  {\texttt{os::mem::mem\_resource}};
+\node[anchor=east, font=\scriptsize\itshape, text=gray] at (12.2,5.95)
+  {IncludeOS};
+\draw[gray] (0,5.70) -- (12.4,5.70);
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,5.50)
+  {+ allocate\_at(addr, size, override)};
+\node[anchor=east, font=\scriptsize\itshape] at (12.2,5.50) {[public entry point]};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,5.20)
+  {\# do\_allocate\_at(addr, size, override)};
+\node[anchor=east, font=\scriptsize\itshape] at (12.2,5.20) {[non-virtual: validation, stats]};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,4.90)
+  {\# strat\_allocate\_at(addr, size, override)};
+\node[anchor=east, font=\scriptsize\itshape] at (12.2,4.90) {[virtual, default: unconstrained]};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,4.55)
+  {- stats:\;mem\_stats};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,4.25)
+  {- region:\;mem\_region};
+
+%% inheritance arrow
+\draw[inh] (6.2,4.00) -- (6.2,3.40);
+\node[anchor=west, font=\scriptsize\itshape] at (6.4,3.70) {extends};
+
+%% buddy_resource
+\draw[fill=orange!15] (0,1.0) rectangle (12.4,3.35);
+\node[anchor=west, font=\small\bfseries] at (0.2,3.15)
+  {\texttt{buddy\_resource}};
+\node[anchor=east, font=\scriptsize\itshape, text=gray] at (12.2,3.15)
+  {IncludeOS};
+\draw[gray] (0,2.90) -- (12.4,2.90);
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,2.70)
+  {+ strat\_allocate\_at(addr, size, override)};
+\node[anchor=east, font=\scriptsize\itshape] at (12.2,2.70) {[override]};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,2.40)
+  {+ strat\_allocate(size, align)};
+\node[anchor=east, font=\scriptsize\itshape] at (12.2,2.40) {[override]};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,2.10)
+  {+ strat\_deallocate(p, size, align)};
+\node[anchor=east, font=\scriptsize\itshape] at (12.2,2.10) {[override]};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,1.75)
+  {- freelist[ORDER\_MAX]:\;...};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,1.45)
+  {- (metadata self-hosted at heap base)};
+\node[anchor=west, font=\ttfamily\scriptsize] at (0.2,1.15)
+  {- (placement-new constructed at startup)};
+
+\end{tikzpicture}
+\caption{The \texttt{mem\_resource} class hierarchy.
+  \texttt{os::mem::mem\_resource} extends \texttt{std::pmr::memory\_resource}
+  with \texttt{allocate\_at()} for fixed-address placement: the public call
+  goes through \texttt{do\_allocate\_at}, which handles address validation
+  and statistics tracking, before dispatching to the allocator-specific
+  strategy (\texttt{strat\_allocate\_at}). Only \texttt{buddy\_resource}
+  is drawn. The arena and ring allocators extend \texttt{mem\_resource} the
+  same way.}
+\label{fig:mem-hierarchy}
+\end{figure}

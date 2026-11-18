@@ -1,0 +1,88 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[
+  every node/.style={font=\footnotesize},
+  box/.style={draw, rounded corners=2pt, fill=#1,
+              minimum width=5.0cm, minimum height=0.70cm,
+              text width=4.8cm, align=center},
+  arr/.style={-{Stealth[length=5pt]}, thick},
+  bnd/.style={draw=gray, dashed, thick, rounded corners=4pt},
+]
+
+\node[box=blue!10]   (posix)   at (0, -0.8)  {%
+  \texttt{mmap(addr, len, prot,}\\\texttt{flags, fd, offset)}\\
+  \scriptsize POSIX interface: raw \texttt{int} arguments};
+
+\node[box=blue!15]   (sysmmap) at (0,-2.8)  {%
+  \texttt{sys\_mmap()}\\
+  \scriptsize integer validation and dispatch};
+
+\node[box=blue!20]   (usmmap)  at (0,-5.6)  {%
+  \texttt{\_\_sys\_mmap(addr, len,}\\\texttt{Perms, Flags, Fd, off\_t)}\\
+  \scriptsize typed \CC{} interface};
+
+\node[box=orange!20] (kalloc)  at (-2.9,-8.2) {%
+  \texttt{kalloc(len)}\\
+  \scriptsize anonymous allocation};
+
+\node[box=orange!20] (kallocf) at ( 2.9,-8.2) {%
+  \texttt{kalloc\_fixed(addr, len)}\\
+  \scriptsize \texttt{MAP\_FIXED} allocation};
+
+\node[box=orange!30] (alloc) at (-2.9,-10.0)  {%
+  \texttt{mem\_resource::}\\\texttt{allocate(bytes)}\\
+  \scriptsize public entry point};
+
+\node[box=orange!30] (allocat) at (2.9,-10.0)  {%
+  \texttt{mem\_resource::}\\\texttt{allocate\_at(where, bytes)}\\
+  \scriptsize public entry point};
+
+\node[box=orange!35] (doalloc) at (-2.9,-12.0)  {%
+  \texttt{do\_allocate()}\\
+  \scriptsize POSIX validity, statistics};
+
+\node[box=orange!35] (doallocat) at (2.9,-12.0)  {%
+  \texttt{do\_allocate\_at()}\\
+  \scriptsize range check, POSIX validity, statistics};
+
+\node[box=red!20]    (strat)   at (-2.9,-14.3)  {%
+  \texttt{buddy\_resource::}\\\texttt{strat\_allocate()}\\
+  \scriptsize buddy-specific allocation};
+
+\node[box=red!20]    (stratat)   at (2.9,-14.3)  {%
+  \texttt{buddy\_resource::}\\\texttt{strat\_allocate\_at()}\\
+  \scriptsize buddy-specific placement};
+
+
+%% arrows
+\draw[arr] (posix)   -- (sysmmap);
+\draw[arr] (sysmmap) -- (usmmap);
+\draw[arr] (usmmap.south) -- ++(0,-0.6) -| (kalloc.north)
+  node[pos=0.85, right, font=\scriptsize] {no \texttt{MAP\_FIXED}};
+\draw[arr] (usmmap.south) -- ++(0,-0.6) -| (kallocf.north)
+  node[pos=0.85, right, font=\scriptsize] {\texttt{MAP\_FIXED}};
+\draw[arr] (kalloc.south)  |- ++(0,-0.4) -| (alloc.north);
+\draw[arr] (kallocf.south) |- ++(0,-0.4) -| (allocat.north);
+\draw[arr] (alloc) -- (doalloc);
+\draw[arr] (allocat) -- (doallocat);
+\draw[arr] (doalloc) -- (strat);
+\draw[arr] (doallocat) -- (stratat);
+
+%% layer boundaries — labels placed outside (north east corner anchored above top edge)
+\draw[bnd] (-3.1, 0.50) rectangle (3.1,-4.00);
+\node[anchor=south east, font=\scriptsize\itshape, text=gray] at (3.1, 0.50)
+  {POSIX compatibility layer (musl)};
+
+\draw[bnd] (-5.75,-4.55) rectangle (5.75,-15.95);
+\node[anchor=south east, font=\scriptsize\itshape, text=gray] at (5.75,-4.55)
+  {IncludeOS memory subsystem};
+
+\end{tikzpicture}
+\caption{\texttt{mmap} call chain from the POSIX interface to the buddy allocator.
+  The upper layer (\texttt{sys\_mmap}) accepts raw integer arguments and translates
+  them to typed \CC{} values; the lower layer handles placement and validation.
+  \texttt{MAP\_FIXED} requests route through \texttt{kalloc\_fixed} and ultimately
+  reach \texttt{strat\_allocate\_at}, which performs buddy-system placement at the
+  requested address.}
+\label{fig:mmap-callchain}
+\end{figure}

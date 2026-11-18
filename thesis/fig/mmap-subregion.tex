@@ -1,0 +1,39 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[every node/.style={font=\footnotesize}, x=1cm, y=1cm]
+  \tikzset{forb/.style={fill=red!12}, data/.style={fill=allocring!30}}
+
+  % (a) the reservation
+  \node[anchor=west, font=\footnotesize\bfseries] at (0,4.05)
+    {(a) \texttt{p = mmap(NULL, 256\,MiB, PROT\_NONE, MAP\_PRIVATE|MAP\_ANONYMOUS)}};
+  \draw[forb] (0,3.05) rectangle (12,3.55);
+  \node at (6,3.3) {\texttt{Forbidden}};
+  \node[anchor=north west, font=\scriptsize, align=left] at (0,2.95)
+    {\texttt{kalloc}: the buddy allocator picks a free block and returns its address \texttt{p};\\
+     \texttt{\_\_sys\_mprotect} marks every page of it \texttt{Forbidden}};
+  \node[anchor=south west, font=\scriptsize, inner sep=1pt] at (0,3.55) {\texttt{p}};
+
+  % (b) the commit
+  \node[anchor=west, font=\footnotesize\bfseries] at (0,1.6)
+    {(b) \texttt{mmap(p, 2\,MiB, PROT\_READ|PROT\_WRITE, MAP\_FIXED|\ldots)}};
+  \draw[data] (0,0.6) rectangle (2.2,1.1);
+  \draw[forb] (2.2,0.6) rectangle (12,1.1);
+  \node at (1.1,0.85) {\texttt{Data}};
+  \node at (7.1,0.85) {\texttt{Forbidden}};
+  \node[anchor=south west, font=\scriptsize, inner sep=1pt] at (0,1.1) {\texttt{p}};
+  \node[anchor=north west, font=\scriptsize, align=left] at (0,0.5)
+    {\texttt{kalloc\_fixed} $\to$ \texttt{allocate\_at(p, 2\,MiB, override)}: no new block, \texttt{p} is
+     already inside the pool;\\
+     \texttt{\_\_sys\_mprotect} rewrites the page table entries of the first 2\,MiB:
+     \texttt{Forbidden} $\to$ \texttt{Data}};
+\end{tikzpicture}
+\caption{What \texttt{mmap} does to a subrange of an existing mapping, as
+         in OCaml's reserve-then-commit pattern: (a) reserving a large
+         region with no access, and (b) committing its first 2\,MiB with
+         \texttt{MAP\_FIXED}. With \texttt{MAP\_FIXED} the allocator only
+         checks that the address lies in its pool and returns it, so the
+         commit changes the permission of part of the reservation without
+         allocating anything new. Sizes as in the OCaml runtime's own
+         reservation and first commit, traced on Linux; not to scale.}
+\label{fig:mmap-subregion}
+\end{figure}

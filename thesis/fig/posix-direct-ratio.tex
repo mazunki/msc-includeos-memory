@@ -1,0 +1,49 @@
+\begin{figure}[tbp]
+\centering
+\definecolor{seriescpp}{HTML}{2A78D6}
+\definecolor{seriesziglang}{HTML}{EB6834}
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=1.6cm},
+  width=6.6cm, height=4.6cm,
+  xmode=log, log basis x=2,
+  xtick={64,1024,4096,16384,65536,262144,1048576},
+  xticklabels={64B,1KiB,4KiB,16KiB,64KiB,256KiB,1MiB},
+  x tick label style={rotate=45, anchor=north east, font=\scriptsize},
+  y tick label style={font=\scriptsize},
+  xlabel style={font=\scriptsize}, ylabel style={font=\scriptsize},
+  ymin=0, ymax=1.1,
+  grid=major, grid style={gray!20, thin},
+  axis line style={gray!60},
+  tick style={gray!60},
+  every axis plot/.append style={line width=1pt, mark size=1.4pt},
+  legend style={font=\scriptsize, draw=none, fill=none, at={(0.98,0.02)}, anchor=south east},
+]
+
+\nextgroupplot[title={(a) alloc}, title style={font=\scriptsize}, ylabel={direct / posix ratio}]
+\addplot[color=seriescpp, mark=*] coordinates {
+  (64,0.24) (1024,0.24) (4096,0.24) (16384,0.53) (65536,0.72) (262144,0.91) (1048576,0.91)
+};
+\addplot[color=seriesziglang, mark=square*] coordinates {
+  (64,0.29) (1024,0.29) (4096,0.29) (16384,0.53) (65536,0.73) (262144,0.91) (1048576,0.92)
+};
+\legend{C++, Zig}
+
+\nextgroupplot[title={(b) free}, title style={font=\scriptsize}, ymin=0.6, ymax=1.05]
+\addplot[color=seriescpp, mark=*] coordinates {
+  (64,0.90) (1024,0.90) (4096,0.92) (16384,0.93) (65536,0.88) (262144,0.86) (1048576,0.66)
+};
+\addplot[color=seriesziglang, mark=square*] coordinates {
+  (64,0.95) (1024,0.96) (4096,0.94) (16384,0.95) (65536,0.93) (262144,0.89) (1048576,0.73)
+};
+
+\end{groupplot}
+\end{tikzpicture}
+\caption{Cycles calling the allocator directly divided by cycles
+  through \texttt{mmap} on IncludeOS, by block size, for allocating (a)
+  and freeing (b), from C++ and from Zig. Below 1 means the direct path
+  is faster. Each point is a ratio of mean cycles over $n = 30$ boots, after
+  dropping any boot more than three times slower than the median. Data in
+  \cref{tab:cpp-posix-direct,tab:zig-posix-direct}.}
+\label{fig:posix-direct-ratio}
+\end{figure}

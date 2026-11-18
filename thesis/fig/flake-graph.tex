@@ -1,0 +1,44 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[
+  every node/.style={font=\footnotesize},
+  box/.style={draw, rounded corners=2pt, fill=#1,
+              minimum width=2.6cm, minimum height=0.7cm,
+              text width=2.4cm, align=center},
+  arr/.style={-{Stealth[length=5pt]}, thick},
+]
+
+%% external upstream projects
+\node[box=gray!15] (zigoverlay) at (-1.7, 4.2) {\texttt{zig-overlay}};
+\node[box=gray!15] (zls)        at ( 1.3, 4.2) {\texttt{zls}};
+
+%% own-maintained flakes
+\node[box=blue!15] (compiler)     at (-4.6, 4.2) {\texttt{compiler}};
+\node[box=blue!15] (vmrunner)     at ( 4.6, 4.2) {\texttt{vmrunner}};
+
+\node[box=blue!15] (linuxrunner)  at (-4.6, 2.4) {\texttt{linux-runner}};
+\node[box=blue!15] (zigtoolchain) at (-0.2, 2.4) {\texttt{zig-toolchain}};
+\node[box=blue!15] (includeos)    at ( 4.6, 2.4) {\texttt{IncludeOS}\\\scriptsize(pinned fork)};
+
+%% this thesis' own artifact
+\node[box=green!15] (benchsuite) at (2.2, 0.4) {benchmark\\suite};
+
+\draw[arr] (compiler) -- (linuxrunner);
+\draw[arr] (zigoverlay) -- (zigtoolchain);
+\draw[arr] (zls) -- (zigtoolchain);
+\draw[arr] (vmrunner) -- (includeos);
+
+\draw[arr] (zigtoolchain) -- (benchsuite);
+\draw[arr] (includeos) -- (benchsuite);
+\draw[arr] (vmrunner) to[bend right=15] (benchsuite);
+
+\end{tikzpicture}
+\caption{Composition of the Nix flakes providing reproducible builds for this
+  thesis. An arrow points from a flake to the flake that uses it. Grey nodes
+  are external upstream projects; blue nodes are flakes
+  maintained as part of this work. \texttt{compiler} and \texttt{linux-runner}
+  form an independent Linux-native path, not consumed by the benchmark suite
+  directly. The OCaml benchmarks are built separately
+  (\fullref{sec:design-ocaml-build}).}
+\label{fig:flake-graph}
+\end{figure}

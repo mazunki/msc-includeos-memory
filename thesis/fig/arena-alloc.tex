@@ -1,0 +1,72 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[
+  every node/.style={font=\footnotesize},
+  live/.style={fill=allocbuddy!25},
+  leak/.style={pattern=north east lines, pattern color=allocbuddy!80!black},
+  cur/.style={-{Stealth[length=5pt]}, very thick},
+  curc/.style={orange!85!black},
+]
+% One contiguous region, drawn growing upwards; each column is a snapshot.
+\newcommand{\arU}{0.45}
+\newcommand{\arW}{1.1}
+\newcommand{\arpool}[1]{\draw[fill=gray!6] (#1,0) rectangle (#1+\arW,8*\arU);}
+\newcommand{\arblock}[5]{% x, from, to, style, label
+  \draw[#4] (#1,#2*\arU) rectangle (#1+\arW,#3*\arU);
+  \node at (#1+\arW/2,{(#2+#3)/2*\arU}) {#5};}
+\newcommand{\arcur}[2]{\draw[cur, curc] (#1+\arW+0.45,#2*\arU) -- (#1+\arW+0.02,#2*\arU);}
+\newcommand{\arstep}[2]{\node[align=center, anchor=north, text width=2.3cm] at (#1+\arW/2,-0.12) {#2};}
+\newcommand{\arA}{{\fboxsep=1pt\colorbox{white}{A}}}
+
+% (a) empty
+\arpool{0}
+\arcur{0}{0}
+\arstep{0}{(a) empty}
+
+% (b) three allocations, bumped one after the other
+\arpool{2.4}
+\arblock{2.4}{0}{2.4}{live}{A}\arblock{2.4}{2.4}{3.4}{live}{B}\arblock{2.4}{3.4}{5.4}{live}{C}
+\arcur{2.4}{5.4}
+\arstep{2.4}{(b) allocate\\A, B, C}
+
+% (c) free C: it is the newest, so the cursor moves back
+\arpool{4.8}
+\arblock{4.8}{0}{2.4}{live}{A}\arblock{4.8}{2.4}{3.4}{live}{B}
+\arcur{4.8}{3.4}
+\arstep{4.8}{(c) free C\\{\scriptsize\itshape cursor back}}
+
+% (d) free A: not the newest, so nothing happens
+\arpool{7.2}
+\arblock{7.2}{0}{2.4}{leak}{\arA}\arblock{7.2}{2.4}{3.4}{live}{B}
+\arcur{7.2}{3.4}
+\arstep{7.2}{(d) free A\\{\scriptsize\itshape nothing happens}}
+
+% (e) allocate D: smaller than A's old space, but still goes at the cursor
+\arpool{9.6}
+\arblock{9.6}{0}{2.4}{leak}{\arA}\arblock{9.6}{2.4}{3.4}{live}{B}\arblock{9.6}{3.4}{5.0}{live}{D}
+\arcur{9.6}{5.0}
+\arstep{9.6}{(e) allocate D\\{\scriptsize\itshape goes on top}}
+
+% (f) deallocate_all
+\arpool{12.0}
+\arcur{12.0}{0}
+\arstep{12.0}{(f) reset\\{\scriptsize\texttt{deallocate\_all}}}
+
+% legend
+\begin{scope}[shift={(2.1,-1.55)}]
+  \draw[cur, curc] (0,0.125) -- (0.45,0.125); \node[right] at (0.5,0.125) {cursor};
+  \draw[live] (2.0,0) rectangle (2.4,0.25); \node[right] at (2.45,0.125) {live};
+  \draw[leak] (3.55,0) rectangle (3.95,0.25); \node[right] at (4.0,0.125) {freed, held until reset};
+  \draw[fill=gray!6] (7.95,0) rectangle (8.35,0.25); \node[right] at (8.4,0.125) {free};
+\end{scope}
+\end{tikzpicture}
+\caption{The arena allocator in IncludeOS, in six snapshots from left
+  to right. The region is contiguous, and addresses grow upwards. A single
+  \emph{cursor} (orange arrow) marks the first free byte, and allocating
+  just moves it up by the requested size (b). Freeing only does something
+  for the newest allocation, which moves the cursor back (c). Freeing
+  anything older is accepted but does nothing, so A stays occupied until
+  the whole arena is reset (d, f). A new allocation always goes at the
+  cursor, even when it would fit in A's old space (e).}
+\label{fig:arena-alloc}
+\end{figure}

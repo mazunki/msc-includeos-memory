@@ -1,0 +1,49 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[every node/.style={font=\footnotesize}, x=1cm, y=1cm]
+  \tikzset{hdr/.style={fill=gray!45}, pool/.style={fill=allocbuddy!15},
+           arena/.style={fill=brown!25}, ring/.style={fill=allocring!25},
+           waste/.style={pattern=north east lines, pattern color=gray!60}}
+
+  % the raw region, with a buddy_resource built inside it
+  \node[anchor=south west] at (0,3.75)
+    {a raw region, given to \texttt{create\_at(region)}};
+  \draw[hdr]   (0,3.0)   rectangle (0.7,3.7);
+  \draw[pool]  (0.7,3.0) rectangle (9.4,3.7);
+  \draw[waste] (9.4,3.0) rectangle (12,3.7);
+  \node at (0.35,3.35) {hdr};
+  \node at (5.05,3.35) {buddy pool};
+  \node[fill=white, inner sep=1.5pt] at (10.7,3.35) {unused};
+
+  % zoom into the buddy pool
+  \fill[allocbuddy!6] (0.7,3.0) -- (9.4,3.0) -- (12,1.7) -- (0,1.7) -- cycle;
+  \draw[gray!60] (0.7,3.0) -- (0,1.7);
+  \draw[gray!60] (9.4,3.0) -- (12,1.7);
+  \node[font=\scriptsize\itshape, text=gray] at (6,2.35) {inside the buddy pool};
+
+  % children carved out of it with create_from
+  \draw[hdr]   (0,1.0)   rectangle (0.7,1.7);
+  \draw[arena] (0.7,1.0) rectangle (5,1.7);
+  \draw[pool]  (5,1.0)   rectangle (7,1.7);
+  \draw[hdr]   (7,1.0)   rectangle (7.7,1.7);
+  \draw[ring]  (7.7,1.0) rectangle (12,1.7);
+  \node at (0.35,1.35) {hdr};
+  \node at (2.85,1.35) {\texttt{arena\_resource} pool};
+  \node at (6,1.35) {free};
+  \node at (7.35,1.35) {hdr};
+  \node at (9.85,1.35) {\texttt{ring\_resource} pool};
+
+  \draw[decorate, decoration={brace, mirror, amplitude=4pt}] (0,0.9) -- (5,0.9)
+    node[midway, below=5pt] {one buddy block, from \texttt{create\_from}};
+  \draw[decorate, decoration={brace, mirror, amplitude=4pt}] (7,0.9) -- (12,0.9)
+    node[midway, below=5pt] {one buddy block, from \texttt{create\_from}};
+\end{tikzpicture}
+\caption{How allocators are built inside the memory they manage.
+         \texttt{create\_at} turns a raw region into a
+         \texttt{buddy\_resource}, with its bookkeeping (hdr) at the start
+         and a power-of-two pool after it, and whatever does not fit the
+         pool goes unused. \texttt{create\_from} then asks that allocator
+         for one block per child, and builds the child, here an arena and
+         a ring, inside the block the same way. Not to scale.}
+\label{fig:allocator-carving}
+\end{figure}

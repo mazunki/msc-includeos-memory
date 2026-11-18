@@ -1,0 +1,23 @@
+--- a/bench/main.cpp
++++ b/bench/main.cpp
+@@ -7,6 +7,8 @@
+   printf("[ocaml start]\n");
+   printf("[bench start]\n");
+ 
++  auto& s0 = os::mem::raw_allocator().stats();
++  unsigned long long a0 = s0.count_alloc, f0 = s0.count_alloc_at, d0 = s0.count_dealloc;
+   struct ocaml_timing t = ocaml_init();
+ 
+   printf("[bench end]\n");
+@@ -19,7 +21,11 @@
+   printf("highest_used         %zu\n",  os::mem::raw_allocator().highest_used());
+   printf("count_alloc          %llu\n", (unsigned long long)stats.count_alloc);
+   printf("count_alloc_at       %llu\n", (unsigned long long)stats.count_alloc_at);
++  printf("count_dealloc        %llu\n", (unsigned long long)stats.count_dealloc);
+ 
++  printf("before_alloc         %llu\n", a0);
++  printf("before_alloc_at      %llu\n", f0);
++  printf("before_dealloc       %llu\n", d0);
+   printf("[ocaml end]\n");
+   os::shutdown();
+ }

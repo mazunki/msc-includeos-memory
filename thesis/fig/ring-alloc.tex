@@ -1,0 +1,81 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[
+  every node/.style={font=\footnotesize},
+  live/.style={fill=allocring!30},
+  done/.style={pattern=north east lines, pattern color=allocring!70!black},
+  gap/.style={pattern=crosshatch dots, pattern color=gray!70},
+  cur/.style={-{Stealth[length=5pt]}, very thick},
+  headc/.style={orange!85!black},
+  tailc/.style={blue!70!black},
+]
+% One contiguous pool, drawn growing upwards; each column is a snapshot.
+% Heights are in arbitrary units, 8 for the whole pool.
+\newcommand{\rgU}{0.45}
+\newcommand{\rgW}{1.1}
+\newcommand{\rgpool}[1]{\draw[fill=gray!6] (#1,0) rectangle (#1+\rgW,8*\rgU);}
+\newcommand{\rgblock}[5]{% x, from, to, style, label
+  \draw[#4] (#1,#2*\rgU) rectangle (#1+\rgW,#3*\rgU);
+  \node at (#1+\rgW/2,{(#2+#3)/2*\rgU}) {#5};}
+\newcommand{\rghead}[2]{\draw[cur, headc] (#1+\rgW+0.45,#2*\rgU) -- (#1+\rgW+0.02,#2*\rgU);}
+\newcommand{\rgtail}[2]{\draw[cur, tailc] (#1-0.45,#2*\rgU) -- (#1-0.02,#2*\rgU);}
+\newcommand{\rgstep}[2]{\node[align=center, anchor=north, text width=2.3cm] at (#1+\rgW/2,-0.12) {#2};}
+\newcommand{\rgB}{{\fboxsep=1pt\colorbox{white}{B}}}
+
+% (a) empty
+\rgpool{0}
+\rgtail{0}{0}\rghead{0}{0}
+\rgstep{0}{(a) empty}
+
+% (b) three allocations of different sizes, back to back
+\rgpool{2.4}
+\rgblock{2.4}{0}{1.2}{live}{A}\rgblock{2.4}{1.2}{3.5}{live}{B}\rgblock{2.4}{3.5}{5.4}{live}{C}
+\rgtail{2.4}{0}\rghead{2.4}{5.4}
+\rgstep{2.4}{(b) allocate\\A, B, C}
+
+% (c) free B: marked done, but A is older and still live
+\rgpool{4.8}
+\rgblock{4.8}{0}{1.2}{live}{A}\rgblock{4.8}{1.2}{3.5}{done}{\rgB}\rgblock{4.8}{3.5}{5.4}{live}{C}
+\rgtail{4.8}{0}\rghead{4.8}{5.4}
+\rgstep{4.8}{(c) free B\\{\scriptsize\itshape tail stays}}
+
+% (d) free A: tail moves past A and B at once
+\rgpool{7.2}
+\rgblock{7.2}{3.5}{5.4}{live}{C}
+\rgtail{7.2}{3.5}\rghead{7.2}{5.4}
+\rgstep{7.2}{(d) free A\\{\scriptsize\itshape tail skips B too}}
+
+% (e) allocate D (3.0): only 2.6 left above the head, so wrap
+\rgpool{9.6}
+\rgblock{9.6}{0}{3.0}{live}{D}\rgblock{9.6}{3.5}{5.4}{live}{C}\rgblock{9.6}{5.4}{8}{gap}{}
+\rgtail{9.6}{3.5}\rghead{9.6}{3.0}
+\rgstep{9.6}{(e) allocate D\\{\scriptsize\itshape head wraps}}
+
+% (f) deallocate_all
+\rgpool{12.0}
+\rgtail{12.0}{0}\rghead{12.0}{0}
+\rgstep{12.0}{(f) reset\\{\scriptsize\texttt{deallocate\_all}}}
+
+% legend
+\begin{scope}[shift={(-0.4,-1.55)}]
+  \draw[cur, tailc] (0,0.125) -- (0.45,0.125); \node[right] at (0.5,0.125) {tail};
+  \draw[cur, headc] (1.45,0.125) -- (1.9,0.125); \node[right] at (1.95,0.125) {head};
+  \draw[live] (3.2,0) rectangle (3.6,0.25); \node[right] at (3.65,0.125) {live};
+  \draw[done] (4.75,0) rectangle (5.15,0.25); \node[right] at (5.2,0.125) {freed, not reclaimed};
+  \draw[gap]  (8.6,0) rectangle (9.0,0.25); \node[right] at (9.05,0.125) {wasted by a wrap};
+  \draw[fill=gray!6] (12.0,0) rectangle (12.4,0.25); \node[right] at (12.45,0.125) {free};
+\end{scope}
+\end{tikzpicture}
+\caption{A ring allocator in six snapshots, from left to right. The pool
+  is one contiguous region, addresses grow upwards, and allocations are
+  any size, packed back to back. New allocations go at the \emph{head}
+  (orange arrow, right), and space is reclaimed only at the \emph{tail}
+  (blue arrow, left), the start of the oldest allocation still live.
+  Freeing out of order is allowed but reclaims nothing yet: in (c), B is
+  freed before A, so its space stays occupied until A is freed too in (d),
+  and the tail then moves past both. When a request does not fit above the
+  head, the head wraps to the bottom of the pool, and the rest of the top
+  is wasted until the tail passes it (e). \texttt{deallocate\_all} resets
+  both cursors at once (f).}
+\label{fig:ring-alloc}
+\end{figure}

@@ -1,0 +1,54 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[
+  every node/.style={font=\footnotesize},
+  box/.style={draw, rounded corners=2pt, fill=#1,
+              minimum width=3.3cm, minimum height=0.8cm,
+              text width=3.1cm, align=center},
+  arr/.style={-{Stealth[length=5pt]}, thick},
+  lbl/.style={font=\scriptsize, fill=white, inner sep=1pt},
+]
+
+%% inputs
+\node[box=blue!15] (includeos) at (-3.7, 6.4) {\texttt{IncludeOS}\\\scriptsize(pinned fork)};
+\node[box=gray!15] (nixpkgs)   at ( 0.0, 6.4) {\texttt{nixpkgs} 25.05\\\scriptsize OCaml 5.3, static musl};
+\node[box=gray!15] (source)    at ( 3.7, 6.4) {benchmark \texttt{.ml}\\\scriptsize Sandmark or fiber scheduler};
+
+%% the one compiler both platforms use
+\node[box=blue!15] (compiler)  at ( 0.0, 4.6) {OCaml 5.3 compiler\\\scriptsize + 3 configure flags};
+
+%% what the compiler produces
+\node[box=white] (asmrun)   at (-1.0, 2.8) {\texttt{libasmrun.a}\\\scriptsize OCaml runtime};
+\node[box=white] (ocamlobj) at ( 2.6, 2.8) {\texttt{ocamlcode.o}\\\scriptsize the program\\(\texttt{ocamlopt -output-obj})};
+
+%% the only step that differs
+\node[box=green!15] (iosimg)   at (-3.7, 0.8) {\texttt{hello.elf.bin}\\\scriptsize CMake link with \texttt{main.cpp}};
+\node[box=green!15] (linuximg) at ( 3.7, 0.8) {\texttt{hello\_linux}\\\scriptsize \texttt{cc -static} with \texttt{main\_linux.c}};
+
+%% how each is booted
+\node[box=blue!15] (vmrunner)    at (-3.7, -1.0) {\texttt{vmrunner}\\\scriptsize QEMU/KVM};
+\node[box=blue!15] (linuxrunner) at ( 3.7, -1.0) {\texttt{linux-runner}\\\scriptsize QEMU/KVM, initrd};
+
+\draw[arr] (nixpkgs) -- (compiler);
+\draw[arr] (compiler) -- (asmrun);
+\draw[arr] (compiler) -- (ocamlobj);
+\draw[arr] (source) -- (ocamlobj);
+
+\draw[arr] (asmrun) -- (iosimg);
+\draw[arr] (asmrun) -- (linuximg);
+\draw[arr] (ocamlobj) -- (iosimg);
+\draw[arr] (ocamlobj) -- (linuximg);
+\draw[arr] (includeos) -- node[lbl, right=2pt] {kernel, its musl} (iosimg);
+
+\draw[arr] (iosimg) -- (vmrunner);
+\draw[arr] (linuximg) -- (linuxrunner);
+
+\end{tikzpicture}
+\caption{How one OCaml benchmark becomes a bootable image on each
+  platform. Both start from the same OCaml~5.3 compiler, taken from
+  \texttt{nixpkgs} and rebuilt with the configure flags of
+  \cref{sec:design-ocaml-build}, and only the final link differs. Grey:
+  external inputs. Blue: flakes and overrides from this work. Green: the
+  images that are timed.}
+\label{fig:ocaml-build}
+\end{figure}

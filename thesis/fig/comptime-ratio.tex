@@ -1,0 +1,51 @@
+\begin{figure}[tbp]
+\centering
+\definecolor{seriesnocomptime}{HTML}{2A78D6}
+\definecolor{seriescomptime}{HTML}{EB6834}
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=1.6cm},
+  width=6.6cm, height=4.6cm,
+  xmode=log, log basis x=2,
+  xtick={64,1024,4096,16384,65536,262144,1048576},
+  xticklabels={64B,1KiB,4KiB,16KiB,64KiB,256KiB,1MiB},
+  x tick label style={rotate=45, anchor=north east, font=\scriptsize},
+  y tick label style={font=\scriptsize},
+  xlabel style={font=\scriptsize}, ylabel style={font=\scriptsize},
+  grid=major, grid style={gray!20, thin},
+  axis line style={gray!60},
+  tick style={gray!60},
+  every axis plot/.append style={line width=1pt, mark size=1.4pt},
+  legend style={font=\scriptsize, draw=none, fill=none, at={(0.98,0.98)}, anchor=north east},
+]
+
+\nextgroupplot[title={(a) alloc}, title style={font=\scriptsize},
+  ylabel={Zig / C++ ratio}, ymin=0.9, ymax=1.35]
+\addplot[color=seriesnocomptime, mark=*] coordinates {
+  (64,1.30) (1024,1.29) (4096,1.28) (16384,1.05) (65536,1.04) (262144,1.02) (1048576,1.01)
+};
+\addplot[color=seriescomptime, mark=square*] coordinates {
+  (64,0.96) (1024,1.01) (4096,1.00) (16384,1.01) (65536,0.99) (262144,1.00) (1048576,1.00)
+};
+\addplot[color=gray, dashed, mark=none, line width=0.5pt] coordinates {(64,1.0) (1048576,1.0)};
+\legend{no \texttt{comptime}, \texttt{comptime}}
+
+\nextgroupplot[title={(b) free}, title style={font=\scriptsize}, ymin=0.9, ymax=1.45]
+\addplot[color=seriesnocomptime, mark=*] coordinates {
+  (64,1.37) (1024,1.38) (4096,1.31) (16384,1.29) (65536,1.33) (262144,1.30) (1048576,1.27)
+};
+\addplot[color=seriescomptime, mark=square*] coordinates {
+  (64,1.05) (1024,1.09) (4096,1.10) (16384,1.06) (65536,1.01) (262144,1.03) (1048576,1.00)
+};
+\addplot[color=gray, dashed, mark=none, line width=0.5pt] coordinates {(64,1.0) (1048576,1.0)};
+
+\end{groupplot}
+\end{tikzpicture}
+\caption{Zig's cycles over C++'s on the \texttt{direct} path, by block
+  size, for allocating (a) and freeing (b), before and after marking the
+  allocator parameter \texttt{comptime}. The dashed line at $1.00\times$
+  is C++ speed, and the height above it is Zig's overhead. Each point is a ratio of mean cycles over $n = 30$ boots,
+  after dropping any boot more than three times slower than the median.
+  Data in \cref{tab:comptime-ratio}.}
+\label{fig:comptime-ratio}
+\end{figure}

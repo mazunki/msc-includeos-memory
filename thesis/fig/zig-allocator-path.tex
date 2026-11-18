@@ -1,0 +1,84 @@
+\begin{figure}[!t]
+\centering
+\begin{tikzpicture}[
+  every node/.style={font=\footnotesize},
+  box/.style={draw, rounded corners=2pt, fill=#1,
+              minimum width=5.0cm, minimum height=0.70cm,
+              text width=4.8cm, align=center},
+  wide/.style={draw, rounded corners=2pt, fill=#1,
+               minimum width=8.0cm, minimum height=0.70cm,
+               text width=7.8cm, align=center},
+  arr/.style={-{Stealth[length=5pt]}, thick},
+  bnd/.style={draw=gray, dashed, thick, rounded corners=4pt},
+  lbl/.style={font=\scriptsize\itshape, text=gray},
+  abi/.style={font=\scriptsize\itshape, text=gray, fill=white},
+]
+
+%% Zig
+\node[wide=green!10] (prog) at (0, 0) {%
+  \texttt{allocator.alloc(u8, n)}\\
+  \scriptsize Zig program, given a \texttt{std.mem.Allocator}};
+
+\node[wide=green!20] (vtable) at (0,-1.6) {%
+  \texttt{std.mem.Allocator} vtable: \texttt{.alloc}, \texttt{.free}\\
+  \scriptsize indirect call, unless the allocator is \texttt{comptime}};
+
+\node[box=green!30] (zposix) at (-3.0,-3.4) {%
+  \texttt{posix} allocator\\
+  \scriptsize calls \texttt{mmap(null, len, \ldots)}};
+
+\node[box=green!30] (zdirect) at (3.0,-3.4) {%
+  \texttt{direct} allocator\\
+  \scriptsize calls \texttt{includeos\_zig\_alloc(len, alignment)}};
+
+%% C linkage
+\node[box=blue!10] (musl) at (-3.0,-5.9) {%
+  \texttt{mmap()} $\rightarrow$ \texttt{syscall\_SYS\_mmap()}\\
+  \scriptsize musl, patched to call IncludeOS};
+
+\node[box=blue!10] (shim) at (3.0,-5.9) {%
+  \texttt{includeos\_zig\_alloc()}\\
+  \scriptsize \texttt{try} \ldots\ \texttt{catch}: exceptions become \texttt{nullptr}};
+
+%% C++
+\node[box=blue!20] (sysmmap) at (-3.0,-8.4) {%
+  \texttt{sys\_mmap()} $\rightarrow$ \texttt{\_\_sys\_mmap()} $\rightarrow$ \texttt{kalloc()}\\
+  \scriptsize typed POSIX layer (\cref{fig:mmap-callchain})};
+
+\node[wide=orange!30] (raw) at (0,-10.4) {%
+  \texttt{os::mem::raw\_allocator().allocate()}\\
+  \scriptsize \texttt{mem\_resource}, a \texttt{buddy\_resource} by default};
+
+%% arrows
+\draw[arr] (prog) -- (vtable);
+\draw[arr] (vtable.south) -- ++(0,-0.4) -| (zposix.north);
+\draw[arr] (vtable.south) -- ++(0,-0.4) -| (zdirect.north);
+\draw[arr] (zposix) -- (musl);
+\draw[arr] (zdirect) -- (shim);
+\draw[arr] (musl) -- (sysmmap);
+\draw[arr] (sysmmap.south) -- ++(0,-0.45) -| ([xshift=-1.5cm]raw.north);
+\draw[arr] (shim.south) -- ++(0,-2.95) -| ([xshift=1.5cm]raw.north);
+
+%% layers
+\draw[bnd] (-5.9, 0.75) rectangle (5.9,-4.30);
+\node[lbl, rotate=90, anchor=south] at (-5.9,-1.78) {Zig};
+
+\draw[bnd] (-5.9,-5.05) rectangle (5.9,-6.75);
+\node[lbl, rotate=90, anchor=south] at (-5.9,-5.90) {C};
+
+\draw[bnd] (-5.9,-7.50) rectangle (5.9,-11.15);
+\node[lbl, rotate=90, anchor=south] at (-5.9,-9.33) {\CC{} (IncludeOS)};
+
+\node[abi] at (0,-4.68) {C ABI (\texttt{extern "C"})};
+\node[abi] at (0,-7.13) {\CC{} ABI (name mangling, exceptions)};
+
+\end{tikzpicture}
+\caption{The two allocation paths a Zig program can take on IncludeOS. Both
+  start from the same \texttt{std.mem.Allocator} interface and leave Zig
+  through the C ABI. The \texttt{posix} allocator calls \texttt{mmap} in musl,
+  which goes through the whole POSIX layer. The \texttt{direct} allocator
+  calls a small shim, which goes straight to \texttt{raw\_allocator()} and
+  stops any \CC{} exception from reaching Zig. Both end up in the same
+  allocator.}
+\label{fig:zig-allocator-path}
+\end{figure}
